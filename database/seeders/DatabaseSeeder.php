@@ -28,5 +28,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RolesAndPermissionsSeeder::class);
 
         $user->assignRole(Role::findByName('super_admin'));
+
+        $this->call(CompanySeeder::class);
     }
 }

@@ -36,10 +36,16 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
+        $query = parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+
+        if (auth()->user()->hasAnyRole(['super_admin', 'system_admin'])) {
+            return $query;
+        }
+
+        return $query->where('company_id', auth()->user()->company_id);
     }
 
     public static function form(Schema $schema): Schema
@@ -76,9 +82,15 @@ class UserResource extends Resource
 
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
-        return parent::getRecordRouteBindingEloquentQuery()
+        $query = parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+
+        if (auth()->user()->hasAnyRole(['super_admin', 'system_admin'])) {
+            return $query;
+        }
+
+        return $query->where('company_id', auth()->user()->company_id);
     }
 }
