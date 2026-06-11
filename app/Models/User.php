@@ -43,4 +43,31 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Company::class);
     }
+
+    public static function allowedRoles(): array
+    {
+        $user = auth()->user();
+
+        if ($user->hasRole('super_admin')) {
+            return [
+                'super_admin',
+                'system_admin',
+                'company_admin',
+                'api_consumer',
+            ];
+        }
+
+        if ($user->hasRole('system_admin')) {
+            return [
+                'system_admin',
+                'company_admin',
+                'api_consumer',
+            ];
+        }
+
+        return [
+            'company_admin',
+            'api_consumer',
+        ];
+    }
 }
