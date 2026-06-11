@@ -17,10 +17,22 @@ class ViewRole extends ViewRecord
     {
         return $this->record->name;
     }
-
+    public function getSubheading(): ?string
+    {
+        return sprintf(
+            '%d users • %d permissions',
+            $this->record->users()->count(),
+            $this->record->permissions()->count(),
+        );
+    }
+    public function getBreadcrumb(): string
+    {
+        return '';
+    }
     protected function getHeaderActions(): array
     {
         return [
         ];
     }
+
 }

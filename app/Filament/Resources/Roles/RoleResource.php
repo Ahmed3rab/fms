@@ -23,8 +23,10 @@ class RoleResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = 'name';
-
+    public static function getRecordTitleAttribute(): ?string
+    {
+        return 'name';
+    }
     protected static string|UnitEnum|null $navigationGroup = 'Administration';
 
     public static function infolist(Schema $schema): Schema
@@ -40,6 +42,8 @@ class RoleResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationManagers\UsersRelationManager::class,
+            RelationManagers\PermissionsRelationManager::class,
             //
         ];
     }
@@ -50,5 +54,15 @@ class RoleResource extends Resource
             'index' => ListRoles::route('/'),
             'view' => ViewRole::route('/{record}'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return false;
     }
 }

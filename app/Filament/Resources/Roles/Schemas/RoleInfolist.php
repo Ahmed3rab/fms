@@ -15,29 +15,6 @@ class RoleInfolist
     {
         return $schema
             ->components([
-
-                Section::make('Users')
-                    ->schema([
-                        RepeatableEntry::make('users')
-                            ->label('')
-                            ->schema([
-                                TextEntry::make('name')
-                                    ->weight(FontWeight::Bold),
-
-                                TextEntry::make('email'),
-                            ])
-                            ->columns(2),
-                    ]),
-
-                Section::make('Permissions')
-                    ->schema([
-                        RepeatableEntry::make('permissions')
-                            ->label('')
-                            ->schema([
-                                TextEntry::make('name')
-                                    ->badge(),
-                            ]),
-                    ]),
             ]);
     }
 }
