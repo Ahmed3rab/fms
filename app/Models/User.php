@@ -35,4 +35,9 @@ class User extends Authenticatable
             'last_login_at' => 'timestamp',
         ];
     }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 }

@@ -8,7 +8,11 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @extends EditRecord<Model>
+ */
 class EditUser extends EditRecord
 {
     protected static string $resource = UserResource::class;
@@ -18,8 +22,16 @@ class EditUser extends EditRecord
         return [
             ViewAction::make(),
             DeleteAction::make(),
-            ForceDeleteAction::make(),
             RestoreAction::make(),
         ];
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (auth()->user()->hasRole('company_admin')) {
+            $data['company_id'] = auth()->user()->company_id;
+        }
+
+        return $data;
     }
 }
