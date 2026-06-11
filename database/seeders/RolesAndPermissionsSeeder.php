@@ -2,9 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -15,14 +13,50 @@ class RolesAndPermissionsSeeder extends Seeder
      */
     public function run(): void
     {
-        $roles = [
-            'super_admin',
-            'system_admin',
-            'user_manager',
-            'api_consumer',
-        ];
-
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
         $permissions = [
+            // Companies
+            'companies.view-any',
+            'companies.view',
+            'companies.create',
+            'companies.update',
+            'companies.deactivate',
+            'companies.activate',
+
+            // Users
+            'users.view-any',
+            'users.view',
+            'users.create',
+            'users.update',
+            'users.deactivate',
+            'users.activate',
+
+            // Roles
+            'roles.view-any',
+            'roles.view',
+
+            // Permissions
+            'permissions.view-any',
+            'permissions.view',
+
+            // Portals
+            'portals.view-any',
+            'portals.view',
+            'portals.create',
+            'portals.update',
+            'portals.delete',
+
+            // Logs
+            'logs.view-any',
+            'logs.view',
+
+            // Tokens
+            'tokens.view-any',
+            'tokens.view',
+            'tokens.create',
+            'tokens.revoke',
+
+            // API
             'api.devices.view-any',
             'api.devices.view',
             'api.devices.profile',
@@ -30,64 +64,107 @@ class RolesAndPermissionsSeeder extends Seeder
 
             'api.companies.view-any',
             'api.companies.view',
+        ];
 
-            'tokens.view-any',
-            'tokens.view',
-            'tokens.create',
-            'tokens.revoke',
+        foreach ($permissions as $permission) {
+            Permission::findOrCreate($permission);
+        }
+
+        $superAdmin = Role::findOrCreate('super_admin');
+        $systemAdmin = Role::findOrCreate('system_admin');
+        $companyAdmin = Role::findOrCreate('company_admin');
+        $apiConsumer = Role::findOrCreate('api_consumer');
+
+        /*
+         * Super Admin
+         */
+        $superAdmin->syncPermissions(Permission::all());
+
+        /*
+         * System Admin
+         * Internal operations team
+         */
+        $systemAdmin->syncPermissions([
+
+            'companies.view-any',
+            'companies.view',
+            'companies.create',
+            'companies.update',
+            'companies.deactivate',
+            'companies.activate',
+
+            'users.view-any',
+            'users.view',
+            'users.create',
+            'users.update',
+            'users.deactivate',
+            'users.activate',
+
+            'roles.view-any',
+            'roles.view',
+
+            'permissions.view-any',
+            'permissions.view',
 
             'portals.view-any',
             'portals.view',
             'portals.create',
             'portals.update',
             'portals.delete',
-            'portals.bulk-delete',
 
             'logs.view-any',
             'logs.view',
 
+            'tokens.view-any',
+            'tokens.view',
+            'tokens.create',
+            'tokens.revoke',
+        ]);
+
+        /*
+         * Company Admin
+         * Customer administrator
+         */
+        $companyAdmin->syncPermissions([
             'users.view-any',
             'users.view',
             'users.create',
             'users.update',
-            'users.activate',
             'users.deactivate',
-            // 'users.delete',
-            // 'users.bulk-delete',
+            'users.activate',
 
             'roles.view-any',
             'roles.view',
-            'roles.create',
-            'roles.update',
-            'roles.delete',
 
-            'permissions.view-any',
-            'permissions.view',
-        ];
+            'tokens.view-any',
+            'tokens.view',
+            'tokens.create',
+            'tokens.revoke',
 
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
-        }
+            'api.devices.view-any',
+            'api.devices.view',
+            'api.devices.profile',
+            'api.devices.history',
 
-        foreach ($roles as $role) {
-            Role::firstOrCreate(['name' => $role]);
-        }
+            'api.companies.view-any',
+            'api.companies.view',
+        ]);
 
-        $permissions = collect($permissions);
-        Role::findByName('super_admin')->syncPermissions($permissions->toArray());
+        /*
+         * API Consumer
+         * Integration accounts
+         */
+        $apiConsumer->syncPermissions([
+            'tokens.view',
+            'tokens.create',
 
-        Role::findByName('system_admin')->syncPermissions($permissions->filter(function ($permission) {
-            return Str::startsWith($permission, 'users') || Str::startsWith($permission, 'portals') || Str::startsWith($permission, 'logs') || Str::startsWith($permission, 'roles') || Str::startsWith($permission, 'permissions');
-        }));
+            'api.devices.view-any',
+            'api.devices.view',
+            'api.devices.profile',
+            'api.devices.history',
 
-        Role::findByName('user_manager')->syncPermissions($permissions->filter(function ($permission) {
-            return Str::startsWith($permission, 'users');
-        }));
-
-        Role::findByName('api_consumer')->syncPermissions($permissions->filter(function ($permission) {
-            return Str::startsWith($permission, 'api') || Str::startsWith($permission, 'tokens');
-        }));
-
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+            'api.companies.view-any',
+            'api.companies.view',
+        ]);
     }
 }
