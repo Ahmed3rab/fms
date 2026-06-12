@@ -24,7 +24,10 @@ class CompanyPolicy
      */
     public function view(User $user, Company $company): bool
     {
-        return false;
+        return $user->hasAnyRole([
+            'super_admin',
+            'system_admin',
+        ]);
     }
 
     /**
@@ -32,7 +35,10 @@ class CompanyPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasAnyRole([
+            'super_admin',
+            'system_admin',
+        ]);
     }
 
     /**
@@ -40,7 +46,10 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company): bool
     {
-        return false;
+        return $user->hasAnyRole([
+            'super_admin',
+            'system_admin',
+        ]);
     }
 
     /**
@@ -48,7 +57,10 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company): bool
     {
-        return false;
+        return $user->hasAnyRole([
+            'super_admin',
+            'system_admin',
+        ]);
     }
 
     /**
@@ -56,14 +68,9 @@ class CompanyPolicy
      */
     public function restore(User $user, Company $company): bool
     {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Company $company): bool
-    {
-        return false;
+        return $user->hasAnyRole([
+            'super_admin',
+            'system_admin',
+        ]);
     }
 }

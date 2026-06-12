@@ -81,8 +81,8 @@ class UserForm
                     ->confirmed()
                     ->required(fn(string $operation) => $operation === 'create'),
                 TextInput::make('password_confirmation')
-                    ->password()
-                    ->required(),
+                    ->requiredWith('password')
+                    ->password(),
 
             ]);
     }

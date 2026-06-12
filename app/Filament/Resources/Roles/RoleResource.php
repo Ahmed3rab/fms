@@ -29,6 +29,8 @@ class RoleResource extends Resource
     }
     protected static string|UnitEnum|null $navigationGroup = 'Administration';
 
+    protected static bool $isScopedToTenant = false;
+
     public static function infolist(Schema $schema): Schema
     {
         return RoleInfolist::configure($schema);
@@ -54,6 +56,21 @@ class RoleResource extends Resource
             'index' => ListRoles::route('/'),
             'view' => ViewRole::route('/{record}'),
         ];
+    }
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->hasAnyRole([
+            'super_admin',
+            'system_admin',
+        ]);
+    }
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasAnyRole([
+            'super_admin',
+            'system_admin',
+        ]) ?? false;
     }
 
     public static function canCreate(): bool

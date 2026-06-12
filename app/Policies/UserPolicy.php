@@ -12,7 +12,11 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('users.view-any');
+        return $user->hasAnyRole([
+            'super_admin',
+            'system_admin',
+            'company_admin',
+        ]);
     }
 
     /**
@@ -20,7 +24,11 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return $user->hasPermissionTo('users.view');
+        return $user->hasAnyRole([
+            'super_admin',
+            'system_admin',
+            'company_admin',
+        ]);
     }
 
     /**
@@ -28,7 +36,11 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('users.create');
+        return $user->hasAnyRole([
+            'super_admin',
+            'system_admin',
+            'company_admin',
+        ]);
     }
 
     /**
@@ -36,7 +48,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $user->hasPermissionTo('users.update');
+        return $user->hasPermissionTo('users.update') && $this->canManageUser($user, $model);
     }
 
     /**
@@ -44,7 +56,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return $user->hasPermissionTo('users.delete');
+        return $user->hasPermissionTo('users.delete') && $this->canManageUser($user, $model);
     }
 
     /**
@@ -52,14 +64,6 @@ class UserPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        return $user->hasPermissionTo('users.restore');
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, User $model): bool
-    {
-        return false;
+        return $user->hasPermissionTo('users.restore') && $this->canManageUser($user, $model);
     }
 }

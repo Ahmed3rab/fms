@@ -17,6 +17,16 @@ class CompanySeeder extends Seeder
         ], [
             'name' => 'Acme Company',
         ]);
-        //
+        Company::firstOrCreate([
+            'slug' => 'company-a',
+        ], [
+            'name' => 'Company A',
+        ]);
+
+        Company::firstOrCreate([
+            'slug' => 'company-b',
+        ], [
+            'name' => 'Company B',
+        ]);
     }
 }

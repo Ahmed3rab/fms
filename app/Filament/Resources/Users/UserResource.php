@@ -34,18 +34,14 @@ class UserResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Administration';
 
+    protected static bool $isScopedToTenant = false;
+
     public static function getEloquentQuery(): Builder
     {
-        $query = parent::getEloquentQuery()
+        return parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
-
-        if (auth()->user()->hasAnyRole(['super_admin', 'system_admin'])) {
-            return $query;
-        }
-
-        return $query->where('company_id', auth()->user()->company_id);
     }
 
     public static function form(Schema $schema): Schema
@@ -82,15 +78,23 @@ class UserResource extends Resource
 
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
-        $query = parent::getEloquentQuery()
+        return parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
-
-        if (auth()->user()->hasAnyRole(['super_admin', 'system_admin'])) {
-            return $query;
-        }
-
-        return $query->where('company_id', auth()->user()->company_id);
+    }
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasAnyRole([
+            'super_admin',
+            'system_admin',
+        ]) ?? false;
+    }
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasAnyRole([
+            'super_admin',
+            'system_admin',
+        ]) ?? false;
     }
 }

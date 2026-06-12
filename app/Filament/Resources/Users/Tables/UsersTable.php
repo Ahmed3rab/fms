@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Users\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -23,6 +22,7 @@ class UsersTable
                 TextColumn::make('roles')
                     ->formatStateUsing(fn($state) => $state->name)
                     ->searchable(),
+                TextColumn::make('company.name'),
                 TextColumn::make('email')
                     ->label('Email address')
                     ->searchable(),
@@ -48,9 +48,8 @@ class UsersTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                    DeleteBulkAction::make()->label('deactivate'),
+                    RestoreBulkAction::make()->label('activate'),
                 ]),
             ]);
     }
