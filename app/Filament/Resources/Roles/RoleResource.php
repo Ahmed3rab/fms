@@ -10,6 +10,7 @@ use App\Filament\Resources\Roles\Schemas\RoleForm;
 use App\Filament\Resources\Roles\Schemas\RoleInfolist;
 use App\Filament\Resources\Roles\Tables\RolesTable;
 use BackedEnum;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -44,8 +45,10 @@ class RoleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\UsersRelationManager::class,
-            RelationManagers\PermissionsRelationManager::class,
+            RelationGroup::make('user', [
+                RelationManagers\UsersRelationManager::class,
+                RelationManagers\PermissionsRelationManager::class,
+            ]),
             //
         ];
     }

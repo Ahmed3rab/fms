@@ -6,11 +6,13 @@ use App\Filament\Resources\Companies\Pages\CreateCompany;
 use App\Filament\Resources\Companies\Pages\EditCompany;
 use App\Filament\Resources\Companies\Pages\ListCompanies;
 use App\Filament\Resources\Companies\Pages\ViewCompany;
+use App\Filament\Resources\Companies\RelationManagers\UsersRelationManager;
 use App\Filament\Resources\Companies\Schemas\CompanyForm;
 use App\Filament\Resources\Companies\Schemas\CompanyInfolist;
 use App\Filament\Resources\Companies\Tables\CompaniesTable;
 use App\Models\Company;
 use BackedEnum;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -46,7 +48,10 @@ class CompanyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationGroup::make('user', [
+                UsersRelationManager::class,
+            ]),
+
         ];
     }
 
