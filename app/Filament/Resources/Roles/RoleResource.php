@@ -77,7 +77,10 @@ class RoleResource extends Resource
     {
         return false;
     }
-
+    public static function canEdit($record): bool
+    {
+        return false;
+    }
     public function hasCombinedRelationManagerTabsWithContent(): bool
     {
         return false;
