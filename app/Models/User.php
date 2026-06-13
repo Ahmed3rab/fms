@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -14,18 +15,28 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements HasTenants
+class User extends Authenticatable implements HasTenants, FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
     use Notifiable;
     use SoftDeletes;
     use HasRoles;
+    use HasApiTokens;
 
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // if ($panel->getId() === 'admin') {
+        //     return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
+        // }
+
+        return true;
+    }
     /**
      * Get the attributes that should be cast.
      *
