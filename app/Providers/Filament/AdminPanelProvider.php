@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
 use App\Models\Company;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -20,6 +21,9 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
+use Rawilk\ProfileFilament\Auth\Multifactor\App\AppAuthenticationProvider;
+use Rawilk\ProfileFilament\Auth\Multifactor\Recovery\RecoveryCodeProvider;
+use Rawilk\ProfileFilament\ProfileFilamentPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -29,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(Login::class)
             ->registration(false)
             ->colors([
                 'primary' => Color::Amber,
@@ -43,6 +47,12 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
             ])
             ->plugins([
+                ProfileFilamentPlugin::make()
+                    ->multiFactorAuthentication([
+                        AppAuthenticationProvider::make()
+                            ->brandName(config('app.name')),
+                    ])
+                    ->multiFactorRecovery(RecoveryCodeProvider::make()),
             ])
             ->middleware([
                 EncryptCookies::class,

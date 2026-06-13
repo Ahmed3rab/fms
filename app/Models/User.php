@@ -16,11 +16,17 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Laravel\Sanctum\HasApiTokens;
+use Rawilk\ProfileFilament\Auth\Multifactor\App\Concerns\InteractsWithAppAuthentication;
+use Rawilk\ProfileFilament\Auth\Multifactor\App\Contracts\HasAppAuthentication;
+use Rawilk\ProfileFilament\Auth\Multifactor\Concerns\InteractsWithMultiFactorAuthentication;
+use Rawilk\ProfileFilament\Auth\Multifactor\Contracts\HasMultiFactorAuthentication;
+use Rawilk\ProfileFilament\Auth\Multifactor\Recovery\Concerns\InteractsWithAuthenticationRecovery;
+use Rawilk\ProfileFilament\Auth\Multifactor\Recovery\Contracts\HasMultiFactorAuthenticationRecovery;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements HasTenants, FilamentUser
+class User extends Authenticatable implements HasTenants, FilamentUser, HasMultiFactorAuthentication, HasAppAuthentication, HasMultiFactorAuthenticationRecovery
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
@@ -28,6 +34,9 @@ class User extends Authenticatable implements HasTenants, FilamentUser
     use SoftDeletes;
     use HasRoles;
     use HasApiTokens;
+    use InteractsWithMultiFactorAuthentication;
+    use InteractsWithAppAuthentication;
+    use InteractsWithAuthenticationRecovery;
 
     public function canAccessPanel(Panel $panel): bool
     {

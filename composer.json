@@ -11,6 +11,7 @@
         "laravel/framework": "^13.8",
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0",
+        "rawilk/profile-filament-plugin": "^0.7.11",
         "spatie/laravel-permission": "^8.0"
     },
     "require-dev": {
