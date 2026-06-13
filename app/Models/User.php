@@ -38,21 +38,22 @@ class User extends Authenticatable implements HasTenants, FilamentUser, HasMulti
     use InteractsWithAppAuthentication;
     use InteractsWithAuthenticationRecovery;
 
+
     public function canAccessPanel(Panel $panel): bool
     {
-        if ($panel->getId() === 'admin') {
-            return $this->hasAnyRole([
+        return match ($panel->getId()) {
+            'admin' => $this->hasAnyRole([
                 'super_admin',
                 'system_admin',
-            ]);
-        }
+            ]),
 
-        if ($panel->getId() === 'portal') {
-            return $this->hasAnyRole([
+            'portal' => $this->hasAnyRole([
                 'company_admin',
                 'api_consumer',
-            ]);
-        }
+            ]),
+
+            default => false,
+        };
     }
     /**
      * Get the attributes that should be cast.
@@ -70,12 +71,13 @@ class User extends Authenticatable implements HasTenants, FilamentUser, HasMulti
 
     public function getTenants(Panel $panel): Collection
     {
-        if ($this->hasAnyRole(['super_admin', 'system_admin'])) {
-            return Company::query()->whereNull('deleted_at')->get();
+        if ($this->hasAnyRole(['company_admin', 'api_consumer'])) {
+            return Company::whereKey($this->company_id)->get();
         }
 
-        return Company::query()->whereKey($this->company_id)->get();
+        return collect();
     }
+
 
     public function canAccessTenant(Model $tenant): bool
     {
