@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Pages\Auth;
+namespace App\Filament\Pages\Auth;
 
 use Filament\Auth\Pages\Login as BaseLogin;
 use Rawilk\ProfileFilament\Auth\Login\Concerns\HandlesLoginForm;
