@@ -6,11 +6,13 @@ use App\Filament\Resources\Admin\PortalLinks\Pages\ViewPortalLink;
 use App\Filament\Resources\Admin\PortalLinks\Pages\EditPortalLink;
 use App\Filament\Resources\Admin\PortalLinks\Pages\CreatePortalLink;
 use App\Filament\Resources\Admin\PortalLinks\Pages\ListPortalLinks;
+use App\Filament\Resources\Admin\PortalLinks\RelationManagers\CompaniesRelationManager;
 use App\Filament\Resources\Admin\PortalLinks\Schemas\PortalLinkForm;
 use App\Filament\Resources\Admin\PortalLinks\Tables\PortalLinksTable;
 use App\Filament\Resources\Admin\PortalLinks\Schemas\PortalLinkInfolist;
 use App\Models\PortalLink;
 use BackedEnum;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Resources\ResourceConfiguration;
 use Filament\Schemas\Schema;
@@ -49,6 +51,9 @@ class PortalLinkResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationGroup::make('user', [
+                CompaniesRelationManager::class,
+            ]),
             //
         ];
     }
