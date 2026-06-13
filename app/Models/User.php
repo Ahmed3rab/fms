@@ -40,11 +40,19 @@ class User extends Authenticatable implements HasTenants, FilamentUser, HasMulti
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // if ($panel->getId() === 'admin') {
-        //     return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
-        // }
+        if ($panel->getId() === 'admin') {
+            return $this->hasAnyRole([
+                'super_admin',
+                'system_admin',
+            ]);
+        }
 
-        return true;
+        if ($panel->getId() === 'portal') {
+            return $this->hasAnyRole([
+                'company_admin',
+                'api_consumer',
+            ]);
+        }
     }
     /**
      * Get the attributes that should be cast.
