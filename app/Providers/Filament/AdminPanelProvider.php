@@ -47,7 +47,7 @@ class AdminPanelProvider extends PanelProvider
                     ->multiFactorAuthentication([
                         AppAuthenticationProvider::make()
                             ->brandName(config('app.name')),
-                    ])
+                    ], true)
                     ->multiFactorRecovery(RecoveryCodeProvider::make()),
             ])
             ->middleware([
