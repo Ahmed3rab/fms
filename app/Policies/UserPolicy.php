@@ -56,7 +56,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return $user->hasPermissionTo('users.delete') && $this->canManageUser($user, $model);
+        return $user->hasPermissionTo('users.deactivate') && $this->canManageUser($user, $model);
     }
 
     /**
@@ -64,7 +64,7 @@ class UserPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        return $user->hasPermissionTo('users.restore') && $this->canManageUser($user, $model);
+        return $user->hasPermissionTo('users.activate') && $this->canManageUser($user, $model);
     }
     protected function canManageUser(
         User $user,
