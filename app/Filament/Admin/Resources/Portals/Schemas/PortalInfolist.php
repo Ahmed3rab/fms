@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Admin\Resources\PortalLinks\Schemas;
+namespace App\Filament\Admin\Resources\Portals\Schemas;
 
 use Filament\Schemas\Schema;
 
-class PortalLinkInfolist
+class PortalInfolist
 {
     public static function configure(Schema $schema): Schema
     {

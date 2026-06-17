@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Resources\PortalLinks\Pages;
+namespace App\Filament\Admin\Resources\Portals\Pages;
 
-use App\Filament\Admin\Resources\PortalLinks\PortalLinkResource;
+use App\Filament\Admin\Resources\Portals\PortalResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
@@ -13,9 +13,9 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends EditRecord<Model>
  */
-class EditPortalLink extends EditRecord
+class EditPortal extends EditRecord
 {
-    protected static string $resource = PortalLinkResource::class;
+    protected static string $resource = PortalResource::class;
 
     protected function getHeaderActions(): array
     {

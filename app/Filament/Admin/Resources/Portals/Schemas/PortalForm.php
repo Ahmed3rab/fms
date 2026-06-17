@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Filament\Admin\Resources\PortalLinks\Schemas;
+namespace App\Filament\Admin\Resources\Portals\Schemas;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-class PortalLinkForm
+class PortalForm
 {
     public static function configure(Schema $schema): Schema
     {

@@ -10,14 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('portal_links', function (Blueprint $table) {
+        Schema::create('portals', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('url');
             $table->string('icon')->nullable();
             $table->integer('sort_order')->default(0);
-            $table->timestamps();
             $table->softDeletes();
+            $table->timestamps();
         });
     }
 

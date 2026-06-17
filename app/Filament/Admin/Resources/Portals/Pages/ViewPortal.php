@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Resources\PortalLinks\Pages;
+namespace App\Filament\Admin\Resources\Portals\Pages;
 
-use App\Filament\Admin\Resources\PortalLinks\PortalLinkResource;
+use App\Filament\Admin\Resources\Portals\PortalResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends ViewRecord<Model>
  */
-class ViewPortalLink extends ViewRecord
+class ViewPortal extends ViewRecord
 {
-    protected static string $resource = PortalLinkResource::class;
+    protected static string $resource = PortalResource::class;
 
     protected function getHeaderActions(): array
     {

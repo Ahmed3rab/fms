@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources\PortalLinks\RelationManagers;
+namespace App\Filament\Admin\Resources\Portals\RelationManagers;
 
 use App\Filament\Admin\Resources\Companies\CompanyResource;
 use Filament\Actions\AttachAction;

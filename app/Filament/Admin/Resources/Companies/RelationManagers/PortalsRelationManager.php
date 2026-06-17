@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Companies\RelationManagers;
 
-use App\Filament\Admin\Resources\PortalLinks\PortalLinkResource;
+use App\Filament\Admin\Resources\Portals\PortalResource;
 use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DetachBulkAction;
@@ -10,11 +10,11 @@ use Filament\Actions\DetachAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
 
-class PortalLinksRelationManager extends RelationManager
+class PortalsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'portalLinks';
+    protected static string $relationship = 'portals';
 
-    protected static ?string $relatedResource = PortalLinkResource::class;
+    protected static ?string $relatedResource = PortalResource::class;
 
     public function table(Table $table): Table
     {

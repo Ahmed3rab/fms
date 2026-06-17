@@ -21,12 +21,11 @@ class Company extends Model
     {
         return $this->hasMany(User::class);
     }
-
     /**
-     * @return BelongsToMany<PortalLink,Company,Pivot>
+     * @return BelongsToMany<Portal,Company,Pivot>
      */
-    public function portalLinks(): BelongsToMany
+    public function portals(): BelongsToMany
     {
-        return $this->belongsToMany(PortalLink::class);
+        return $this->belongsToMany(Portal::class, 'company_portal');
     }
 }

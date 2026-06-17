@@ -12,21 +12,32 @@ class CompanySeeder extends Seeder
      */
     public function run(): void
     {
-        Company::firstOrCreate([
-            'slug' => 'acme',
-        ], [
-            'name' => 'Acme Company',
-        ]);
-        Company::firstOrCreate([
+        $a = Company::firstOrCreate([
             'slug' => 'company-a',
         ], [
             'name' => 'Company A',
         ]);
+        $ua = $a->users()->create([
+            'name'  => 'test a',
+            'email' => 'a@example.com',
+            'password'  => bcrypt('password'),
+            'email_verified_at' => now(),
+        ]);
+        $ua->assignRole('company_admin');
 
-        Company::firstOrCreate([
+        $b = Company::firstOrCreate([
             'slug' => 'company-b',
         ], [
             'name' => 'Company B',
         ]);
+
+        $ub = $b->users()->create([
+            'name'  => 'test b',
+            'email' => 'b@example.com',
+            'password'  => bcrypt('password'),
+            'email_verified_at' => now(),
+        ]);
+
+        $ub->assignRole('company_admin');
     }
 }

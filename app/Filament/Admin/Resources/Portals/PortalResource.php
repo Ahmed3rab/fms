@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Filament\Admin\Resources\PortalLinks;
+namespace App\Filament\Admin\Resources\Portals;
 
-use App\Filament\Admin\Resources\PortalLinks\Pages\ViewPortalLink;
-use App\Filament\Admin\Resources\PortalLinks\Pages\EditPortalLink;
-use App\Filament\Admin\Resources\PortalLinks\Pages\CreatePortalLink;
-use App\Filament\Admin\Resources\PortalLinks\Pages\ListPortalLinks;
-use App\Filament\Admin\Resources\PortalLinks\RelationManagers\CompaniesRelationManager;
-use App\Filament\Admin\Resources\PortalLinks\Schemas\PortalLinkForm;
-use App\Filament\Admin\Resources\PortalLinks\Tables\PortalLinksTable;
-use App\Filament\Admin\Resources\PortalLinks\Schemas\PortalLinkInfolist;
-use App\Models\PortalLink;
+use App\Filament\Admin\Resources\Portals\Pages\EditPortal;
+use App\Filament\Admin\Resources\Portals\Pages\CreatePortal;
+use App\Filament\Admin\Resources\Portals\Pages\ViewPortal;
+use App\Filament\Admin\Resources\Portals\Pages\ListPortals;
+use App\Filament\Admin\Resources\Portals\RelationManagers\CompaniesRelationManager;
+use App\Filament\Admin\Resources\Portals\Schemas\PortalForm;
+use App\Filament\Admin\Resources\Portals\Schemas\PortalInfolist;
+use App\Filament\Admin\Resources\Portals\Tables\PortalsTable;
+use App\Models\Portal;
 use BackedEnum;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
@@ -25,9 +25,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 /**
  * @extends Resource<Model,ResourceConfiguration>
  */
-class PortalLinkResource extends Resource
+class PortalResource extends Resource
 {
-    protected static ?string $model = PortalLink::class;
+    protected static ?string $model = Portal::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
@@ -35,17 +35,17 @@ class PortalLinkResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return PortalLinkForm::configure($schema);
+        return PortalForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema
     {
-        return PortalLinkInfolist::configure($schema);
+        return PortalInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return PortalLinksTable::configure($table);
+        return PortalsTable::configure($table);
     }
 
     public static function getRelations(): array
@@ -61,10 +61,10 @@ class PortalLinkResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListPortalLinks::route('/'),
-            'create' => CreatePortalLink::route('/create'),
-            'view' => ViewPortalLink::route('/{record}'),
-            'edit' => EditPortalLink::route('/{record}/edit'),
+            'index' => ListPortals::route('/'),
+            'create' => CreatePortal::route('/create'),
+            'view' => ViewPortal::route('/{record}'),
+            'edit' => EditPortal::route('/{record}/edit'),
         ];
     }
 

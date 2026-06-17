@@ -6,7 +6,7 @@ use App\Filament\Admin\Resources\Companies\Pages\EditCompany;
 use App\Filament\Admin\Resources\Companies\Pages\ViewCompany;
 use App\Filament\Admin\Resources\Companies\Pages\CreateCompany;
 use App\Filament\Admin\Resources\Companies\Pages\ListCompanies;
-use App\Filament\Admin\Resources\Companies\RelationManagers\PortalLinksRelationManager;
+use App\Filament\Admin\Resources\Companies\RelationManagers\PortalsRelationManager;
 use App\Filament\Admin\Resources\Companies\RelationManagers\UsersRelationManager;
 use App\Filament\Admin\Resources\Companies\Schemas\CompanyForm;
 use App\Filament\Admin\Resources\Companies\Tables\CompaniesTable;
@@ -56,7 +56,7 @@ class CompanyResource extends Resource
         return [
             RelationGroup::make('user', [
                 UsersRelationManager::class,
-                PortalLinksRelationManager::class,
+                PortalsRelationManager::class,
             ]),
             RelationGroup::make('portalLinks', [
             ]),

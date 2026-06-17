@@ -10,11 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('company_portal_link', function (Blueprint $table) {
+        Schema::create('company_portal', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('portal_link_id')->constrained()->cascadeOnDelete();
-            $table->primary(['company_id', 'portal_link_id']);
+            $table->foreignId('portal_id')->constrained()->cascadeOnDelete();
+            $table->primary(['company_id', 'portal_id']);
             $table->timestamps();
         });
     }

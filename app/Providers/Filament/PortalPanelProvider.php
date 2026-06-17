@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Portal\Pages\Home;
 use App\Models\Company;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -38,7 +39,7 @@ class PortalPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Portal/Resources'), for: 'App\Filament\Portal\Resources')
             ->discoverPages(in: app_path('Filament/Portal/Pages'), for: 'App\Filament\Portal\Pages')
             ->pages([
-                Dashboard::class,
+                Home::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Portal/Widgets'), for: 'App\Filament\Portal\Widgets')
             ->widgets([
@@ -48,7 +49,7 @@ class PortalPanelProvider extends PanelProvider
                     ->multiFactorAuthentication([
                         AppAuthenticationProvider::make()
                             ->brandName(config('app.name')),
-                    ], true)
+                    ], config('app.env') == 'production' ?? false)
                     ->multiFactorRecovery(RecoveryCodeProvider::make()),
             ])
             ->middleware([

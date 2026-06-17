@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources\PortalLinks\Tables;
+namespace App\Filament\Admin\Resources\Portals\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -12,7 +12,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
-class PortalLinksTable
+class PortalsTable
 {
     public static function configure(Table $table): Table
     {
