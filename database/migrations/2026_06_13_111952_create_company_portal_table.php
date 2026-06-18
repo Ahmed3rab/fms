@@ -10,13 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('portals', function (Blueprint $table) {
+        Schema::create('company_portal', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('url');
-            $table->string('icon')->nullable();
-            $table->integer('sort_order')->default(0);
-            $table->softDeletes();
+            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('portal_id')->constrained()->cascadeOnDelete();
+            $table->primary(['company_id', 'portal_id']);
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('portal_links');
+        Schema::dropIfExists('company_portal');
     }
 };
