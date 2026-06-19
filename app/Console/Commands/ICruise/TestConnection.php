@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\ICruise;
 
 use App\Services\ICruise\ICruiseClient;
 use Illuminate\Console\Attributes\Description;
@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 
 #[Signature('icruise:test')]
 #[Description('Command description')]
-class ICruiseTest extends Command
+class TestConnection extends Command
 {
     /**
      * Execute the console command.

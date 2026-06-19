@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\ICruise;
 
 use App\Models\Company;
 use App\Models\Device;
@@ -11,7 +11,7 @@ use Illuminate\Console\Command;
 
 #[Signature('icruise:sync-devices')]
 #[Description('Command description')]
-class SyncICruiseDevices extends Command
+class Devices extends Command
 {
     /**
      * Execute the console command.

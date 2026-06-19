@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\ICruise;
 
 use App\Models\Company;
-use App\Models\Device;
 use App\Services\ICruise\ICruiseClient;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -12,7 +11,7 @@ use Illuminate\Support\Str;
 
 #[Signature('icruise:sync-companies')]
 #[Description('Command description')]
-class SyncICruiseCompanies extends Command
+class Companies extends Command
 {
     /**
      * Execute the console command.

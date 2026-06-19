@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\ICruise;
 
 use App\Models\Device;
-use App\Models\DeviceState;
+use App\Models\DeviceState as StateModel;
 use App\Services\ICruise\ICruiseClient;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -11,7 +11,7 @@ use Illuminate\Console\Command;
 
 #[Signature('icruise:sync-states')]
 #[Description('Command description')]
-class SyncICruiseDevicesStates extends Command
+class DeviceState extends Command
 {
     /**
      * Execute the console command.
@@ -21,7 +21,7 @@ class SyncICruiseDevicesStates extends Command
         $positions = $client->trackers()['Position'];
 
         foreach ($positions as $position) {
-            DeviceState::updateOrCreate([
+            StateModel::updateOrCreate([
                 'device_id' => Device::where('system_no', $position['SystemNo'])->first()?->id,
             ], [
                 'latitude'  => $position['Latitude'],
