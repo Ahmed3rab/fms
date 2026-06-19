@@ -42,7 +42,33 @@ class ICruiseClient
             $this->token(),
         );
 
-        return $data;
+        return $data['Data'];
+    }
+
+    public function trackerProfile(string $productId): array
+    {
+        $data = $this->request(
+            'Product',
+            'GetTrackerProfile',
+            [
+                'ProductID' => $productId,
+            ],
+            $this->token(),
+        );
+
+        return $data['Data'];
+    }
+
+    public function companies(): array
+    {
+        $data = $this->request(
+            informationType: 'Company',
+            operationType: 'Query',
+            arguments: [],
+            token: $this->token(),
+        );
+
+        return $data['Data'];
     }
 
     /**
@@ -61,7 +87,7 @@ class ICruiseClient
                     'InformationType' => $informationType,
                     'OperationType' => $operationType,
                     'LanguageType' => config('icruise.language_type'),
-                    'Arguments' => json_encode($arguments),
+                    'Arguments' => $arguments ? json_encode($arguments) : "{}",
                 ]),
             ]);
 

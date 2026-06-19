@@ -3,16 +3,33 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['name', 'slug'])]
+#[Fillable(['name', 'slug', 'icruise_company_id', 'payload', 'last_synced_at'])]
 class Company extends Model
 {
     use SoftDeletes;
+    use HasUuids;
+
+    protected $casts = [
+        'payload' => 'array',
+        'last_synced_at' => 'datetime',
+    ];
+
+    /**
+     * Get the columns that should receive a unique identifier.
+     *
+     * @return array<int, string>
+     */
+    public function uniqueIds(): array
+    {
+        return ['uuid'];
+    }
 
     /**
      * @return HasMany<User,Company>
