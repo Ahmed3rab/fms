@@ -15,19 +15,21 @@ class DeviceStateResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
-            'speed' => $this->speed,
-            'gps_time' => $this->gps_time,
-            'gps_status' => $this->gps_status,
-            'angle' => $this->angle,
-            'altitude' => $this->altitude,
-            'acc' => $this->acc,
-            'oil' => $this->oil,
-            'voltage' => $this->voltage,
-            'mileage' => $this->mileage,
-            'temperature' => $this->temperature,
-            'last_synced_at' => $this->last_synced_at,
+            'source'    => data_get($this->resource, 'source'),
+            'latitude' => data_get($this->resource, 'latitude'),
+            'longitude' => data_get($this->resource, 'longitude'),
+            'speed' => data_get($this->resource, 'speed'),
+            'gps_time' => data_get($this->resource, 'gps_time'),
+            'gps_status' => data_get($this->resource, 'gps_status'),
+            'angle' => data_get($this->resource, 'angle'),
+            'altitude' => data_get($this->resource, 'altitude'),
+            'acc' => data_get($this->resource, 'acc'),
+            'oil' => data_get($this->resource, 'oil'),
+            'voltage' => data_get($this->resource, 'voltage'),
+            'mileage' => data_get($this->resource, 'mileage'),
+            'temperature' => data_get($this->resource, 'temperature'),
+            'last_synced_at' => data_get($this->resource, 'last_synced_at'),
+            'received_at' => data_get($this->resource, 'received_at'),
         ];
     }
 }

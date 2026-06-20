@@ -2,6 +2,7 @@
 
 namespace App\Services\ICruise\Realtime;
 
+use App\Services\Tracking\DeviceStateStore;
 use Illuminate\Support\Facades\Cache;
 use Ratchet\Client\Connector;
 use React\EventLoop\Loop;
@@ -98,9 +99,36 @@ class ICruiseRealtimeClient
             return;
         }
 
-        logger()->info(
-            'ICruise message',
-            $payload
-        );
+        match ($payload['SignalName'] ?? null) {
+            '80' => $this->handlePosition($payload),
+            default => null,
+        };
+    }
+
+    /**
+     * @param array<int,mixed> $payload
+     */
+    protected function handlePosition(array $payload): void
+    {
+        app(DeviceStateStore::class)
+            ->put(
+                $payload['SystemNo'],
+                [
+                    'latitude' => $payload['Latitude'],
+                    'longitude' => $payload['Longitude'],
+                    'speed' => $payload['Velocity'],
+                    'gps_time' => $payload['DateTime'],
+                    'gps_status' => $payload['GpsStatus'],
+                    'angle' => $payload['Angle'],
+                    'altitude' => $payload['Altitude'],
+                    'acc' => $payload['Acc'],
+                    'oil' => $payload['Oil'],
+                    'voltage' => $payload['Voltage'],
+                    'mileage' => $payload['Mileage'],
+                    'temperature' => $payload['Temperature'],
+                    'received_at' => now()->toIso8601String(),
+                    'payload' => $payload,
+                ]
+            );
     }
 }
