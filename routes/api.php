@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\API\V1\CompanyController;
+use App\Http\Controllers\API\V1\CompanyDevicesController;
 use App\Http\Controllers\API\V1\DeviceController;
 use App\Http\Controllers\API\V1\DeviceStateController;
 use Illuminate\Support\Facades\Route;
@@ -9,8 +11,10 @@ Route::prefix('v1')
     ->group(function () {
 
         Route::get('/devices', [DeviceController::class, 'index']);
-
         Route::get('/devices/{device:uuid}', [DeviceController::class, 'show']);
-
         Route::get('/devices/{device:uuid}/state', DeviceStateController::class);
+
+        Route::get('/companies', [CompanyController::class, 'index']);
+        Route::get('/companies/{company}', [CompanyController::class, 'show']);
+        Route::get('/companies/{company}/devices', CompanyDevicesController::class);
     });

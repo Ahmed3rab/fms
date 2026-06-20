@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -52,6 +54,14 @@ class Company extends Model
     }
 
     /**
+     * @return HasMany<Device,Company>
+     */
+    public function devices(): HasMany
+    {
+        return $this->hasMany(Device::class);
+    }
+
+    /**
      * @return BelongsToMany<Company,Company,Pivot>
      */
     public function visibleCompanies(): BelongsToMany
@@ -64,4 +74,15 @@ class Company extends Model
         );
     }
 
+    #[Scope]
+    public function visibleTo(Builder $query, User $user): Builder
+    {
+        $companyIds = $user->company
+            ->visibleCompanies()
+            ->pluck('companies.id')
+            ->push($user->company_id)
+            ->unique();
+
+        return $query->whereIn('id', $companyIds);
+    }
 }
