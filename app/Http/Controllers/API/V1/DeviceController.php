@@ -18,7 +18,7 @@ class DeviceController extends Controller
     {
         $devices = (new DeviceFilter(
             Device::query()->visibleTo(auth()->user())->with('company'),
-            $request->validated(),
+            $request->all(),
         ))
             ->apply()
             ->paginate();

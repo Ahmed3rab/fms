@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 
 class Device extends Model
 {
@@ -42,5 +44,18 @@ class Device extends Model
     public function state(): HasOne
     {
         return $this->hasOne(DeviceState::class);
+    }
+
+    #[Scope]
+    public function visibleTo(Builder $query, User $user): Builder
+    {
+        $companyIds = $user->company
+            ->visibleCompanies()
+            ->pluck('companies.id');
+
+        return $query->whereIn(
+            'company_id',
+            $companyIds,
+        );
     }
 }

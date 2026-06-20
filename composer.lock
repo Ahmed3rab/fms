@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b04cac1518a57eae0cec5b8636e5f7b5",
+    "content-hash": "3789b41c965469c29bc98417fce661bf",
     "packages": [
         {
             "name": "arokettu/random-polyfill",
