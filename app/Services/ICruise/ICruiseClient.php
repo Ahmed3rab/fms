@@ -20,8 +20,8 @@ class ICruiseClient
         );
 
         Cache::forever('icruise.token', $data['Token']);
-
         Cache::forever('icruise.session_id', $data['Data']['SessionID']);
+        Cache::forever('icruise.ws_password', $data['Data']['Password']);
 
         return $data;
     }

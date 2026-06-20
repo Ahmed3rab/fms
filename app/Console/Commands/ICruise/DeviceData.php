@@ -78,7 +78,7 @@ class DeviceData extends Command
                 'domain' => $info['DomainName'],
                 'websocket'    => [
                     'domain'    => $info['WssDomainName'],
-                    'port' => $info['WssOutputPort'],
+                    'port' => $info['WsOutputPort'],
                     'secure_port'   => $info['WssOutputPort'],
                 ],
             ];
