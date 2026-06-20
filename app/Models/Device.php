@@ -30,6 +30,11 @@ class Device extends Model
         return ['uuid'];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
     /**
      * @return BelongsTo<Company,Device>
      */
@@ -51,11 +56,10 @@ class Device extends Model
     {
         $companyIds = $user->company
             ->visibleCompanies()
-            ->pluck('companies.id');
+            ->pluck('companies.id')
+            ->push($user->company_id)
+            ->unique();
 
-        return $query->whereIn(
-            'company_id',
-            $companyIds,
-        );
+        return $query->whereIn('company_id', $companyIds);
     }
 }
