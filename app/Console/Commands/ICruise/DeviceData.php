@@ -24,6 +24,8 @@ class DeviceData extends Command
         $devices = $data['Tracker'];
         $positions = $data['Position'];
         $info = $data['Transfer'][0];
+        $companies = Company::pluck('id', 'icruise_company_id');
+        $devicesBySystemNo = Device::pluck('id', 'system_no');
 
         foreach ($devices as $device) {
             Device::updateOrCreate(
@@ -31,7 +33,7 @@ class DeviceData extends Command
                     'icruise_product_id' => $device['ProductID'],
                 ],
                 [
-                    'company_id' => Company::where('icruise_company_id', $device['CompanyID'])->first()?->id,
+                    'company_id' => $companies[$device['CompanyID']] ?? null,
                     'system_no' => $device['SystemNo'],
                     'imei' => $device['IMEI'],
                     'name' => $device['Name'],
@@ -51,7 +53,7 @@ class DeviceData extends Command
 
         foreach ($positions as $position) {
             DeviceState::updateOrCreate([
-                'device_id' => Device::where('system_no', $position['SystemNo'])->first()?->id,
+                'device_id' => $devicesBySystemNo[$position['SystemNo']] ?? null,
             ], [
                 'latitude'  => $position['Latitude'],
                 'longitude' => $position['Longitude'],
