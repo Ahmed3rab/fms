@@ -62,6 +62,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'api.devices.profile',
             'api.devices.history',
 
+            'api.devices.state.view-any',
+            'api.devices.state.view',
+
             'api.companies.view-any',
             'api.companies.view',
         ];
