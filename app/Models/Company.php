@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -56,6 +58,19 @@ class Company extends Model
             'company_visibility',
             'company_id',
             'visible_company_id',
+        );
+    }
+
+    #[Scope]
+    public function visibleTo(Builder $query, User $user): Builder
+    {
+        $companyIds = $user->company
+            ->visibleCompanies()
+            ->pluck('companies.id');
+
+        return $query->whereIn(
+            'company_id',
+            $companyIds,
         );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Filters\DeviceFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\DeviceResource;
 use App\Models\Device;
@@ -13,9 +14,14 @@ class DeviceController extends Controller
     /**
      * @return AnonymousResourceCollection
      */
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $devices = Device::query()->with('company')->paginate();
+        $devices = (new DeviceFilter(
+            Device::query()->visibleTo(auth()->user())->with('company'),
+            $request->validated(),
+        ))
+            ->apply()
+            ->paginate();
         return DeviceResource::collection($devices);
     }
 
