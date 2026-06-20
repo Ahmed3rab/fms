@@ -45,4 +45,17 @@ class Company extends Model
     {
         return $this->belongsToMany(Portal::class, 'company_portal');
     }
+
+    /**
+     * @return BelongsToMany<Company,Company,Pivot>
+     */
+    public function visibleCompanies(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Company::class,
+            'company_visibility',
+            'company_id',
+            'visible_company_id',
+        );
+    }
 }
