@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\V1\DeviceStateResource;
+use App\Http\Resources\API\V1\DeviceStateResource;
 use App\Models\Device;
 use Illuminate\Http\Request;
 

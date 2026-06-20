@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Filters\DeviceFilter;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\V1\DeviceResource;
+use App\Http\Resources\API\V1\DeviceResource;
 use App\Models\Device;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
