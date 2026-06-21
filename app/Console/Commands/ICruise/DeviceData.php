@@ -32,7 +32,7 @@ class DeviceData extends Command
                     'icruise_product_id' => $device['ProductID'],
                 ],
                 [
-                    'company_id' => $companies[$device['CompanyID']] ?? null,
+                    // 'company_id' => $companies[$device['CompanyID']] ?? null,
                     'system_no' => $device['SystemNo'],
                     'imei' => $device['IMEI'],
                     'name' => $device['Name'],

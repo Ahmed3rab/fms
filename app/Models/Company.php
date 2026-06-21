@@ -54,11 +54,11 @@ class Company extends Model
     }
 
     /**
-     * @return HasMany<Device,Company>
+     * @return HasMany<Vehicle,Company>
      */
-    public function devices(): HasMany
+    public function vehicles(): HasMany
     {
-        return $this->hasMany(Device::class);
+        return $this->hasMany(Vehicle::class);
     }
 
     /**

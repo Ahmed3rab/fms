@@ -58,19 +58,19 @@ class Device extends Model
     }
 
     /**
-     * @return BelongsTo<Company,Device>
-     */
-    public function company(): BelongsTo
-    {
-        return $this->belongsTo(Company::class);
-    }
-
-    /**
      * @return HasOne<DeviceState,Device>
      */
     public function state(): HasOne
     {
         return $this->hasOne(DeviceState::class);
+    }
+
+    /**
+     * @return BelongsTo<Vehicle,Device>
+     */
+    public function vehicle(): BelongsTo
+    {
+        return $this->belongsTo(Vehicle::class);
     }
 
     #[Scope]

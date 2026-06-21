@@ -24,10 +24,10 @@ class DeviceResource extends JsonResource
             'brand' => $this->brand,
             'imei' => $this->imei,
             'phone_number' => $this->phone_number,
-            'company' => [
-                'id' => $this->company?->uuid,
-                'name' => $this->company?->name,
-            ],
+            // 'company' => [
+            //     'id' => $this->company?->uuid,
+            //     'name' => $this->company?->name,
+            // ],
             'location' => DeviceStateResource::make($this->current_state),
         ];
     }

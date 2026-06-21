@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('system_no')->nullable();
-            $table->foreignId('company_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('vehicle_id')->nullable()->constrained()->nullOnDelete();
             $table->uuid('icruise_product_id')->nullable()->unique();
             $table->uuid('icruise_object_id')->nullable()->index();
