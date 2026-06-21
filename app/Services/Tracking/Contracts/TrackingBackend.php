@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 
 interface TrackingBackend
 {
-    public function resolve(Device $device): Device;
+    public function attachCurrentState(Device $device): Device;
 
     /**
      * @param Collection<array-key,Model> $devices
      */
-    public function resolveMany(Collection $devices): Collection;
+    public function attachCurrentStateForMany(Collection $devices): Collection;
 }

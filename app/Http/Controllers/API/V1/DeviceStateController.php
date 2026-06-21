@@ -17,7 +17,7 @@ class DeviceStateController extends Controller
     public function __invoke(Request $request, Device $device, TrackingBackend $tracking): DeviceStateResource
     {
         return DeviceStateResource::make(
-            $tracking->resolve($device)->current_state
+            $tracking->attachCurrentState($device)->current_state
         );
     }
 }

@@ -12,13 +12,13 @@ class ICruiseTrackingBackend implements TrackingBackend
 {
     public function __construct(protected DeviceStateStore $store) {}
 
-    public function resolve(Device $device): Device
+    public function attachCurrentState(Device $device): Device
     {
         $device->loadMissing('state');
 
         $state = $this->store->get($device->system_no);
 
-        $this->attachResolvedState($device, $state);
+        $this->attachCurrentStateToDevice($device, $state);
 
         return $device;
     }
@@ -27,7 +27,7 @@ class ICruiseTrackingBackend implements TrackingBackend
      * @param Collection<array-key,Model> $devices
      * @return Collection<array-key,Model>
      */
-    public function resolveMany(Collection $devices): Collection
+    public function attachCurrentStateForMany(Collection $devices): Collection
     {
         $states = $this->store->many($devices->pluck('system_no')->all());
 
@@ -35,7 +35,7 @@ class ICruiseTrackingBackend implements TrackingBackend
 
             $state = $states[$device->system_no] ?? null;
 
-            $this->attachResolvedState($device, $state);
+            $this->attachCurrentStateToDevice($device, $state);
         });
 
         return $devices;
@@ -44,7 +44,7 @@ class ICruiseTrackingBackend implements TrackingBackend
     /**
      * @return void
      */
-    private function attachResolvedState(Device $device, ?array $realtimeState): void
+    private function attachCurrentStateToDevice(Device $device, ?array $realtimeState): void
     {
         if ($realtimeState) {
             $realtimeState['source'] = 'realtime';
