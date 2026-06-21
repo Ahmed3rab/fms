@@ -5,6 +5,7 @@ use App\Http\Controllers\API\V1\CompanyDevicesController;
 use App\Http\Controllers\API\V1\DeviceController;
 use App\Http\Controllers\API\V1\DeviceStateController;
 use App\Http\Controllers\API\V1\VehicleController;
+use App\Http\Controllers\API\V1\VehicleHistoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')
@@ -13,6 +14,7 @@ Route::prefix('v1')
         Route::get('/vehicles', [VehicleController::class, 'index']);
         Route::get('/vehicles/{vehicle:uuid}', [VehicleController::class, 'show']);
         // Route::get('/vehicles/{vehicle:uuid}/state', vehicleStateController::class);
+        Route::get('/vehicles/{vehicle:uuid}/history', VehicleHistoryController::class);
 
         // Route::get('/devices', [DeviceController::class, 'index']);
         // Route::get('/devices/{device:uuid}', [DeviceController::class, 'show']);
