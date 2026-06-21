@@ -3,6 +3,7 @@
 namespace App\Services\Tracking\Contracts;
 
 use App\Models\Device;
+use App\Models\Vehicle;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -15,6 +16,14 @@ interface TrackingGateway
      * @param Collection<array-key,Model> $devices
      */
     public function attachCurrentStateForMany(Collection $devices): Collection;
+
+    public function attachCurrentStateToVehicle(Vehicle $vehicle): Vehicle;
+
+    /**
+     * @param Collection<array-key, Vehicle> $vehicles
+     * @return Collection<array-key, Vehicle>
+     */
+    public function attachCurrentStateToVehicles(Collection $vehicles): Collection;
 
     /**
      * @return void
