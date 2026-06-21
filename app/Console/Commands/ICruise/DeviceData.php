@@ -38,7 +38,7 @@ class DeviceData extends Command
                     'name' => $device['Name'],
                     'model' => $device['Model'],
                     'brand' => $device['Brand'],
-                    'icruise_vehicle_id'    => $device['VehID'],
+                    // 'icruise_vehicle_id'    => $device['VehID'],
                     'icruise_tot_id'    => $device['TotID'],
                     'icruise_object_id' => $device['ObjectID'],
                     'phone_number' => $device['PhoneNumber1'],

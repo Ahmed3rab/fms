@@ -15,9 +15,9 @@ return new class extends Migration {
             $table->uuid('uuid')->unique();
             $table->string('system_no')->nullable();
             $table->foreignId('company_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('vehicle_id')->nullable()->constrained()->nullOnDelete();
             $table->uuid('icruise_product_id')->nullable()->unique();
             $table->uuid('icruise_object_id')->nullable()->index();
-            $table->uuid('icruise_vehicle_id')->nullable()->index();
             $table->uuid('icruise_tot_id')->nullable()->index();
             $table->string('imei')->nullable();
             $table->string('name');
