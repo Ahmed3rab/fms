@@ -16,19 +16,21 @@ class DeviceStateController extends Controller
      */
     public function __invoke(Request $request, Device $device): DeviceStateResource
     {
-        $state = app(DeviceStateStore::class)->get($device->system_no);
+        $device->load('state');
+
+        $state = app(DeviceStateStore::class)
+            ->getByDevice($device);
 
         if ($state) {
-            $state['source']  = 'realtime';
-            return DeviceStateResource::make($state);
+            $state['source'] = 'realtime';
+
+            $device->setResolvedState($state);
+        } elseif ($device->state) {
+            $device->state->source = 'database';
+
+            $device->setResolvedState($device->state);
         }
 
-        $state = $device->state;
-
-        if ($state) {
-            $state['source'] = 'database';
-        }
-
-        return DeviceStateResource::make($state);
+        return DeviceStateResource::make($device->current_state);
     }
 }

@@ -33,9 +33,34 @@ class DeviceStateStore
             : null;
     }
 
-    public function getByDevice(Device $device): ?array
+    /**
+ * @param array<int,string> $systemNos
+ * @return array<string,array<string,mixed>>
+ */
+    public function many(array $systemNos): array
     {
-        return $this->get($device->system_no);
+        if ($systemNos === []) {
+            return [];
+        }
+
+        $keys = array_map(
+            fn(string $systemNo) => "device-state:{$systemNo}",
+            $systemNos,
+        );
+
+        $values = Redis::mget($keys);
+
+        $states = [];
+
+        foreach ($systemNos as $index => $systemNo) {
+            if (! $values[$index]) {
+                continue;
+            }
+
+            $states[$systemNo] = json_decode($values[$index], true);
+        }
+
+        return $states;
     }
 
     public function forget(string $systemNo): void
@@ -43,5 +68,10 @@ class DeviceStateStore
         Redis::del(
             "device-state:{$systemNo}"
         );
+    }
+
+    public function getByDevice(Device $device): ?array
+    {
+        return $this->get($device->system_no);
     }
 }

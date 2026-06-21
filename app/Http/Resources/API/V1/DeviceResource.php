@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\API\V1;
 
+use App\Models\DeviceState;
+use App\Services\Tracking\DeviceStateStore;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,9 +28,7 @@ class DeviceResource extends JsonResource
                 'id' => $this->company?->uuid,
                 'name' => $this->company?->name,
             ],
-            'location' => DeviceStateResource::make($this->state),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'location' => DeviceStateResource::make($this->current_state),
         ];
     }
 }

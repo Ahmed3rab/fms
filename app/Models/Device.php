@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Services\Tracking\DeviceStateStore;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,10 +17,30 @@ class Device extends Model
 
     protected $guarded = ['id'];
 
+    protected mixed $resolvedState = null;
+
     protected $casts = [
         'payload' => 'array',
         'last_synced_at' => 'datetime',
     ];
+
+    public function setResolvedState(mixed $state): void
+    {
+        $this->resolvedState = $state;
+    }
+
+    public function getCurrentStateAttribute(): mixed
+    {
+        if ($this->resolvedState !== null) {
+            return $this->resolvedState;
+        }
+
+        if ($this->state) {
+            $this->state->source = 'database';
+        }
+
+        return $this->state;
+    }
 
     /**
      * Get the columns that should receive a unique identifier.
@@ -61,5 +83,28 @@ class Device extends Model
             ->unique();
 
         return $query->whereIn('company_id', $companyIds);
+    }
+
+    protected function currentState(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+
+                $state = app(DeviceStateStore::class)
+                    ->get($this->system_no);
+
+                if ($state) {
+                    $state['source'] = 'realtime';
+
+                    return $state;
+                }
+
+                if ($this->state) {
+                    $this->state->source = 'database';
+                }
+
+                return $this->state;
+            }
+        );
     }
 }
