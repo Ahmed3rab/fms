@@ -34,9 +34,9 @@ class DeviceStateStore
     }
 
     /**
- * @param array<int,string> $systemNos
- * @return array<string,array<string,mixed>>
- */
+     * @param array<int,string> $systemNos
+     * @return array<string,array<string,mixed>>
+     */
     public function many(array $systemNos): array
     {
         if ($systemNos === []) {

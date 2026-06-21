@@ -16,19 +16,7 @@ class TrackingService
 
         $state = $this->store->getByDevice($device);
 
-        if ($state) {
-            $state['source'] = 'realtime';
-
-            $device->setResolvedState($state);
-
-            return $device;
-        }
-
-        if ($device->state) {
-            $device->state->source = 'database';
-
-            $device->setResolvedState($device->state);
-        }
+        $this->attachResolvedState($device, $state);
 
         return $device;
     }
@@ -45,21 +33,26 @@ class TrackingService
 
             $state = $states[$device->system_no] ?? null;
 
-            if ($state) {
-                $state['source'] = 'realtime';
-
-                $device->setResolvedState($state);
-
-                return;
-            }
-
-            if ($device->state) {
-                $device->state->source = 'database';
-
-                $device->setResolvedState($device->state);
-            }
+            $this->attachResolvedState($device, $state);
         });
 
         return $devices;
+    }
+
+    /**
+     * @return void
+     */
+    public function attachResolvedState(Device $device, ?array $realtimeState): void
+    {
+        if ($realtimeState) {
+            $realtimeState['source'] = 'realtime';
+            $device->setResolvedState($realtimeState);
+            return;
+        }
+
+        if ($device->state) {
+            $device->state->source = 'database';
+            $device->setResolvedState($device->state);
+        }
     }
 }
