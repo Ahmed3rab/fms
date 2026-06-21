@@ -18,6 +18,6 @@ class Sync extends Command
     {
         $this->call(Companies::class);
         $this->call(SyncVehicles::class);
-        $this->call(DeviceData::class);
+        $this->call(SyncDevices::class);
     }
 }

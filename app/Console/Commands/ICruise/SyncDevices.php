@@ -12,9 +12,9 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 
-#[Signature('icruise:fetch-data')]
+#[Signature('icruise:sync-devices')]
 #[Description('Command description')]
-class DeviceData extends Command
+class SyncDevices extends Command
 {
     /**
      * Execute the console command.
