@@ -3,6 +3,7 @@
 namespace App\Services\ICruise;
 
 use App\Models\Device;
+use App\Models\Vehicle;
 use App\Services\Tracking\Contracts\TrackingGateway;
 use App\Services\Tracking\DeviceStateStore;
 use Illuminate\Support\Carbon;
@@ -19,7 +20,7 @@ class ICruiseTrackingGateway implements TrackingGateway
 
         $state = $this->store->get($device->system_no);
 
-        $this->attachCurrentStateToDevice($device, $state);
+        $this->applyCurrentState($device, $state);
 
         return $device;
     }
@@ -36,26 +37,51 @@ class ICruiseTrackingGateway implements TrackingGateway
 
             $state = $states[$device->system_no] ?? null;
 
-            $this->attachCurrentStateToDevice($device, $state);
+            $this->applyCurrentState($device, $state);
         });
 
         return $devices;
     }
 
-    public function history(Device $device, Carbon $from, Carbon $to): Collection
+    public function hydrateVehicle(Vehicle $vehicle): Vehicle
+    {
+        $vehicle->loadMissing('device.state');
+
+        if (! $vehicle->device) {
+            return $vehicle;
+        }
+
+        $this->attachCurrentState($vehicle->device);
+
+        return $vehicle;
+    }
+
+    public function hydrateVehicles(Collection $vehicles): Collection
+    {
+        $devices = $vehicles
+               ->pluck('device')
+               ->filter();
+
+        $this->attachCurrentStateForMany($devices);
+
+        return $vehicles;
+    }
+
+    public function history(Vehicle $vehicle, Carbon $from, Carbon $to): Collection
     {
         $history = $this->client->history(
-            $device->icruise_product_id,
+            $vehicle->device->icruise_product_id,
             $from,
             $to,
         );
 
         return collect($history['Data'] ?? []);
     }
+
     /**
      * @return void
      */
-    private function attachCurrentStateToDevice(Device $device, ?array $realtimeState): void
+    private function applyCurrentState(Device $device, ?array $realtimeState): void
     {
         if ($realtimeState) {
             $realtimeState['source'] = 'realtime';
@@ -68,4 +94,5 @@ class ICruiseTrackingGateway implements TrackingGateway
             $device->setResolvedState($device->state);
         }
     }
+
 }

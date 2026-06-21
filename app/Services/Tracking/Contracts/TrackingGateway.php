@@ -17,16 +17,16 @@ interface TrackingGateway
      */
     public function attachCurrentStateForMany(Collection $devices): Collection;
 
-    public function attachCurrentStateToVehicle(Vehicle $vehicle): Vehicle;
+    public function hydrateVehicle(Vehicle $vehicle): Vehicle;
 
     /**
      * @param Collection<array-key, Vehicle> $vehicles
      * @return Collection<array-key, Vehicle>
      */
-    public function attachCurrentStateToVehicles(Collection $vehicles): Collection;
+    public function hydrateVehicles(Collection $vehicles): Collection;
 
     /**
      * @return void
      */
-    public function history(Device $device, Carbon $from, Carbon $to): Collection;
+    public function history(Vehicle $vehicle, Carbon $from, Carbon $to): Collection;
 }
