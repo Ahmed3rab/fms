@@ -25,7 +25,7 @@ class SyncDevices extends Command
         $devices = $data['Tracker'];
         $positions = $data['Position'];
         $info = $data['Transfer'][0];
-        $companies = Company::pluck('id', 'icruise_company_id');
+
         $db_id = $devices[0]['DbID'];
         $vehicles = Vehicle::query()
             ->get()

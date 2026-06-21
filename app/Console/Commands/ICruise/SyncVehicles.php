@@ -20,12 +20,11 @@ class SyncVehicles extends Command
      */
     public function handle(ICruiseClient $client): int
     {
+        $companies = Company::query()
+            ->get()
+            ->keyBy('icruise_company_id');
         foreach ($client->allVehicles() as $data) {
-
-            $company = Company::query()
-                ->where('icruise_company_id', $data['SubCompanyID'])
-                ->first();
-
+            $company = $companies->get($data['SubCompanyID']);
             Vehicle::updateOrCreate(
                 [
                     'icruise_vehicle_id' => $data['VehID'],

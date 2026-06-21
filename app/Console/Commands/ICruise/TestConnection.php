@@ -17,7 +17,7 @@ class TestConnection extends Command
      */
     public function handle(ICruiseClient $client): int
     {
-        $response = $client->trackers();
+        $response = $client->vehicles();
 
         dump($response);
 
