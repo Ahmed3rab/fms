@@ -14,9 +14,9 @@ Route::prefix('v1')
         Route::get('/vehicles/{vehicle:uuid}', [VehicleController::class, 'show']);
         // Route::get('/vehicles/{vehicle:uuid}/state', vehicleStateController::class);
 
-        Route::get('/devices', [DeviceController::class, 'index']);
-        Route::get('/devices/{device:uuid}', [DeviceController::class, 'show']);
-        Route::get('/devices/{device:uuid}/state', DeviceStateController::class);
+        // Route::get('/devices', [DeviceController::class, 'index']);
+        // Route::get('/devices/{device:uuid}', [DeviceController::class, 'show']);
+        // Route::get('/devices/{device:uuid}/state', DeviceStateController::class);
 
         Route::get('/companies', [CompanyController::class, 'index']);
         Route::get('/companies/{company}', [CompanyController::class, 'show']);
