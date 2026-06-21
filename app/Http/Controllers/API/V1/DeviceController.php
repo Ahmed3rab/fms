@@ -6,13 +6,14 @@ use App\Filters\DeviceFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\API\V1\DeviceResource;
 use App\Models\Device;
+use App\Services\Tracking\Contracts\TrackingBackend;
 use App\Services\Tracking\TrackingService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class DeviceController extends Controller
 {
-    public function index(Request $request, TrackingService $tracking): AnonymousResourceCollection
+    public function index(Request $request, TrackingBackend $tracking): AnonymousResourceCollection
     {
         $query = (new DeviceFilter(
             Device::query()->visibleTo(auth()->user())->with('company', 'state'),
@@ -29,7 +30,7 @@ class DeviceController extends Controller
     /**
      * @return DeviceResource
      */
-    public function show(Device $device, TrackingService $tracking): DeviceResource
+    public function show(Device $device, TrackingBackend $tracking): DeviceResource
     {
         $device->load(['company', 'state']);
 

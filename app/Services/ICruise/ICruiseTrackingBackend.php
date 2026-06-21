@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Services\Tracking;
+namespace App\Services\ICruise;
 
 use App\Models\Device;
+use App\Services\Tracking\Contracts\TrackingBackend;
+use App\Services\Tracking\DeviceStateStore;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class TrackingService
+class ICruiseTrackingBackend implements TrackingBackend
 {
     public function __construct(protected DeviceStateStore $store) {}
 
@@ -14,7 +16,7 @@ class TrackingService
     {
         $device->loadMissing('state');
 
-        $state = $this->store->getByDevice($device);
+        $state = $this->store->get($device->system_no);
 
         $this->attachResolvedState($device, $state);
 
@@ -42,7 +44,7 @@ class TrackingService
     /**
      * @return void
      */
-    public function attachResolvedState(Device $device, ?array $realtimeState): void
+    private function attachResolvedState(Device $device, ?array $realtimeState): void
     {
         if ($realtimeState) {
             $realtimeState['source'] = 'realtime';
