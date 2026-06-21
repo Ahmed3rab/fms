@@ -3,8 +3,9 @@
 namespace App\Services\Tracking\Contracts;
 
 use App\Models\Device;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 interface TrackingBackend
 {
@@ -14,4 +15,9 @@ interface TrackingBackend
      * @param Collection<array-key,Model> $devices
      */
     public function attachCurrentStateForMany(Collection $devices): Collection;
+
+    /**
+     * @return void
+     */
+    public function history(Device $device, Carbon $from, Carbon $to): Collection;
 }

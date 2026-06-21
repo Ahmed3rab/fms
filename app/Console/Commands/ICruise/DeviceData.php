@@ -25,8 +25,7 @@ class DeviceData extends Command
         $positions = $data['Position'];
         $info = $data['Transfer'][0];
         $companies = Company::pluck('id', 'icruise_company_id');
-        $devicesBySystemNo = Device::pluck('id', 'system_no');
-
+        $db_id = $devices[0]['DbID'];
         foreach ($devices as $device) {
             Device::updateOrCreate(
                 [
@@ -51,6 +50,7 @@ class DeviceData extends Command
             );
         }
 
+        $devicesBySystemNo = Device::pluck('id', 'system_no');
         foreach ($positions as $position) {
             DeviceState::updateOrCreate([
                 'device_id' => $devicesBySystemNo[$position['SystemNo']] ?? null,
@@ -72,10 +72,11 @@ class DeviceData extends Command
             ]);
         }
 
-        Cache::rememberForever('server-info', function () use ($info) {
+        Cache::rememberForever('server-info', function () use ($info, $db_id) {
             return [
                 'ip' => $info['ServerIP'],
                 'domain' => $info['DomainName'],
+                'db_id' => $db_id,
                 'websocket'    => [
                     'domain'    => $info['WssDomainName'],
                     'port' => $info['WsOutputPort'],

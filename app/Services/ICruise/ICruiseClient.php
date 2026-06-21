@@ -2,6 +2,7 @@
 
 namespace App\Services\ICruise;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -69,6 +70,26 @@ class ICruiseClient
         );
 
         return $data['Data'];
+    }
+
+    /**
+     * @return void
+     */
+    public function history(string $productId, Carbon $from, Carbon $to): array
+    {
+        $data = $this->request(
+            informationType: 'HistoricalLocation',
+            operationType: 'Query',
+            arguments: [
+                'ProductID' => $productId,
+                'DbID'      => app(ServerInfo::class)->dbId(),
+                'Speed'     => '-1',
+                'StartTime' => $from->format('Y-m-d H:i:s'),
+                'EndTime'   => $to->format('Y-m-d H:i:s'),
+            ],
+            token: $this->token(),
+        );
+        return $data;
     }
 
     /**

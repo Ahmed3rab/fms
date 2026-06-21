@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\ICruise;
 
+use App\Models\Device;
 use App\Services\ICruise\ICruiseClient;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -16,7 +17,7 @@ class TestConnection extends Command
      */
     public function handle(ICruiseClient $client): int
     {
-        $response = $client->trackers();
+        $response = $client->history(Device::first()->icruise_product_id, now()->subMonth(), now());
 
         dump($response);
 
