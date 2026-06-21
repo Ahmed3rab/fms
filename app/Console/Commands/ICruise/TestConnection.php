@@ -17,7 +17,7 @@ class TestConnection extends Command
      */
     public function handle(ICruiseClient $client): int
     {
-        $response = $client->history(Device::first()->icruise_product_id, now()->subMonth(), now());
+        $response = $client->trackers();
 
         dump($response);
 

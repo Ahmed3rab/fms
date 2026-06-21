@@ -17,6 +17,7 @@ class Sync extends Command
     public function handle(): void
     {
         $this->call(Companies::class);
+        $this->call(SyncVehicles::class);
         $this->call(DeviceData::class);
     }
 }

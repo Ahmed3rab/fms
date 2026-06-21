@@ -16,13 +16,18 @@ return new class extends Migration {
             $table->foreignId('company_id')->nullable()->constrained()->nullOnDelete();
             $table->string('icruise_vehicle_id')->nullable()->unique();
             $table->string('plate_number')->nullable();
+            $table->string('status')->nullable();
+
             $table->string('brand')->nullable();
             $table->string('model')->nullable();
             $table->string('color')->nullable();
+
             $table->string('chassis_number')->nullable();
             $table->string('engine_number')->nullable();
+
             $table->string('owner_name')->nullable();
             $table->string('owner_phone')->nullable();
+
             $table->date('purchase_date')->nullable();
             $table->date('installation_date')->nullable();
             $table->jsonb('payload')->nullable();

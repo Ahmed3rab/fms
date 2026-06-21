@@ -92,24 +92,77 @@ class ICruiseClient
         return $data;
     }
 
+    public function vehicles(int $page = 1, int $pageSize = 100): array
+    {
+        $data = $this->request(
+            informationType: 'Vehicle',
+            operationType: 'Query',
+            arguments: [
+                'PlateNo' => '',
+                'IMEI' => '',
+                'SystemNo' => '',
+                'PhoneNumber' => '',
+                'VIN' => '',
+                'UserName' => '',
+                'ModelID' => '',
+                'CompanyID' => '',
+                'GroupID' => '',
+                'Status' => '0',
+                'FromActiveTime' => '',
+                'ToActiveTime' => '',
+            ],
+            token: $this->token(),
+            pageArguments: [
+                'PageSize' => (string) $pageSize,
+                'PageIndex' => (string) $page,
+            ],
+        );
+
+        return $data;
+    }
+    /**
+     * @return \Generator<int, array<string,mixed>>
+     */
+    public function allVehicles(): \Generator
+    {
+        $page = 1;
+
+        do {
+            $response = $this->vehicles($page);
+
+            foreach ($response['Data'] as $vehicle) {
+                yield $vehicle;
+            }
+
+            $page++;
+
+        } while ($page <= (int) $response['TotalPage']);
+    }
     /**
      *
      * @param array<int,mixed> $arguments
+     * @param array<int,mixed> $pageArguments
      */
-    protected function request(string $informationType, string $operationType, array $arguments = [], ?string $token = null): array
+    protected function request(string $informationType, string $operationType, array $arguments = [], ?string $token = null, ?array $pageArguments = []): array
     {
+        $payload = [
+            'Token' => $token ?? Cache::get('icruise.token'),
+            'InformationType' => $informationType,
+            'OperationType' => $operationType,
+            'LanguageType' => config('icruise.language_type'),
+            'Arguments' => $arguments ? json_encode($arguments) : "{}",
+        ];
+
+        if (!empty($pageArguments)) {
+            $payload['PageArguments'] = json_encode($pageArguments);
+        }
+
         $response = Http::asForm()
             ->withHeaders([
                 'Origin' => config('icruise.origin'),
             ])
             ->send('GET', config('icruise.url'), [
-                'body' => http_build_query([
-                    'Token' => $token ?? Cache::get('icruise.token'),
-                    'InformationType' => $informationType,
-                    'OperationType' => $operationType,
-                    'LanguageType' => config('icruise.language_type'),
-                    'Arguments' => $arguments ? json_encode($arguments) : "{}",
-                ]),
+                'body' => http_build_query($payload),
             ]);
 
         if (($response->json()['State'] ?? null) !== '0') {

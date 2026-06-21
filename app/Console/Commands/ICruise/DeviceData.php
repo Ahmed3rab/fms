@@ -5,6 +5,7 @@ namespace App\Console\Commands\ICruise;
 use App\Models\Company;
 use App\Models\Device;
 use App\Models\DeviceState;
+use App\Models\Vehicle;
 use App\Services\ICruise\ICruiseClient;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -26,19 +27,23 @@ class DeviceData extends Command
         $info = $data['Transfer'][0];
         $companies = Company::pluck('id', 'icruise_company_id');
         $db_id = $devices[0]['DbID'];
+        $vehicles = Vehicle::query()
+            ->get()
+            ->keyBy('icruise_vehicle_id');
+
         foreach ($devices as $device) {
+            $vehicle = $vehicles->get($device['VehID']);
             Device::updateOrCreate(
                 [
                     'icruise_product_id' => $device['ProductID'],
                 ],
                 [
-                    // 'company_id' => $companies[$device['CompanyID']] ?? null,
                     'system_no' => $device['SystemNo'],
                     'imei' => $device['IMEI'],
                     'name' => $device['Name'],
                     'model' => $device['Model'],
                     'brand' => $device['Brand'],
-                    // 'icruise_vehicle_id'    => $device['VehID'],
+                    'vehicle_id'    => $vehicle?->id,
                     'icruise_tot_id'    => $device['TotID'],
                     'icruise_object_id' => $device['ObjectID'],
                     'phone_number' => $device['PhoneNumber1'],
