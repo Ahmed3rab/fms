@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\Tracking\DeviceStateStore;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -29,17 +28,19 @@ class Device extends Model
         $this->resolvedState = $state;
     }
 
-    public function getCurrentStateAttribute(): mixed
+    protected function currentState(): Attribute
     {
-        if ($this->resolvedState !== null) {
-            return $this->resolvedState;
-        }
-
-        if ($this->state) {
-            $this->state->source = 'database';
-        }
-
-        return $this->state;
+        return Attribute::make(
+            get: function () {
+                if ($this->resolvedState !== null) {
+                    return $this->resolvedState;
+                }
+                if ($this->state) {
+                    $this->state->source = 'database';
+                }
+                return $this->state;
+            }
+        );
     }
 
     /**
@@ -76,35 +77,9 @@ class Device extends Model
     #[Scope]
     public function visibleTo(Builder $query, User $user): Builder
     {
-        $companyIds = $user->company
-            ->visibleCompanies()
-            ->pluck('companies.id')
-            ->push($user->company_id)
-            ->unique();
-
-        return $query->whereIn('company_id', $companyIds);
-    }
-
-    protected function currentState(): Attribute
-    {
-        return Attribute::make(
-            get: function () {
-
-                $state = app(DeviceStateStore::class)
-                    ->get($this->system_no);
-
-                if ($state) {
-                    $state['source'] = 'realtime';
-
-                    return $state;
-                }
-
-                if ($this->state) {
-                    $this->state->source = 'database';
-                }
-
-                return $this->state;
-            }
+        return $query->whereHas(
+            'vehicle',
+            fn(Builder $query) => $query->visibleTo($user)
         );
     }
 }

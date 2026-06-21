@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -45,5 +47,20 @@ class Vehicle extends Model
     public function device(): HasOne
     {
         return $this->hasOne(Device::class);
+    }
+
+    #[Scope]
+    public function visibleTo(Builder $query, User $user): Builder
+    {
+        $companyIds = $user->company
+            ->visibleCompanies()
+            ->pluck('companies.id')
+            ->push($user->company_id)
+            ->unique();
+
+        return $query->whereIn(
+            'company_id',
+            $companyIds
+        );
     }
 }

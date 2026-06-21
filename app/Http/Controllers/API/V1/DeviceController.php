@@ -17,7 +17,7 @@ class DeviceController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $query = (new DeviceFilter(
-            Device::query()->visibleTo(auth()->user())->with('company', 'state'),
+            Device::query()->visibleTo(auth()->user())->with('vehicle.company', 'state'),
             $request->all(),
         ))->apply();
 
@@ -33,7 +33,7 @@ class DeviceController extends Controller
      */
     public function show(Device $device): DeviceResource
     {
-        $device->load(['company', 'state']);
+        $device->load(['vehicle.company', 'state']);
 
         return DeviceResource::make(
             $this->gateway->attachCurrentState($device)
