@@ -3,13 +3,13 @@
 namespace App\Services\ICruise;
 
 use App\Models\Device;
-use App\Services\Tracking\Contracts\TrackingBackend;
+use App\Services\Tracking\Contracts\TrackingGateway;
 use App\Services\Tracking\DeviceStateStore;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class ICruiseTrackingBackend implements TrackingBackend
+class ICruiseTrackingGateway implements TrackingGateway
 {
     public function __construct(protected DeviceStateStore $store, protected ICruiseClient $client) {}
 

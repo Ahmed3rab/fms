@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
-interface TrackingBackend
+interface TrackingGateway
 {
     public function attachCurrentState(Device $device): Device;
 

@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Services\ICruise\ICruiseTrackingBackend;
-use App\Services\Tracking\Contracts\TrackingBackend;
+use App\Services\ICruise\ICruiseTrackingGateway;
+use App\Services\Tracking\Contracts\TrackingGateway;
 use Illuminate\Support\ServiceProvider;
 
 class TrackingServiceProvider extends ServiceProvider
@@ -11,8 +11,8 @@ class TrackingServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(
-            TrackingBackend::class,
-            ICruiseTrackingBackend::class,
+            TrackingGateway::class,
+            ICruiseTrackingGateway::class,
         );
     }
     public function boot(): void {}
