@@ -2,7 +2,8 @@
 
 namespace App\Services\ICruise;
 
-use App\Data\ResolvedDeviceState;
+use App\Data\Factories\ResolvedDeviceStateFactory;
+use App\Data\RealtimeDeviceState;
 use App\Models\Device;
 use App\Models\Vehicle;
 use App\Services\Tracking\Contracts\TrackingGateway;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ICruiseTrackingGateway implements TrackingGateway
 {
-    public function __construct(protected DeviceStateStore $store, protected ICruiseClient $client) {}
+    public function __construct(protected DeviceStateStore $store, protected ICruiseClient $client, protected ResolvedDeviceStateFactory $factory) {}
 
     public function attachCurrentState(Device $device): Device
     {
@@ -82,11 +83,11 @@ class ICruiseTrackingGateway implements TrackingGateway
     /**
      * @return void
      */
-    private function applyCurrentState(Device $device, ?array $realtimeState): void
+    private function applyCurrentState(Device $device, ?RealtimeDeviceState $realtimeState): void
     {
         if ($realtimeState) {
             $device->setResolvedState(
-                ResolvedDeviceState::fromRealtime($realtimeState)
+                $this->factory->fromRealtime($realtimeState)
             );
 
             return;
@@ -94,7 +95,7 @@ class ICruiseTrackingGateway implements TrackingGateway
 
         if ($device->state) {
             $device->setResolvedState(
-                ResolvedDeviceState::fromDatabase($device->state)
+                $this->factory->fromDatabase($device->state)
             );
         }
     }

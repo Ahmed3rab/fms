@@ -2,6 +2,7 @@
 
 namespace App\Services\ICruise\Realtime;
 
+use App\Data\RealtimeDeviceState;
 use App\Services\Geocoding\Contracts\Geocoder;
 use App\Services\Tracking\DeviceStateStore;
 use Illuminate\Support\Facades\Cache;
@@ -115,26 +116,12 @@ class ICruiseRealtimeClient
             $payload['Latitude'],
             $payload['Longitude'],
         );
-        app(DeviceStateStore::class)
-            ->put(
-                $payload['SystemNo'],
-                [
-                    'latitude' => $payload['Latitude'],
-                    'longitude' => $payload['Longitude'],
-                    'geo_address' => $geoAddress,
-                    'speed' => $payload['Velocity'],
-                    'gps_time' => $payload['DateTime'],
-                    'gps_status' => $payload['GpsStatus'],
-                    'angle' => $payload['Angle'],
-                    'altitude' => $payload['Altitude'],
-                    'acc' => $payload['Acc'],
-                    'oil' => $payload['Oil'],
-                    'voltage' => $payload['Voltage'],
-                    'mileage' => $payload['Mileage'],
-                    'temperature' => $payload['Temperature'],
-                    'received_at' => now()->toIso8601String(),
-                    'payload' => $payload,
-                ]
-            );
+        $payload['geo_address'] = $geoAddress;
+        $payload['received_at'] = now();
+
+        app(DeviceStateStore::class)->put(
+            $payload['SystemNo'],
+            RealtimeDeviceState::fromICruisePayload($payload),
+        );
     }
 }

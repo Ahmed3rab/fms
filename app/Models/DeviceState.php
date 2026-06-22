@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use App\Casts\AsGeoLocationAddress;
+use App\Data\GeoLocationAddress;
+use App\Services\Tracking\Contracts\TracksVehicleState;
 use App\Services\Tracking\VehicleStatus\ConnectivityStatusResolver;
 use App\Services\Tracking\VehicleStatus\MovementStatusResolver;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
-class DeviceState extends Model
+class DeviceState extends Model implements TracksVehicleState
 {
     protected $guarded = ['id'];
 
@@ -42,5 +45,80 @@ class DeviceState extends Model
     public function device(): BelongsTo
     {
         return $this->belongsTo(Device::class);
+    }
+
+    public function latitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function longitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function geoAddress(): ?GeoLocationAddress
+    {
+        return $this->geo_address;
+    }
+
+    public function speed(): ?float
+    {
+        return $this->speed;
+    }
+
+    public function gpsTime(): ?Carbon
+    {
+        return $this->gps_time;
+    }
+
+    public function gpsStatus(): ?bool
+    {
+        return $this->gps_status;
+    }
+
+    public function angle(): ?int
+    {
+        return $this->angle;
+    }
+
+    public function altitude(): ?float
+    {
+        return $this->altitude;
+    }
+
+    public function acc(): ?string
+    {
+        return $this->acc;
+    }
+
+    public function oil(): ?float
+    {
+        return $this->oil;
+    }
+
+    public function voltage(): ?float
+    {
+        return $this->voltage;
+    }
+
+    public function mileage(): ?float
+    {
+        return $this->mileage;
+    }
+
+    public function temperature(): ?string
+    {
+        return $this->temperature;
+    }
+
+    public function receivedAt(): ?Carbon
+    {
+        return null;
+    }
+
+    public function lastSyncedAt(): ?Carbon
+    {
+        return $this->last_synced_at;
     }
 }
