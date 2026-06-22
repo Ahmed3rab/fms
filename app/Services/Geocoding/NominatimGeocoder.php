@@ -31,7 +31,7 @@ class NominatimGeocoder implements Geocoder
         }
         $data = $response->json();
         return GeoLocationAddress::fromArray([
-            'display_name' => $data['display_name'],
+            'display_name' => $data['display_name'] ?? null,
             'city' => $data['address']['city'] ?? $data['address']['town'] ?? $data['address']['village'] ?? null,
             'state' => $data['address']['state'] ?? null,
             'country' => $data['address']['country'] ?? null,

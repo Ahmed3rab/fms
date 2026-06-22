@@ -6,15 +6,15 @@ use App\Models\Device;
 use App\Models\Vehicle;
 use App\Services\Tracking\Contracts\TrackingGateway;
 use App\Services\Tracking\DeviceStateStore;
-use App\Services\Tracking\VehicleConnectivityResolver;
-use App\Services\Tracking\VehicleStatusResolver;
+use App\Services\Tracking\VehicleStatus\ConnectivityStatusResolver;
+use App\Services\Tracking\VehicleStatus\MovementStatusResolver;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class ICruiseTrackingGateway implements TrackingGateway
 {
-    public function __construct(protected DeviceStateStore $store, protected ICruiseClient $client, protected VehicleConnectivityResolver $connectivityResolver, protected VehicleStatusResolver $statusResolver) {}
+    public function __construct(protected DeviceStateStore $store, protected ICruiseClient $client, protected ConnectivityStatusResolver $connectivityStatusResolver, protected MovementStatusResolver $movementStatusResolver) {}
 
     public function attachCurrentState(Device $device): Device
     {
@@ -87,8 +87,8 @@ class ICruiseTrackingGateway implements TrackingGateway
     {
         if ($realtimeState) {
             $realtimeState['source'] = 'realtime';
-            $realtimeState['connection_status'] = $this->connectivityResolver->resolve($realtimeState)->value;
-            $realtimeState['status'] = $this->statusResolver->resolve($realtimeState)->value;
+            $realtimeState['status']['connection'] = $this->connectivityStatusResolver->resolve($realtimeState)->value;
+            $realtimeState['status']['movement'] = $this->movementStatusResolver->resolve($realtimeState)->value;
 
             $device->setResolvedState($realtimeState);
             return;
@@ -96,8 +96,11 @@ class ICruiseTrackingGateway implements TrackingGateway
 
         if ($device->state) {
             $device->state->source = 'database';
-            $device->state->status = $this->connectivityResolver->resolve($device->state)->value;
-            $device->state->connection_status = $this->statusResolver->resolve($device->state)->value;
+            $status = [
+                'connection'    => $this->connectivityStatusResolver->resolve($device->state)->value,
+                'movement' => $this->movementStatusResolver->resolve($device->state)->value,
+            ];
+            $device->state->status = $status;
             $device->setResolvedState($device->state);
         }
     }

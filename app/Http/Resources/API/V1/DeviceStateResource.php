@@ -17,7 +17,6 @@ class DeviceStateResource extends JsonResource
         return [
             'source'    => data_get($this->resource, 'source'),
             'status' => data_get($this->resource, 'status'),
-            'connection_status' => data_get($this->resource, 'connection_status'),
             'latitude' => data_get($this->resource, 'latitude'),
             'longitude' => data_get($this->resource, 'longitude'),
             'geo_address'   => GeoLocationAddressResource::make(data_get($this->resource, 'geo_address')),

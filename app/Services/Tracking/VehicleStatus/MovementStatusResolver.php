@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Services\Tracking;
+namespace App\Services\Tracking\VehicleStatus;
 
 use App\Enums\VehicleStatus;
 
-class VehicleStatusResolver
+class MovementStatusResolver
 {
+    private const MOVING_SPEED_THRESHOLD = 2;
     /**
      * @param mixed[]|object|null $state
      */
@@ -23,7 +24,7 @@ class VehicleStatusResolver
 
         $speed = (float) data_get($state, 'speed');
 
-        if ($speed > 2) {
+        if ($speed > self::MOVING_SPEED_THRESHOLD) {
             return VehicleStatus::Moving;
         }
 
