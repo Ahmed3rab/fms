@@ -4,6 +4,7 @@ namespace App\Services\ICruise;
 
 use App\Data\Factories\ResolvedDeviceStateFactory;
 use App\Data\RealtimeDeviceState;
+use App\Enums\DeviceStateSource;
 use App\Models\Device;
 use App\Models\Vehicle;
 use App\Services\Tracking\Contracts\TrackingGateway;
@@ -87,7 +88,7 @@ class ICruiseTrackingGateway implements TrackingGateway
     {
         if ($realtimeState) {
             $device->setResolvedState(
-                $this->factory->fromRealtime($realtimeState)
+                $this->factory->make($realtimeState, DeviceStateSource::Realtime)
             );
 
             return;
@@ -95,7 +96,7 @@ class ICruiseTrackingGateway implements TrackingGateway
 
         if ($device->state) {
             $device->setResolvedState(
-                $this->factory->fromDatabase($device->state)
+                $this->factory->make($device->state, DeviceStateSource::Database)
             );
         }
     }
