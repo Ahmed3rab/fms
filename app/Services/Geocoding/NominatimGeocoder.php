@@ -32,7 +32,20 @@ class NominatimGeocoder implements Geocoder
         if (! $response->successful()) {
             return null;
         }
+        $data = $response->json();
+        return [
+            'display_name' => $data['display_name'] ?? null,
 
-        return $response->json();
+            'latitude'  => $data['lat'] ?? null,
+            'longitude' => $data['lon'] ?? null,
+
+            'city' => data_get($data, 'address.city'),
+            'state' => data_get($data, 'address.state'),
+            'country' => data_get($data, 'address.country'),
+            'country_code' => data_get($data, 'address.country_code'),
+
+            'provider' => 'nominatim',
+            'payload' => $data,
+        ];
     }
 }
