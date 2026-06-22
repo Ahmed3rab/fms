@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Casts\AsAddress;
+use App\Casts\AsGeoLocationAddress;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -15,7 +15,7 @@ class DeviceState extends Model
         'gps_time' => 'datetime',
         'last_synced_at' => 'datetime',
         'gps_status' => 'boolean',
-        'address'   => AsAddress::class,
+        'geo_address'   => AsGeoLocationAddress::class,
     ];
 
     /**

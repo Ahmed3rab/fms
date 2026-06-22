@@ -2,7 +2,7 @@
 
 namespace App\Data;
 
-final readonly class Address
+final readonly class GeoLocationAddress
 {
     public function __construct(
         public ?string $displayName,
@@ -30,5 +30,22 @@ final readonly class Address
             'osm_type' => $this->osmType,
             'osm_id' => $this->osmId,
         ];
+    }
+
+    /**
+     * @param array<int,mixed> $data
+     */
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            displayName: $data['display_name'] ?? null,
+            city: $data['city'] ?? null,
+            state: $data['state'] ?? null,
+            country: $data['country'] ?? null,
+            countryCode: $data['country_code'] ?? null,
+            placeId: $data['place_id'] ?? null,
+            osmType: $data['osm_type'] ?? null,
+            osmId: $data['osm_id'] ?? null,
+        );
     }
 }
