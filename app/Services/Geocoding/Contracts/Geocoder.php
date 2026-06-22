@@ -2,12 +2,9 @@
 
 namespace App\Services\Geocoding\Contracts;
 
+use App\Data\Address;
+
 interface Geocoder
 {
-    /**
-     * Reverse geocode coordinates.
-     *
-     * @return array<string,mixed>|null
-     */
-    public function reverse(float $latitude, float $longitude, ?string $language = null): ?array;
+    public function reverse(float $latitude, float $longitude, ?string $language = null): ?Address;
 }

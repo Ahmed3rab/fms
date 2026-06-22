@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->foreignId('device_id')->unique()->constrained()->cascadeOnDelete();
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
+            $table->jsonb('address')->nullable();
             $table->decimal('speed', 8, 2)->nullable();
             $table->integer('angle')->nullable();
             $table->decimal('altitude', 10, 2)->nullable();
