@@ -2,7 +2,9 @@
 
 namespace App\Data;
 
-final readonly class GeoLocationAddress
+use JsonSerializable;
+
+final readonly class GeoLocationAddress implements JsonSerializable
 {
     public function __construct(
         public ?string $displayName,
@@ -47,5 +49,10 @@ final readonly class GeoLocationAddress
             osmType: $data['osm_type'] ?? null,
             osmId: $data['osm_id'] ?? null,
         );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }

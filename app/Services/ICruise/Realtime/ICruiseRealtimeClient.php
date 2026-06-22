@@ -2,6 +2,7 @@
 
 namespace App\Services\ICruise\Realtime;
 
+use App\Services\Geocoding\Contracts\Geocoder;
 use App\Services\Tracking\DeviceStateStore;
 use Illuminate\Support\Facades\Cache;
 use Ratchet\Client\Connector;
@@ -110,12 +111,17 @@ class ICruiseRealtimeClient
      */
     protected function handlePosition(array $payload): void
     {
+        $geoAddress = app(Geocoder::class)->reverse(
+            $payload['Latitude'],
+            $payload['Longitude'],
+        );
         app(DeviceStateStore::class)
             ->put(
                 $payload['SystemNo'],
                 [
                     'latitude' => $payload['Latitude'],
                     'longitude' => $payload['Longitude'],
+                    'geo_address' => $geoAddress,
                     'speed' => $payload['Velocity'],
                     'gps_time' => $payload['DateTime'],
                     'gps_status' => $payload['GpsStatus'],

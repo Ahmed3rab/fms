@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands\ICruise;
 
-use App\Models\Company;
 use App\Models\Device;
 use App\Models\DeviceState;
 use App\Models\Vehicle;
+use App\Services\Geocoding\Contracts\Geocoder;
 use App\Services\ICruise\ICruiseClient;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -19,7 +19,7 @@ class SyncDevices extends Command
     /**
      * Execute the console command.
      */
-    public function handle(ICruiseClient $client): int
+    public function handle(ICruiseClient $client, Geocoder $geocoder): int
     {
         $data = $client->trackers();
         $devices = $data['Tracker'];
@@ -57,11 +57,16 @@ class SyncDevices extends Command
 
         $devicesBySystemNo = Device::pluck('id', 'system_no');
         foreach ($positions as $position) {
-            DeviceState::updateOrCreate([
+            $geoAddress = $geocoder->reverse(
+                $position['Latitude'],
+                $position['Longitude'],
+            );
+            $state = DeviceState::updateOrCreate([
                 'device_id' => $devicesBySystemNo[$position['SystemNo']] ?? null,
             ], [
                 'latitude'  => $position['Latitude'],
                 'longitude' => $position['Longitude'],
+                'geo_address' => $geoAddress,
                 'speed' => $position['Velocity'],
                 'gps_time' => $position['DateTime'],
                 'gps_status'    => $position['GpsStatus'],

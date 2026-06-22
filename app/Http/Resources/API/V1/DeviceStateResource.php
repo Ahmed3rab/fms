@@ -20,6 +20,7 @@ class DeviceStateResource extends JsonResource
             'connection_status' => data_get($this->resource, 'connection_status'),
             'latitude' => data_get($this->resource, 'latitude'),
             'longitude' => data_get($this->resource, 'longitude'),
+            'geo_address'   => GeoLocationAddressResource::make(data_get($this->resource, 'geo_address')),
             'speed' => data_get($this->resource, 'speed'),
             'gps_time' => data_get($this->resource, 'gps_time'),
             'gps_status' => data_get($this->resource, 'gps_status'),
