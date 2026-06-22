@@ -6,13 +6,15 @@ use App\Models\Device;
 use App\Models\Vehicle;
 use App\Services\Tracking\Contracts\TrackingGateway;
 use App\Services\Tracking\DeviceStateStore;
+use App\Services\Tracking\VehicleConnectivityResolver;
+use App\Services\Tracking\VehicleStatusResolver;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class ICruiseTrackingGateway implements TrackingGateway
 {
-    public function __construct(protected DeviceStateStore $store, protected ICruiseClient $client) {}
+    public function __construct(protected DeviceStateStore $store, protected ICruiseClient $client, protected VehicleConnectivityResolver $connectivityResolver, protected VehicleStatusResolver $statusResolver) {}
 
     public function attachCurrentState(Device $device): Device
     {
@@ -85,12 +87,17 @@ class ICruiseTrackingGateway implements TrackingGateway
     {
         if ($realtimeState) {
             $realtimeState['source'] = 'realtime';
+            $realtimeState['connection_status'] = $this->connectivityResolver->resolve($realtimeState)->value;
+            $realtimeState['status'] = $this->statusResolver->resolve($realtimeState)->value;
+
             $device->setResolvedState($realtimeState);
             return;
         }
 
         if ($device->state) {
             $device->state->source = 'database';
+            $device->state->status = $this->connectivityResolver->resolve($device->state)->value;
+            $device->state->connection_status = $this->statusResolver->resolve($device->state)->value;
             $device->setResolvedState($device->state);
         }
     }

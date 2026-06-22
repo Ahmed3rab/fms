@@ -16,6 +16,8 @@ class DeviceStateResource extends JsonResource
     {
         return [
             'source'    => data_get($this->resource, 'source'),
+            'status' => data_get($this->resource, 'status'),
+            'connection_status' => data_get($this->resource, 'connection_status'),
             'latitude' => data_get($this->resource, 'latitude'),
             'longitude' => data_get($this->resource, 'longitude'),
             'speed' => data_get($this->resource, 'speed'),
