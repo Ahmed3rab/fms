@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum VehicleStatus: string
+enum MovementStatus: string
 {
     case Parked = 'parked';
     case Idling = 'idling';
