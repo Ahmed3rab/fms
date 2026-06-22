@@ -87,22 +87,27 @@ class ICruiseTrackingGateway implements TrackingGateway
     {
         if ($realtimeState) {
             $realtimeState['source'] = 'realtime';
-            $realtimeState['status']['connection'] = $this->connectivityStatusResolver->resolve($realtimeState)->value;
-            $realtimeState['status']['movement'] = $this->movementStatusResolver->resolve($realtimeState)->value;
-
+            $realtimeState['status'] = $this->resolveStatus($realtimeState);
             $device->setResolvedState($realtimeState);
             return;
         }
 
         if ($device->state) {
             $device->state->source = 'database';
-            $status = [
-                'connection'    => $this->connectivityStatusResolver->resolve($device->state)->value,
-                'movement' => $this->movementStatusResolver->resolve($device->state)->value,
-            ];
-            $device->state->status = $status;
+            $device->state->status = $this->resolveStatus($device->state);
             $device->setResolvedState($device->state);
         }
+    }
+
+    /**
+     * @param mixed[]|object $state
+     */
+    private function resolveStatus(array|object $state): array
+    {
+        return [
+            'connection'    => $this->connectivityStatusResolver->resolve($state)->value,
+            'movement' => $this->movementStatusResolver->resolve($state)->value,
+        ];
     }
 
 }
