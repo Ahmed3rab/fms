@@ -18,7 +18,7 @@ class CachedGeocoder implements Geocoder
             $language,
         );
 
-        return Cache::remember(
+        return Cache::store('redis')->remember(
             $key,
             now()->addDays(30),
             fn() => $this->geocoder->reverse(

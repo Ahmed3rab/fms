@@ -12,7 +12,7 @@ class DeviceStateStore
      */
     public function put(string $systemNo, array $state): void
     {
-        Redis::setex(
+        Redis::connection('default')->setex(
             "device-state:{$systemNo}",
             21600, // (6) Hours
             json_encode($state)
@@ -24,7 +24,7 @@ class DeviceStateStore
      */
     public function get(string $systemNo): ?array
     {
-        $value = Redis::get(
+        $value = Redis::connection('default')->get(
             "device-state:{$systemNo}"
         );
 
@@ -48,7 +48,7 @@ class DeviceStateStore
             $systemNos,
         );
 
-        $values = Redis::mget($keys);
+        $values = Redis::connection('default')->mget($keys);
 
         $states = [];
 
@@ -65,7 +65,7 @@ class DeviceStateStore
 
     public function forget(string $systemNo): void
     {
-        Redis::del(
+        Redis::connection('default')->del(
             "device-state:{$systemNo}"
         );
     }
