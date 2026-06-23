@@ -6,72 +6,52 @@ use Illuminate\Support\Collection;
 
 class SubscriptionManager
 {
-    /**
-     * Connected websocket clients.
-     *
-     * @var Collection<string, WebSocketClient>
-     */
-    protected Collection $clients;
-
-    public function __construct()
+    public function subscribe(Client $client, Subscription $subscription): void
     {
-        $this->clients = collect();
+        if ($client->subscriptions->contains(fn(Subscription $item) => $item->equals($subscription))) {
+            return;
+        }
+
+        $client->subscriptions->push($subscription);
     }
 
-    public function add(WebSocketClient $client): void
+    public function unsubscribe(Client $client, Subscription $subscription): void
     {
-        $this->clients->put(
-            spl_object_hash($client->connection),
-            $client,
-        );
-    }
-
-    public function remove(WebSocketClient $client): void
-    {
-        $this->clients->forget(
-            spl_object_hash($client->connection),
-        );
-    }
-
-    /**
-     * @return Collection<int,WebSocketClient>
-     */
-    public function all(): Collection
-    {
-        return $this->clients->values();
-    }
-
-    /**
-     * @return Collection<int,WebSocketClient>
-     */
-    public function authenticated(): Collection
-    {
-        return $this->clients
-            ->filter(fn(WebSocketClient $client) => $client->authenticated())
+        $client->subscriptions = $client->subscriptions
+            ->reject(fn(Subscription $item) => $item->equals($subscription))
             ->values();
     }
 
     /**
-     * @return Collection<int,WebSocketClient>
+     * @param iterable<Subscription> $subscriptions
      */
-    public function subscribedToVehicle(int $vehicleId): Collection
+    public function subscribeMany(Client $client, iterable $subscriptions): void
     {
-        return $this->authenticated()
-            ->filter(
-                fn(WebSocketClient $client)
-                    => $client->subscriptions
-                        ->isSubscribedToVehicle($vehicleId)
-            )
-            ->values();
+        foreach ($subscriptions as $subscription) {
+            $this->subscribe($client, $subscription);
+        }
     }
 
     /**
-     * @return Collection<int,WebSocketClient>
+     * @param iterable<Subscription> $subscriptions
      */
-    public function subscribedToVehicleForCompany(int $vehicleId, int $companyId): Collection
+    public function unsubscribeMany(Client $client, iterable $subscriptions): void
     {
-        return $this->subscribedToVehicle($vehicleId)
-            ->filter(fn(WebSocketClient $client) => $client->company?->id === $companyId)
-            ->values();
+        foreach ($subscriptions as $subscription) {
+            $this->unsubscribe($client, $subscription);
+        }
+    }
+
+    /**
+     * @return Collection<int,Subscription>
+     */
+    public function subscriptions(Client $client): Collection
+    {
+        return $client->subscriptions;
+    }
+
+    public function subscribed(Client $client, Subscription $subscription): bool
+    {
+        return $client->subscriptions->contains(fn(Subscription $item) => $item->equals($subscription));
     }
 }
