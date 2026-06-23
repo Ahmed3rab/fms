@@ -22,10 +22,7 @@ class VehicleResource extends JsonResource
             'color' => $this->color,
             'chassis_number' => $this->chassis_number,
             'engine_number' => $this->engine_number,
-            'company' => [
-                'id' => $this->company?->uuid,
-                'name' => $this->company?->name,
-            ],
+            'company' => CompanyResource::make($this->company),
             'location' => DeviceStateResource::make(
                 $this->device?->current_state
             ),

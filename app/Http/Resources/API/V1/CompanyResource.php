@@ -17,8 +17,7 @@ class CompanyResource extends JsonResource
         return [
             'uuid' => $this->uuid,
             'name' => $this->name,
-            'slug' => $this->slug,
-            'devices_count' => $this->whenCounted('devices'),
+            'vehicles_count' => $this->whenCounted('vehicles'),
         ];
     }
 }

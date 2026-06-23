@@ -14,7 +14,7 @@ class CompanyController extends Controller
         return CompanyResource::collection(
             Company::query()
                 ->visibleTo($request->user())
-                ->withCount('devices')
+                ->withCount('vehicles')
                 ->paginate()
         );
     }
@@ -30,7 +30,7 @@ class CompanyController extends Controller
         );
 
         return CompanyResource::make(
-            $company->loadCount('devices')
+            $company->loadCount('vehicles')
         );
     }
 }
