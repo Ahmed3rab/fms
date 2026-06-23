@@ -19,6 +19,7 @@ class TrackingManager
 
     /**
      * @param Collection<array-key,mixed> $devices
+     * @return Collection<int,Device>
      */
     public function attachCurrentStateForMany(Collection $devices): Collection
     {
@@ -32,6 +33,7 @@ class TrackingManager
 
     /**
      * @param Collection<array-key,mixed> $vehicles
+     * @return Collection<int,Vehicle>
      */
     public function hydrateVehicles(Collection $vehicles): Collection
     {

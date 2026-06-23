@@ -12,7 +12,8 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class VehicleController extends Controller
 {
-    public function index(Request $request, TrackingManager $tracking): AnonymousResourceCollection
+    public function __construct(private TrackingManager $tracking) {}
+    public function index(Request $request): AnonymousResourceCollection
     {
         $query = (new VehicleFilter(
             Vehicle::query()
@@ -26,14 +27,14 @@ class VehicleController extends Controller
 
         $vehicles = $query->paginate();
 
-        $tracking->hydrateVehicles(
+        $this->tracking->hydrateVehicles(
             $vehicles->getCollection()
         );
 
         return VehicleResource::collection($vehicles);
     }
 
-    public function show(Vehicle $vehicle, TrackingManager $tracking): VehicleResource
+    public function show(Vehicle $vehicle): VehicleResource
     {
         $vehicle->load([
             'company',
@@ -41,7 +42,7 @@ class VehicleController extends Controller
         ]);
 
         return VehicleResource::make(
-            $tracking->hydrateVehicle($vehicle)
+            $this->tracking->hydrateVehicle($vehicle)
         );
     }
 }
