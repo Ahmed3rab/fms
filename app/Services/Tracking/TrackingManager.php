@@ -2,6 +2,7 @@
 
 namespace App\Services\Tracking;
 
+use App\Data\History;
 use App\Models\Device;
 use App\Models\Vehicle;
 use App\Services\Tracking\Contracts\TrackingProvider;
@@ -40,7 +41,7 @@ class TrackingManager
         return $this->provider->hydrateVehicles($vehicles);
     }
 
-    public function history(Vehicle $vehicle, Carbon $from, Carbon $to): Collection
+    public function history(Vehicle $vehicle, Carbon $from, Carbon $to): History
     {
         return $this->provider->history($vehicle, $from, $to);
     }
