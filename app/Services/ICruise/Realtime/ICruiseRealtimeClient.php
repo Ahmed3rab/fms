@@ -2,6 +2,7 @@
 
 namespace App\Services\ICruise\Realtime;
 
+use App\Data\Coordinates;
 use App\Data\RealtimeDeviceState;
 use App\Services\Geocoding\Contracts\Geocoder;
 use App\Services\Tracking\DeviceStateStore;
@@ -112,10 +113,10 @@ class ICruiseRealtimeClient
      */
     protected function handlePosition(array $payload): void
     {
-        $geoAddress = app(Geocoder::class)->reverse(
+        $geoAddress = app(Geocoder::class)->reverse(new Coordinates(
             $payload['Latitude'],
             $payload['Longitude'],
-        );
+        ));
         $payload['geo_address'] = $geoAddress;
         $payload['received_at'] = now();
 

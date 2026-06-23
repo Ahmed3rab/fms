@@ -2,29 +2,23 @@
 
 namespace App\Services\ICruise;
 
-use App\Data\Factories\ResolvedDeviceStateFactory;
 use App\Data\RealtimeDeviceState;
 use App\Enums\DeviceStateSource;
 use App\Models\Device;
 use App\Models\Vehicle;
 use App\Services\Tracking\Contracts\TrackingGateway;
-use App\Services\Tracking\DeviceStateStore;
+use App\Services\Tracking\CurrentStateResolver;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class ICruiseTrackingGateway implements TrackingGateway
 {
-    public function __construct(protected DeviceStateStore $store, protected ICruiseClient $client, protected ResolvedDeviceStateFactory $factory) {}
+    public function __construct(protected CurrentStateResolver $resolver, protected ICruiseClient $client) {}
 
     public function attachCurrentState(Device $device): Device
     {
-        $device->loadMissing('state');
-
-        $state = $this->store->get($device->system_no);
-
-        $this->applyCurrentState($device, $state);
-
+        $this->resolver->resolve($device);
         return $device;
     }
 
@@ -34,14 +28,7 @@ class ICruiseTrackingGateway implements TrackingGateway
      */
     public function attachCurrentStateForMany(Collection $devices): Collection
     {
-        $states = $this->store->many($devices->pluck('system_no')->all());
-
-        $devices->each(function (Device $device) use ($states) {
-
-            $state = $states[$device->system_no] ?? null;
-
-            $this->applyCurrentState($device, $state);
-        });
+        $this->resolver->resolveMany($devices);
 
         return $devices;
     }
@@ -79,25 +66,5 @@ class ICruiseTrackingGateway implements TrackingGateway
         );
 
         return collect($history['Data'] ?? []);
-    }
-
-    /**
-     * @return void
-     */
-    private function applyCurrentState(Device $device, ?RealtimeDeviceState $realtimeState): void
-    {
-        if ($realtimeState) {
-            $device->setResolvedState(
-                $this->factory->make($realtimeState, DeviceStateSource::Realtime)
-            );
-
-            return;
-        }
-
-        if ($device->state) {
-            $device->setResolvedState(
-                $this->factory->make($device->state, DeviceStateSource::Database)
-            );
-        }
     }
 }

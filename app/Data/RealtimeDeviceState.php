@@ -36,9 +36,7 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
         }
 
         return new self(
-            coordinates: isset($state['latitude'], $state['longitude'])
-            ? Coordinates::fromArray(['latitude' => $state['latitude'], 'longitude' => $state['longitude']])
-            : null,
+            coordinates: isset($state['coordinates']) ? Coordinates::fromArray($state['coordinates']) : null,
             geoAddress: $address,
             speed: isset($state['speed']) ? Speed::fromArray($state['speed']) : null,
             gpsStatus: $state['gps_status'] ?? null,
@@ -106,7 +104,7 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
         return $this->toArray();
     }
 
-    public function coordinates(): Coordinates
+    public function coordinates(): ?Coordinates
     {
         return $this->coordinates;
     }
