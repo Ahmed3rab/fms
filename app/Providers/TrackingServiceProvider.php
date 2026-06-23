@@ -20,7 +20,7 @@ class TrackingServiceProvider extends ServiceProvider
         );
         $this->app->singleton(MessageDispatcher::class, function ($app) {
             return new MessageDispatcher([
-                $app->make(AuthenticateMessage::class),
+                // $app->make(AuthenticateMessage::class),
                 $app->make(SubscribeVehicleMessage::class),
                 $app->make(UnsubscribeVehicleMessage::class),
                 $app->make(PingMessage::class),
