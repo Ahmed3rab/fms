@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\AsDistance;
 use App\Casts\AsGeoLocationAddress;
 use App\Casts\AsSpeed;
+use App\Data\Coordinates;
 use App\Data\Distance;
 use App\Data\GeoLocationAddress;
 use App\Data\Speed;
@@ -53,14 +54,13 @@ class DeviceState extends Model implements TracksVehicleState
         return $this->belongsTo(Device::class);
     }
 
-    public function latitude(): ?float
+    public function coordinates(): ?Coordinates
     {
-        return $this->latitude;
-    }
+        if ($this->latitude === null || $this->longitude === null) {
+            return null;
+        }
 
-    public function longitude(): ?float
-    {
-        return $this->longitude;
+        return Coordinates::fromProvider($this->latitude, $this->longitude);
     }
 
     public function geoAddress(): ?GeoLocationAddress

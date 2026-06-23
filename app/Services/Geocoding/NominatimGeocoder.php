@@ -2,13 +2,14 @@
 
 namespace App\Services\Geocoding;
 
+use App\Data\Coordinates;
 use App\Data\GeoLocationAddress;
 use App\Services\Geocoding\Contracts\Geocoder;
 use Illuminate\Support\Facades\Http;
 
 class NominatimGeocoder implements Geocoder
 {
-    public function reverse(float $latitude, float $longitude, ?string $language = 'ar'): ?GeoLocationAddress
+    public function reverse(Coordinates $coordinates, ?string $language = 'ar'): ?GeoLocationAddress
     {
         $response = Http::acceptJson()
             ->withHeaders([
@@ -18,8 +19,8 @@ class NominatimGeocoder implements Geocoder
                 'https://nominatim.openstreetmap.org/reverse',
                 [
                     'format' => 'json',
-                    'lat' => $latitude,
-                    'lon' => $longitude,
+                    'lat' => $coordinates->latitude,
+                    'lon' => $coordinates->longitude,
                     'zoom' => 18,
                     'addressdetails' => 1,
                     'accept-language' => $language,

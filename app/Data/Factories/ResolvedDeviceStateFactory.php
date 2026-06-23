@@ -18,8 +18,7 @@ class ResolvedDeviceStateFactory
         return new ResolvedDeviceState(
             source: $source->value,
             status: $this->resolveStatus($state),
-            latitude: $state->latitude(),
-            longitude: $state->longitude(),
+            coordinates: $state->coordinates(),
             geoAddress: $state->geoAddress(),
             speed: $state->speed(),
             gpsStatus: $state->gpsStatus(),

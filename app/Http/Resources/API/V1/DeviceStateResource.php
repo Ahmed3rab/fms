@@ -24,8 +24,7 @@ class DeviceStateResource extends JsonResource
                 'connection' => $this->status->connection->value,
                 'movement' => $this->status->movement->value,
             ],
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
+            'coordinates' => $this->coordinates,
             'geo_address' => GeoLocationAddressResource::make(
                 $this->geoAddress
             ),

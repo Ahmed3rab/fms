@@ -2,6 +2,7 @@
 
 namespace App\Services\Tracking\Contracts;
 
+use App\Data\Coordinates;
 use App\Data\Distance;
 use App\Data\GeoLocationAddress;
 use App\Data\Speed;
@@ -9,9 +10,7 @@ use App\Data\TrackingTimestamps;
 
 interface TracksVehicleState
 {
-    public function latitude(): ?float;
-
-    public function longitude(): ?float;
+    public function coordinates(): ?Coordinates;
 
     public function geoAddress(): ?GeoLocationAddress;
 

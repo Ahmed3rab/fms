@@ -10,8 +10,7 @@ use JsonSerializable;
 final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable, TracksVehicleState
 {
     public function __construct(
-        public ?float $latitude,
-        public ?float $longitude,
+        public ?Coordinates $coordinates,
         public ?GeoLocationAddress $geoAddress,
         public ?Speed $speed,
         public ?bool $gpsStatus,
@@ -37,8 +36,9 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
         }
 
         return new self(
-            latitude: $state['latitude'] ?? null,
-            longitude: $state['longitude'] ?? null,
+            coordinates: isset($state['latitude'], $state['longitude'])
+            ? Coordinates::fromArray(['latitude' => $state['latitude'], 'longitude' => $state['longitude']])
+            : null,
             geoAddress: $address,
             speed: isset($state['speed']) ? Speed::fromArray($state['speed']) : null,
             gpsStatus: $state['gps_status'] ?? null,
@@ -60,8 +60,9 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
     public static function fromICruisePayload(array $payload): self
     {
         return new self(
-            latitude: $payload['Latitude'] ?? null,
-            longitude: $payload['Longitude'] ?? null,
+            coordinates: isset($payload['Latitude'], $payload['Longitude'])
+            ? Coordinates::fromProvider((float) $payload['Latitude'], (float) $payload['Longitude'])
+            : null,
             geoAddress: $payload['geo_address'] ?? null,
             speed: isset($payload['Velocity']) ? Speed::fromProvider((float) $payload['Velocity']) : null,
             gpsStatus: $payload['GpsStatus'] ?? null,
@@ -84,8 +85,7 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
     public function toArray(): array
     {
         return [
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
+            'coordinates'   => $this->coordinates,
             'geo_address' => $this->geoAddress,
             'speed' => $this->speed,
             'gps_status' => $this->gpsStatus,
@@ -106,14 +106,9 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
         return $this->toArray();
     }
 
-    public function latitude(): ?float
+    public function coordinates(): Coordinates
     {
-        return $this->latitude;
-    }
-
-    public function longitude(): ?float
-    {
-        return $this->longitude;
+        return $this->coordinates;
     }
 
     public function geoAddress(): ?GeoLocationAddress

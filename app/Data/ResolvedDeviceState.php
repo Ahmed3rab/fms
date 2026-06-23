@@ -7,8 +7,7 @@ final readonly class ResolvedDeviceState
     public function __construct(
         public string $source,
         public VehicleStatus $status,
-        public ?float $latitude,
-        public ?float $longitude,
+        public ?Coordinates $coordinates,
         public ?GeoLocationAddress $geoAddress,
         public ?Speed $speed,
         public ?bool $gpsStatus,
