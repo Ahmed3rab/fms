@@ -5,6 +5,9 @@ namespace App\Http\Resources\API\V1;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin \App\Data\TrackingTimestamps
+ */
 class TrackingTimestampResource extends JsonResource
 {
     /**
@@ -15,9 +18,9 @@ class TrackingTimestampResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'gps' => $this->gps,
-            'received' => $this->received,
-            'last_synced' => $this->lastSynced,
+            'gps' => $this->gps(),
+            'received' => $this->received(),
+            'last_synced' => $this->lastSynced(),
         ];
     }
 }

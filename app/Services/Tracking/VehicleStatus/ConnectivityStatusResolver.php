@@ -16,13 +16,17 @@ class ConnectivityStatusResolver
             return ConnectivityStatus::Offline;
         }
 
-        $timestamp = $state->receivedAt()
-            ?? $state->lastSyncedAt();
+        $timestamps = $state->timestamps();
+
+        $timestamp = $timestamps->received()
+            ?? $timestamps->lastSynced();
 
         if ($timestamp === null) {
             return ConnectivityStatus::Offline;
         }
 
-        return $timestamp->isAfter(now()->subMinutes(5)) ? ConnectivityStatus::Online : ConnectivityStatus::Offline;
+        return $timestamp->isAfter(now()->subMinutes(5))
+            ? ConnectivityStatus::Online
+            : ConnectivityStatus::Offline;
     }
 }

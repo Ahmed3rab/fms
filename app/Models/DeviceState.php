@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use App\Casts\AsDistance;
 use App\Casts\AsGeoLocationAddress;
 use App\Data\Distance;
 use App\Data\GeoLocationAddress;
+use App\Data\TrackingTimestamps;
 use App\Services\Tracking\Contracts\TracksVehicleState;
 use App\Services\Tracking\VehicleStatus\ConnectivityStatusResolver;
 use App\Services\Tracking\VehicleStatus\MovementStatusResolver;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Carbon;
 
 class DeviceState extends Model implements TracksVehicleState
 {
@@ -23,6 +24,7 @@ class DeviceState extends Model implements TracksVehicleState
         'last_synced_at' => 'datetime',
         'gps_status' => 'boolean',
         'geo_address'   => AsGeoLocationAddress::class,
+        'mileage' => AsDistance::class,
     ];
 
     protected function status(): Attribute
@@ -68,11 +70,6 @@ class DeviceState extends Model implements TracksVehicleState
         return $this->speed;
     }
 
-    public function gpsTime(): ?Carbon
-    {
-        return $this->gps_time;
-    }
-
     public function gpsStatus(): ?bool
     {
         return $this->gps_status;
@@ -105,28 +102,20 @@ class DeviceState extends Model implements TracksVehicleState
 
     public function mileage(): ?Distance
     {
-        if ($this->getRawOriginal('mileage') === null) {
-            return null;
-        }
-
-        return Distance::fromProvider(
-            (float) $this->getRawOriginal('mileage')
-        );
+        return $this->mileage;
     }
-
 
     public function temperature(): ?string
     {
         return $this->temperature;
     }
 
-    public function receivedAt(): ?Carbon
+    public function timestamps(): TrackingTimestamps
     {
-        return null;
-    }
-
-    public function lastSyncedAt(): ?Carbon
-    {
-        return $this->last_synced_at;
+        return new TrackingTimestamps(
+            gps: $this->gps_time,
+            received: null,
+            lastSynced: $this->last_synced_at,
+        );
     }
 }

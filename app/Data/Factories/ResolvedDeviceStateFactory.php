@@ -3,7 +3,6 @@
 namespace App\Data\Factories;
 
 use App\Data\ResolvedDeviceState;
-use App\Data\TrackingTimestamps;
 use App\Data\VehicleStatus;
 use App\Enums\DeviceStateSource;
 use App\Services\Tracking\Contracts\TracksVehicleState;
@@ -31,7 +30,7 @@ class ResolvedDeviceStateFactory
             voltage: $state->voltage(),
             mileage: $state->mileage(),
             temperature: $state->temperature(),
-            timestamps: new TrackingTimestamps(gps: $state->gpsTime(), received: $state->receivedAt(), lastSynced: $state->lastSyncedAt()),
+            timestamps: $state->timestamps(),
         );
     }
 

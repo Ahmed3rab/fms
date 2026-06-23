@@ -4,7 +4,7 @@ namespace App\Services\Tracking\Contracts;
 
 use App\Data\Distance;
 use App\Data\GeoLocationAddress;
-use Illuminate\Support\Carbon;
+use App\Data\TrackingTimestamps;
 
 interface TracksVehicleState
 {
@@ -15,8 +15,6 @@ interface TracksVehicleState
     public function geoAddress(): ?GeoLocationAddress;
 
     public function speed(): ?float;
-
-    public function gpsTime(): ?Carbon;
 
     public function gpsStatus(): ?bool;
 
@@ -34,7 +32,5 @@ interface TracksVehicleState
 
     public function temperature(): ?string;
 
-    public function receivedAt(): ?Carbon;
-
-    public function lastSyncedAt(): ?Carbon;
+    public function timestamps(): TrackingTimestamps;
 }

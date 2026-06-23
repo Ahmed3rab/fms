@@ -10,9 +10,9 @@ final readonly class Distance implements Arrayable, JsonSerializable
     public function __construct(public float $kilometers) {}
 
     /**
-     * @param mixed $value
+     * @param float $value
      */
-    public static function fromProvider($value): self
+    public static function fromProvider(float $value): self
     {
         return self::fromKilometers($value);
     }
@@ -30,6 +30,16 @@ final readonly class Distance implements Arrayable, JsonSerializable
     public function meters(): float
     {
         return $this->kilometers * 1000;
+    }
+
+    /**
+     * @param array{km:float|int,meters:float|int} $data
+     */
+    public static function fromArray(array $data): self
+    {
+        return self::fromKilometers(
+            (float) $data['km']
+        );
     }
 
     public function toArray(): array
