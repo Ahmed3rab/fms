@@ -2,6 +2,7 @@
 
 namespace App\Services\Tracking\Contracts;
 
+use App\Data\Distance;
 use App\Data\GeoLocationAddress;
 use Illuminate\Support\Carbon;
 
@@ -29,7 +30,7 @@ interface TracksVehicleState
 
     public function voltage(): ?float;
 
-    public function mileage(): ?float;
+    public function mileage(): ?Distance;
 
     public function temperature(): ?string;
 

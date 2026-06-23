@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\AsGeoLocationAddress;
+use App\Data\Distance;
 use App\Data\GeoLocationAddress;
 use App\Services\Tracking\Contracts\TracksVehicleState;
 use App\Services\Tracking\VehicleStatus\ConnectivityStatusResolver;
@@ -102,10 +103,17 @@ class DeviceState extends Model implements TracksVehicleState
         return $this->voltage;
     }
 
-    public function mileage(): ?float
+    public function mileage(): ?Distance
     {
-        return $this->mileage;
+        if ($this->getRawOriginal('mileage') === null) {
+            return null;
+        }
+
+        return Distance::fromProvider(
+            (float) $this->getRawOriginal('mileage')
+        );
     }
+
 
     public function temperature(): ?string
     {

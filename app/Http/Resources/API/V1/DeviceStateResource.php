@@ -30,7 +30,6 @@ class DeviceStateResource extends JsonResource
                 $this->geoAddress
             ),
             'speed' => $this->speed,
-            'gps_time' => $this->gpsTime,
             'gps_status' => $this->gpsStatus,
             'angle' => $this->angle,
             'altitude' => $this->altitude,
@@ -39,8 +38,7 @@ class DeviceStateResource extends JsonResource
             'voltage' => $this->voltage,
             'mileage' => $this->mileage,
             'temperature' => $this->temperature,
-            'received_at' => $this->receivedAt,
-            'last_synced_at' => $this->lastSyncedAt,
+            'timestamps' => TrackingTimestampResource::make($this->timestamps),
         ];
     }
 }

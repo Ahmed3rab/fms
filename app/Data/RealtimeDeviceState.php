@@ -14,16 +14,15 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
         public ?float $longitude,
         public ?GeoLocationAddress $geoAddress,
         public ?float $speed,
-        public ?Carbon $gpsTime,
         public ?bool $gpsStatus,
         public ?int $angle,
         public ?float $altitude,
         public ?string $acc,
         public ?float $oil,
         public ?float $voltage,
-        public ?float $mileage,
+        public ?Distance $mileage,
         public ?string $temperature,
-        public ?Carbon $receivedAt,
+        public TrackingTimestamps $timestamps,
         public ?array $payload,
     ) {}
 
@@ -43,16 +42,19 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
             longitude: $state['longitude'] ?? null,
             geoAddress: $address,
             speed: $state['speed'] ?? null,
-            gpsTime: isset($state['gps_time']) ? Carbon::parse($state['gps_time']) : null,
             gpsStatus: $state['gps_status'] ?? null,
             angle: $state['angle'] ?? null,
             altitude: $state['altitude'] ?? null,
             acc: $state['acc'] ?? null,
             oil: $state['oil'] ?? null,
             voltage: $state['voltage'] ?? null,
-            mileage: $state['mileage'] ?? null,
+            mileage: isset($state['mileage']) ? Distance::fromProvider((float) $state['mileage']) : null,
             temperature: $state['temperature'] ?? null,
-            receivedAt: isset($state['received_at']) ? Carbon::parse($state['received_at']) : null,
+            timestamps: new TrackingTimestamps(
+                gps: isset($state['gps_time']) ? Carbon::parse($state['gps_time']) : null,
+                received: isset($state['received_at']) ? Carbon::parse($state['received_at']) : null,
+                lastSynced: null,
+            ),
             payload: $state['payload'] ?? null,
         );
     }
@@ -67,16 +69,19 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
             longitude: $payload['Longitude'] ?? null,
             geoAddress: $payload['geo_address'] ?? null,
             speed: isset($payload['Velocity']) ? (float) $payload['Velocity'] : null,
-            gpsTime: isset($payload['DateTime']) ? Carbon::parse($payload['DateTime']) : null,
             gpsStatus: $payload['GpsStatus'] ?? null,
             angle: $payload['Angle'] ?? null,
             altitude: isset($payload['Altitude']) ? (float) $payload['Altitude'] : null,
             acc: $payload['Acc'] ?? null,
             oil: isset($payload['Oil']) ? (float) $payload['Oil'] : null,
             voltage: isset($payload['Voltage']) ? (float) $payload['Voltage'] : null,
-            mileage: isset($payload['Mileage']) ? (float) $payload['Mileage'] : null,
+            mileage: isset($payload['Mileage']) ? Distance::fromProvider((float) $payload['Mileage']) : null,
             temperature: isset($payload['Temperature']) ? (string) $payload['Temperature'] : null,
-            receivedAt: $payload['received_at'] ?? now(),
+            timestamps: new TrackingTimestamps(
+                gps: isset($payload['DateTime']) ? Carbon::parse($payload['DateTime']) : null,
+                received: isset($payload['received_at']) ? Carbon::parse($payload['received_at']) : now(),
+                lastSynced: null,
+            ),
             payload: $payload,
         );
     }
@@ -87,22 +92,16 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
             'geo_address' => $this->geoAddress,
-
             'speed' => $this->speed,
-            'gps_time' => $this->gpsTime,
             'gps_status' => $this->gpsStatus,
-
             'angle' => $this->angle,
             'altitude' => $this->altitude,
-
             'acc' => $this->acc,
             'oil' => $this->oil,
             'voltage' => $this->voltage,
             'mileage' => $this->mileage,
             'temperature' => $this->temperature,
-
-            'received_at' => $this->receivedAt,
-
+            'timestamps' => $this->timestamps,
             'payload' => $this->payload,
         ];
     }
@@ -130,11 +129,6 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
     public function speed(): ?float
     {
         return $this->speed;
-    }
-
-    public function gpsTime(): ?Carbon
-    {
-        return $this->gpsTime;
     }
 
     public function gpsStatus(): ?bool
@@ -167,7 +161,7 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
         return $this->voltage;
     }
 
-    public function mileage(): ?float
+    public function mileage(): ?Distance
     {
         return $this->mileage;
     }
@@ -177,13 +171,18 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
         return $this->temperature;
     }
 
+    public function gpsTime(): ?Carbon
+    {
+        return $this->timestamps->gps;
+    }
+
     public function receivedAt(): ?Carbon
     {
-        return $this->receivedAt;
+        return $this->timestamps->received;
     }
 
     public function lastSyncedAt(): ?Carbon
     {
-        return null;
+        return $this->timestamps->lastSynced;
     }
 }
