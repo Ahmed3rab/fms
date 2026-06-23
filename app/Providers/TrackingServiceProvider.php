@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Services\ICruise\ICruiseTrackingProvider;
 use App\Services\Tracking\Contracts\TrackingProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -12,7 +11,7 @@ class TrackingServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             TrackingProvider::class,
-            ICruiseTrackingProvider::class,
+            config('tracking.provider'),
         );
     }
     public function boot(): void {}
