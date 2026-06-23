@@ -7,7 +7,7 @@ use App\Models\Vehicle;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
-interface TrackingProvider
+interface TrackingProvider extends RealtimeProvider, HistoryProvider, VehicleHydrator
 {
     public function attachCurrentState(Device $device): Device;
 
