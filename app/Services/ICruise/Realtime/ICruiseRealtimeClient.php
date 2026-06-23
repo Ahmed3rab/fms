@@ -3,8 +3,8 @@
 namespace App\Services\ICruise\Realtime;
 
 use App\Data\Coordinates;
-use App\Data\RealtimeDeviceState;
 use App\Services\Geocoding\Contracts\Geocoder;
+use App\Services\ICruise\Mappers\RealtimeStateMapper;
 use App\Services\Tracking\DeviceStateStore;
 use Illuminate\Support\Facades\Cache;
 use Ratchet\Client\Connector;
@@ -12,6 +12,8 @@ use React\EventLoop\Loop;
 
 class ICruiseRealtimeClient
 {
+    public function __construct(protected RealtimeStateMapper $mapper) {}
+
     public function connect(): void
     {
         $server = Cache::get('server-info');
@@ -122,7 +124,7 @@ class ICruiseRealtimeClient
 
         app(DeviceStateStore::class)->put(
             $payload['SystemNo'],
-            RealtimeDeviceState::fromICruisePayload($payload),
+            $this->mapper->map($payload),
         );
     }
 }
