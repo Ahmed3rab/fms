@@ -2,11 +2,12 @@
 
 namespace App\Services\WebSocket;
 
+use App\Services\WebSocket\Messages\MessageDispatcher;
 use React\Socket\ConnectionInterface;
 
 class TrackingWebSocketServer
 {
-    public function __construct(protected SubscriptionManager $subscriptions) {}
+    public function __construct(protected SubscriptionManager $subscriptions, protected MessageDispatcher $dispatcher) {}
 
     public function connected(ConnectionInterface $connection): void
     {
@@ -26,5 +27,17 @@ class TrackingWebSocketServer
         $client->connection->on('error', fn() => $this->subscriptions->remove($client));
     }
 
-    private function handleMessage(WebSocketClient $client, string $message): void {}
+    private function handleMessage(WebSocketClient $client, string $message): void
+    {
+        $payload = json_decode($message, true);
+
+        if (! is_array($payload)) {
+            return;
+        }
+
+        $this->dispatcher->dispatch(
+            $client,
+            $payload,
+        );
+    }
 }

@@ -7,10 +7,7 @@ use App\Services\WebSocket\WebSocketClient;
 
 class PingMessage implements HandlesWebSocketMessage
 {
-    public function type(): string
-    {
-        return 'ping';
-    }
+    public const TYPE = 'ping';
 
     public function handle(WebSocketClient $client, array $payload): void
     {
