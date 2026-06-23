@@ -4,6 +4,7 @@ namespace App\Services\Tracking\Contracts;
 
 use App\Data\Distance;
 use App\Data\GeoLocationAddress;
+use App\Data\Speed;
 use App\Data\TrackingTimestamps;
 
 interface TracksVehicleState
@@ -14,7 +15,7 @@ interface TracksVehicleState
 
     public function geoAddress(): ?GeoLocationAddress;
 
-    public function speed(): ?float;
+    public function speed(): ?Speed;
 
     public function gpsStatus(): ?bool;
 

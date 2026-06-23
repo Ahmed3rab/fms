@@ -4,8 +4,10 @@ namespace App\Models;
 
 use App\Casts\AsDistance;
 use App\Casts\AsGeoLocationAddress;
+use App\Casts\AsSpeed;
 use App\Data\Distance;
 use App\Data\GeoLocationAddress;
+use App\Data\Speed;
 use App\Data\TrackingTimestamps;
 use App\Services\Tracking\Contracts\TracksVehicleState;
 use App\Services\Tracking\VehicleStatus\ConnectivityStatusResolver;
@@ -25,6 +27,7 @@ class DeviceState extends Model implements TracksVehicleState
         'gps_status' => 'boolean',
         'geo_address'   => AsGeoLocationAddress::class,
         'mileage' => AsDistance::class,
+        'speed' =>  AsSpeed::class,
     ];
 
     protected function status(): Attribute
@@ -65,7 +68,7 @@ class DeviceState extends Model implements TracksVehicleState
         return $this->geo_address;
     }
 
-    public function speed(): ?float
+    public function speed(): ?Speed
     {
         return $this->speed;
     }

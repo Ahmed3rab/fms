@@ -14,7 +14,9 @@ class MovementStatusResolver
      */
     public function resolve(?TracksVehicleState $state): MovementStatus
     {
-        if ($state === null) {
+        $speed = $state->speed();
+
+        if ($speed === null) {
             return MovementStatus::NoGps;
         }
 
@@ -22,7 +24,7 @@ class MovementStatusResolver
             return MovementStatus::NoGps;
         }
 
-        if (($state->speed() ?? 0) > self::MOVING_SPEED_THRESHOLD) {
+        if ($speed->isMoving()) {
             return MovementStatus::Moving;
         }
 

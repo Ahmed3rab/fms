@@ -13,7 +13,7 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
         public ?float $latitude,
         public ?float $longitude,
         public ?GeoLocationAddress $geoAddress,
-        public ?float $speed,
+        public ?Speed $speed,
         public ?bool $gpsStatus,
         public ?int $angle,
         public ?float $altitude,
@@ -32,7 +32,6 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
     public static function fromArray(array $state): self
     {
         $address = $state['geo_address'] ?? null;
-
         if (is_array($address)) {
             $address = GeoLocationAddress::fromArray($address);
         }
@@ -41,7 +40,7 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
             latitude: $state['latitude'] ?? null,
             longitude: $state['longitude'] ?? null,
             geoAddress: $address,
-            speed: $state['speed'] ?? null,
+            speed: isset($state['speed']) ? Speed::fromArray($state['speed']) : null,
             gpsStatus: $state['gps_status'] ?? null,
             angle: $state['angle'] ?? null,
             altitude: $state['altitude'] ?? null,
@@ -64,7 +63,7 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
             latitude: $payload['Latitude'] ?? null,
             longitude: $payload['Longitude'] ?? null,
             geoAddress: $payload['geo_address'] ?? null,
-            speed: isset($payload['Velocity']) ? (float) $payload['Velocity'] : null,
+            speed: isset($payload['Velocity']) ? Speed::fromProvider((float) $payload['Velocity']) : null,
             gpsStatus: $payload['GpsStatus'] ?? null,
             angle: $payload['Angle'] ?? null,
             altitude: isset($payload['Altitude']) ? (float) $payload['Altitude'] : null,
@@ -122,7 +121,7 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
         return $this->geoAddress;
     }
 
-    public function speed(): ?float
+    public function speed(): ?Speed
     {
         return $this->speed;
     }

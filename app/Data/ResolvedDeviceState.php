@@ -10,7 +10,7 @@ final readonly class ResolvedDeviceState
         public ?float $latitude,
         public ?float $longitude,
         public ?GeoLocationAddress $geoAddress,
-        public ?float $speed,
+        public ?Speed $speed,
         public ?bool $gpsStatus,
         public ?int $angle,
         public ?float $altitude,
