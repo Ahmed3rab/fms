@@ -13,4 +13,12 @@ final readonly class AuthenticateMessage extends IncomingMessage
             WebSocketMessageType::Authenticate
         );
     }
+
+    public static function fromArray(array $payload): static
+    {
+        return new static(
+            token: $payload['token'],
+        );
+    }
+
 }

@@ -13,4 +13,9 @@ final readonly class PingMessage extends IncomingMessage
             WebSocketMessageType::Ping
         );
     }
+
+    public static function fromArray(array $payload): static
+    {
+        return new static();
+    }
 }

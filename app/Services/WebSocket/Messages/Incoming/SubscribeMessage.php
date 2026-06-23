@@ -3,8 +3,9 @@
 namespace App\Services\WebSocket\Messages\Incoming;
 
 use App\Enums\WebSocketMessageType;
+use App\Enums\WebSocketTopic;
 use App\Services\WebSocket\Messages\Contracts\IncomingMessage;
-use App\Services\WebSocket\Subscription;
+use App\Services\WebSocket\Subscriptions\Subscription;
 
 final readonly class SubscribeMessage extends IncomingMessage
 {
@@ -15,6 +16,17 @@ final readonly class SubscribeMessage extends IncomingMessage
     {
         parent::__construct(
             WebSocketMessageType::Subscribe
+        );
+    }
+
+    public static function fromArray(array $payload): static
+    {
+        return new static(
+            subscriptions: collect($payload['subscriptions'])
+                ->map(fn(array $item) => new Subscription(
+                    topic: WebSocketTopic::from($item['topic']),
+                    identifier: $item['identifier'],
+                )),
         );
     }
 }
