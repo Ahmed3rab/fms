@@ -5,23 +5,23 @@ namespace App\Services\WebSocket\Connections;
 class ClientRepository
 {
     /**
-     * @var array<string,Client>
+     * @var array<string, ClientConnection>
      */
-    protected array $clients = [];
+    protected array $connections = [];
 
-    public function put(string $connectionId, Client $client): void
+    public function put(string $connectionId, ClientConnection $connection): void
     {
-        $this->clients[$connectionId] = $client;
+        $this->connections[$connectionId] = $connection;
     }
 
-    public function get(string $connectionId): ?Client
+    public function get(string $connectionId): ?ClientConnection
     {
-        return $this->clients[$connectionId] ?? null;
+        return $this->connections[$connectionId] ?? null;
     }
 
     public function forget(string $connectionId): void
     {
-        unset($this->clients[$connectionId]);
+        unset($this->connections[$connectionId]);
     }
 
     /**
@@ -29,11 +29,11 @@ class ClientRepository
      */
     public function all(): iterable
     {
-        yield from $this->clients;
+        yield from $this->connections;
     }
 
     public function has(string $connectionId): bool
     {
-        return isset($this->clients[$connectionId]);
+        return isset($this->connections[$connectionId]);
     }
 }
