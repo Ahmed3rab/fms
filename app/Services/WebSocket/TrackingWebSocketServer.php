@@ -9,6 +9,8 @@ class TrackingWebSocketServer
 {
     public function __construct(protected SubscriptionManager $subscriptions, protected MessageDispatcher $dispatcher) {}
 
+    public function start(): void {}
+
     public function connected(ConnectionInterface $connection): void
     {
         $client = WebSocketClient::connect($connection);
