@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\WebSocket;
+namespace App\Services\WebSocket\Connections;
 
 use App\Models\PersonalAccessToken;
 use App\Models\Company;

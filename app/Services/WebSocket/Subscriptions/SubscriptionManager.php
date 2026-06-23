@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Services\WebSocket;
+namespace App\Services\WebSocket\Subscriptions;
 
+use App\Services\WebSocket\Connections\Client;
 use Illuminate\Support\Collection;
 
 class SubscriptionManager
