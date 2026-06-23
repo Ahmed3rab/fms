@@ -7,12 +7,13 @@ use App\Http\Resources\API\V1\VehicleResource;
 use App\Models\Vehicle;
 use App\Http\Controllers\Controller;
 use App\Services\Tracking\Contracts\TrackingGateway;
+use App\Services\Tracking\Contracts\TrackingProvider;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class VehicleController extends Controller
 {
-    public function index(Request $request, TrackingGateway $tracking): AnonymousResourceCollection
+    public function index(Request $request, TrackingProvider $tracking): AnonymousResourceCollection
     {
         $query = (new VehicleFilter(
             Vehicle::query()
@@ -33,7 +34,7 @@ class VehicleController extends Controller
         return VehicleResource::collection($vehicles);
     }
 
-    public function show(Vehicle $vehicle, TrackingGateway $tracking): VehicleResource
+    public function show(Vehicle $vehicle, TrackingProvider  $tracking): VehicleResource
     {
         $vehicle->load([
             'company',

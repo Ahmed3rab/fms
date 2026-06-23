@@ -2,17 +2,15 @@
 
 namespace App\Services\ICruise;
 
-use App\Data\RealtimeDeviceState;
-use App\Enums\DeviceStateSource;
 use App\Models\Device;
 use App\Models\Vehicle;
-use App\Services\Tracking\Contracts\TrackingGateway;
+use App\Services\Tracking\Contracts\TrackingProvider;
 use App\Services\Tracking\CurrentStateResolver;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class ICruiseTrackingGateway implements TrackingGateway
+class ICruiseTrackingProvider implements TrackingProvider
 {
     public function __construct(protected CurrentStateResolver $resolver, protected ICruiseClient $client) {}
 
