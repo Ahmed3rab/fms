@@ -3,6 +3,7 @@
 namespace App\Gateway\Connections;
 
 use App\Models\User;
+use OpenSwoole\Http\Request;
 
 class Connection
 {
@@ -10,6 +11,18 @@ class Connection
      * @param array<string,mixed> $headers
      */
     public function __construct(protected int $id, protected string $ip, protected array $headers = [], protected ?User $user = null) {}
+
+    /**
+     * @return Connection
+     */
+    public static function fromRequest(Request $request): Connection
+    {
+        return new self(
+            id: $request->fd,
+            ip: $request->server['remote_addr'] ?? 'unknown',
+            headers: $request->header ?? []
+        );
+    }
 
     public function id(): int
     {

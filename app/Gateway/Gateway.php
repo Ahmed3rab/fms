@@ -8,6 +8,7 @@ use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
 use App\Gateway\Protocol\Messages\MessageFactory;
 use App\Gateway\Routing\MessageRouter;
 use App\Gateway\Transport\Contracts\GatewayTransport;
+use OpenSwoole\Http\Request;
 
 class Gateway
 {
@@ -23,8 +24,9 @@ class Gateway
         $this->transport->start($this);
     }
 
-    public function connect(Connection $connection): void
+    public function connect(Request $request): void
     {
+        $connection = Connection::fromRequest($request);
         $this->connections->put($connection);
 
         logger()->info('Gateway connected', [
@@ -33,9 +35,19 @@ class Gateway
         ]);
     }
 
-    public function receive(Connection $connection, string $message): void
+    public function receive(int $connectionId, string $payload): void
     {
-        $message = $this->messages->make($message);
+        $connection = $this->connections->get($connectionId);
+
+        if ($connection === null) {
+            logger()->warning('Message received for unknown connection.', [
+                'connection' => $connectionId,
+            ]);
+
+            return;
+        }
+
+        $message = $this->messages->make($payload);
 
         $this->router->dispatch(
             $this,
@@ -44,12 +56,18 @@ class Gateway
         );
     }
 
-    public function disconnect(Connection $connection): void
+    public function disconnect(int $connectionId): void
     {
-        $this->connections->forget($connection->id());
+        $connection = $this->connections->get($connectionId);
+
+        if ($connection === null) {
+            return;
+        }
+
+        $this->connections->forget($connectionId);
 
         logger()->info('Gateway disconnected', [
-            'connection' => $connection->id(),
+            'connection' => $connectionId,
         ]);
     }
 

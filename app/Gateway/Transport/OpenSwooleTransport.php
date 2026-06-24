@@ -5,7 +5,6 @@ namespace App\Gateway\Transport;
 use App\Gateway\Connections\Connection;
 use App\Gateway\Gateway;
 use App\Gateway\Transport\Contracts\GatewayTransport;
-use App\Gateway\Connections\ConnectionFactory;
 use OpenSwoole\Http\Request;
 use OpenSwoole\WebSocket\Frame;
 use OpenSwoole\WebSocket\Server;
@@ -13,8 +12,6 @@ use OpenSwoole\WebSocket\Server;
 class OpenSwooleTransport implements GatewayTransport
 {
     protected Server $server;
-
-    public function __construct(protected ConnectionFactory $connections) {}
 
     protected function createServer(): void
     {
@@ -68,39 +65,24 @@ class OpenSwooleTransport implements GatewayTransport
 
     protected function handleOpen(Gateway $gateway, Request $request): void
     {
-        $connection = $this->connections->create($request);
-        $gateway->connect($connection);
+        $gateway->connect($request);
     }
 
     protected function handleMessage(Gateway $gateway, Frame $frame): void
     {
-        $connection = $gateway->connection($frame->fd);
-        if ($connection === null) {
-            return;
-        }
         $gateway->receive(
-            $connection,
+            $frame->fd,
             $frame->data,
         );
     }
 
     protected function handleClose(Gateway $gateway, int $fd): void
     {
-        $connection = $gateway->connection($fd);
-
-        if ($connection === null) {
-            return;
-        }
-
-        $gateway->disconnect($connection);
+        $gateway->disconnect($fd);
     }
 
     public function send(Connection $connection, string $payload): void
     {
-        if (! $this->server->isEstablished($connection->id())) {
-            return;
-        }
-
         $this->server->push(
             $connection->id(),
             $payload,
