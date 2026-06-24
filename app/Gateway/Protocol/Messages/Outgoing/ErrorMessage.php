@@ -2,17 +2,17 @@
 
 namespace App\Gateway\Protocol\Messages\Outgoing;
 
-use App\Enums\WebSocketMessageType;
 use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
 
 final readonly class ErrorMessage extends OutgoingMessage
 {
-    public function __construct(public string $code, public string $message)
+    public function __construct(public string $code, public string $message) {}
+
+    public static function type(): string
     {
-        parent::__construct(
-            WebSocketMessageType::Error,
-        );
+        return 'error';
     }
+
     /**
      * @return array<string,string>
      */

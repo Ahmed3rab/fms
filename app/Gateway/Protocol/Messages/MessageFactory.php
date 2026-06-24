@@ -2,33 +2,33 @@
 
 namespace App\Gateway\Protocol\Messages;
 
-use App\Enums\WebSocketMessageType;
 use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
-use App\Gateway\Protocol\Messages\Incoming\PingMessage;
-use App\Gateway\Protocol\Messages\Incoming\UnsubscribeMessage;
-use App\Gateway\Protocol\Messages\Incoming\SubscribeMessage;
-use App\Gateway\Protocol\Messages\Incoming\AuthenticateMessage;
 use InvalidArgumentException;
 
 class MessageFactory
 {
+    public function __construct(protected MessageRegistry $registry) {}
+
     public function make(string $json): IncomingMessage
     {
-        $payload = json_decode($json, true);
+        $payload = json_decode(
+            $json,
+            true,
+            flags: JSON_THROW_ON_ERROR,
+        );
 
-        if (! is_array($payload)) {
-            throw new InvalidArgumentException('Invalid websocket payload.');
+        if (! isset($payload['type'])) {
+            throw new InvalidArgumentException('Missing message type.');
         }
 
-        return match (WebSocketMessageType::from($payload['type'])) {
+        $class = $this->registry->resolve($payload['type']);
 
-            WebSocketMessageType::Authenticate => AuthenticateMessage::fromArray($payload),
+        if (! method_exists($class, 'fromArray')) {
+            throw new InvalidArgumentException(
+                "{$class} cannot be constructed from an array."
+            );
+        }
 
-            WebSocketMessageType::Subscribe => SubscribeMessage::fromArray($payload),
-
-            WebSocketMessageType::Unsubscribe => UnsubscribeMessage::fromArray($payload),
-
-            WebSocketMessageType::Ping => PingMessage::fromArray($payload),
-        };
+        return $class::fromArray($payload);
     }
 }

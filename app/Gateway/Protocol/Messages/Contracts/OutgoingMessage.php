@@ -2,12 +2,11 @@
 
 namespace App\Gateway\Protocol\Messages\Contracts;
 
-use App\Enums\WebSocketMessageType;
 use JsonSerializable;
 
 abstract readonly class OutgoingMessage implements JsonSerializable
 {
-    public function __construct(public WebSocketMessageType $type) {}
+    abstract public static function type(): string;
 
     /**
      * @return array<string,mixed>
@@ -20,7 +19,7 @@ abstract readonly class OutgoingMessage implements JsonSerializable
     final public function toArray(): array
     {
         return [
-            'type' => $this->type->value,
+            'type' => $this->type(),
             ...$this->payload(),
         ];
     }

@@ -2,17 +2,17 @@
 
 namespace App\Gateway\Protocol\Messages\Incoming;
 
-use App\Enums\WebSocketMessageType;
 use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
 
 final readonly class AuthenticateMessage extends IncomingMessage
 {
-    public function __construct(public string $accessToken)
+    public function __construct(public string $accessToken) {}
+
+    public static function type(): string
     {
-        parent::__construct(
-            WebSocketMessageType::Authenticate
-        );
+        return 'authenticate';
     }
+
     /**
      * @param array<int,mixed> $payload
      */
@@ -22,5 +22,4 @@ final readonly class AuthenticateMessage extends IncomingMessage
             accessToken: $payload['token'],
         );
     }
-
 }

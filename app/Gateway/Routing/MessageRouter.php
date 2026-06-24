@@ -3,7 +3,9 @@
 namespace App\Gateway\Routing;
 
 use App\Gateway\Connections\Connection;
+use App\Gateway\Protocol\Handlers\Contracts\MessageHandler;
 use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
+use RuntimeException;
 
 class MessageRouter
 {
@@ -12,12 +14,17 @@ class MessageRouter
      */
     public function __construct(protected array $handlers) {}
 
-    public function route(Connection $connection, IncomingMessage $message): void
+    public function dispatch(Connection $connection, IncomingMessage $message): void
     {
         $handler = $this->handlers[$message::class] ?? null;
         if ($handler === null) {
+            throw new RuntimeException(
+                "No handler registered for " . $message::class
+            );
+        }
+        if ($handler === null) {
             return;
         }
-        $handler($connection, $message);
+        $handler->handle($connection, $message);
     }
 }

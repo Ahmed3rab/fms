@@ -4,11 +4,19 @@ namespace App\Gateway;
 
 use App\Gateway\Connections\Connection;
 use App\Gateway\Connections\ConnectionRepository;
+use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
+use App\Gateway\Protocol\Messages\MessageFactory;
+use App\Gateway\Routing\MessageRouter;
 use App\Gateway\Transport\Contracts\GatewayTransport;
 
 class Gateway
 {
-    public function __construct(protected GatewayTransport $transport, protected ConnectionRepository $connections) {}
+    public function __construct(
+        protected GatewayTransport $transport,
+        protected ConnectionRepository $connections,
+        protected MessageFactory $messages,
+        protected MessageRouter $router,
+    ) {}
 
     public function start(): void
     {
@@ -27,10 +35,12 @@ class Gateway
 
     public function receive(Connection $connection, string $message): void
     {
-        logger()->info('Gateway received message', [
-            'connection' => $connection->id(),
-            'message' => $message,
-        ]);
+        $message = $this->messages->make($message);
+
+        $this->router->dispatch(
+            $connection,
+            $message,
+        );
     }
 
     public function disconnect(Connection $connection): void
@@ -46,4 +56,6 @@ class Gateway
     {
         return $this->connections->get($id);
     }
+
+    public function send(Connection $connection, OutgoingMessage $message): void {}
 }

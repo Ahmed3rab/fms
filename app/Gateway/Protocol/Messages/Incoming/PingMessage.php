@@ -2,17 +2,15 @@
 
 namespace App\Gateway\Protocol\Messages\Incoming;
 
-use App\Enums\WebSocketMessageType;
 use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
 
 final readonly class PingMessage extends IncomingMessage
 {
-    public function __construct()
+    public static function type(): string
     {
-        parent::__construct(
-            WebSocketMessageType::Ping
-        );
+        return 'ping';
     }
+
     /**
      * @param array<int,mixed> $payload
      */

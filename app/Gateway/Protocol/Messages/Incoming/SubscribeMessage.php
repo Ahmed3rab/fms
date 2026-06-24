@@ -2,7 +2,6 @@
 
 namespace App\Gateway\Protocol\Messages\Incoming;
 
-use App\Enums\WebSocketMessageType;
 use App\Enums\WebSocketTopic;
 use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
 use App\Gateway\Subscriptions\Subscription;
@@ -12,12 +11,13 @@ final readonly class SubscribeMessage extends IncomingMessage
     /**
      * @param list<Subscription> $subscriptions
      */
-    public function __construct(public array $subscriptions)
+    public function __construct(public array $subscriptions) {}
+
+    public static function type(): string
     {
-        parent::__construct(
-            WebSocketMessageType::Subscribe
-        );
+        return 'subscribe';
     }
+
     /**
      * @param array<int,mixed> $payload
      */

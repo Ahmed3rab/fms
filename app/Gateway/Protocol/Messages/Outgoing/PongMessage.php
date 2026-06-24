@@ -2,17 +2,16 @@
 
 namespace App\Gateway\Protocol\Messages\Outgoing;
 
-use App\Enums\WebSocketMessageType;
 use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
 use Carbon\Carbon;
 
 final readonly class PongMessage extends OutgoingMessage
 {
-    public function __construct(public Carbon $timestamp)
+    public function __construct(public Carbon $timestamp) {}
+
+    public static function type(): string
     {
-        parent::__construct(
-            WebSocketMessageType::Pong,
-        );
+        return 'pong';
     }
     /**
      * @return array<string,Carbon>

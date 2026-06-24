@@ -2,11 +2,9 @@
 
 namespace App\Gateway\Protocol\Messages\Contracts;
 
-use App\Enums\WebSocketMessageType;
-
 abstract readonly class IncomingMessage
 {
-    public function __construct(public WebSocketMessageType $type) {}
+    abstract public static function type(): string;
 
     /**
     * @param array<string,mixed> $payload
