@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Gateway\Connections\ConnectionRepository;
+use App\Gateway\Events\GatewayEventRegistry;
+use App\Gateway\Events\TelemetryEvent;
 use App\Gateway\Protocol\Handlers\AuthenticateHandler;
 use App\Gateway\Protocol\Handlers\PingHandler;
 use App\Gateway\Protocol\Handlers\UnsubscribeHandler;
@@ -31,6 +33,14 @@ class GatewayServiceProvider extends ServiceProvider
         $this->app->singleton(SubscriptionManager::class);
         $this->app->singleton(MessageRouter::class, fn(Application $app) => $this->registerHandlers($app));
         $this->app->singleton(MessageRegistry::class, fn() => $this->registerProtocols());
+        $this->app->singleton(
+            GatewayEventRegistry::class,
+            function () {
+                $registry = new GatewayEventRegistry();
+                $registry->register(TelemetryEvent::class);
+                return $registry;
+            },
+        );
     }
 
     /**

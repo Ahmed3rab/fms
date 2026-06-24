@@ -7,17 +7,9 @@ use InvalidArgumentException;
 
 class GatewayEventFactory
 {
-    /**
-     * @var array<string,class-string<GatewayEvent>>
-     */
-    protected array $events = [];
-
-    public function __construct()
-    {
-        $this->events = [
-            TelemetryEvent::class::type() => TelemetryEvent::class,
-        ];
-    }
+    public function __construct(
+        protected GatewayEventRegistry $registry,
+    ) {}
 
     public function make(string $json): GatewayEvent
     {
@@ -27,18 +19,15 @@ class GatewayEventFactory
             flags: JSON_THROW_ON_ERROR,
         );
 
-        $type = $payload['type'] ?? null;
-
-        if ($type === null) {
+        if (! isset($payload['type'])) {
             throw new InvalidArgumentException(
                 'Missing event type.'
             );
         }
 
-        $class = $this->events[$type]
-            ?? throw new InvalidArgumentException(
-                "Unknown gateway event [$type]."
-            );
+        $class = $this->registry->resolve(
+            $payload['type'],
+        );
 
         return $class::fromArray($payload);
     }
