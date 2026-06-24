@@ -19,7 +19,7 @@ abstract readonly class OutgoingMessage implements JsonSerializable
     final public function toArray(): array
     {
         return [
-            'type' => $this->type(),
+            'type' => static::type(),
             ...$this->payload(),
         ];
     }

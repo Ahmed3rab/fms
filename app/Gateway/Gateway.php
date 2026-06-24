@@ -62,7 +62,7 @@ class Gateway
         $this->transport->send(
             $connection,
             json_encode(
-                $message->toArray(),
+                $message->toJson(),
                 JSON_THROW_ON_ERROR,
             ),
         );
