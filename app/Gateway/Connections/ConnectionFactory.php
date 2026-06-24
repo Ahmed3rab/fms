@@ -2,4 +2,10 @@
 
 namespace App\Gateway\Connections;
 
-class ConnectionFactory {}
+use OpenSwoole\Http\Request;
+use OpenSwoole\WebSocket\Server;
+
+class ConnectionFactory
+{
+    public function create(Server $server, Request $request): Connection {}
+}

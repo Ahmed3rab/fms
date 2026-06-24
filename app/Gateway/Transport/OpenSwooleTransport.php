@@ -12,7 +12,7 @@ use OpenSwoole\WebSocket\Server;
 
 class OpenSwooleTransport implements GatewayTransport
 {
-    protected ?Server $server = null;
+    protected Server $server;
 
     public function __construct(protected ConnectionFactory $connections) {}
 
@@ -24,18 +24,18 @@ class OpenSwooleTransport implements GatewayTransport
             SWOOLE_PROCESS,
             SWOOLE_SOCK_TCP,
         );
-        $this->configureServer();
     }
 
     public function start(Gateway $gateway): void
     {
         $this->createServer();
 
+        $this->configureServer();
+
         $this->registerEventHandlers($gateway);
 
         $this->server->start();
     }
-
 
     public function stop(): void {}
 
@@ -46,44 +46,43 @@ class OpenSwooleTransport implements GatewayTransport
     protected function configureServer(): void
     {
         $this->server->set([
-            'worker_num' => 1,
-            'daemonize' => false,
-            'log_file' => storage_path('logs/openswoole.log'),
-            'heartbeat_idle_time' => 120,
-            'heartbeat_check_interval' => 30,
+            'worker_num' => config('tracking.gateway.worker_num'),
+            'max_connection' => config('tracking.gateway.max_connections'),
+            'heartbeat_idle_time' => config('tracking.gateway.heartbeat_idle_time'),
+            'heartbeat_check_interval' => config('tracking.gateway.heartbeat_check_interval'),
         ]);
     }
 
     protected function registerEventHandlers(Gateway $gateway): void
     {
         $this->server->on('Open', function (Server $server, Request $request) use ($gateway): void {
-            $this->handleOpen($gateway, $server, $request);
+            $this->handleOpen($gateway, $request);
         });
 
         $this->server->on('Message', function (Server $server, Frame $frame) use ($gateway): void {
-            $this->handleMessage($gateway, $server, $frame);
+            $this->handleMessage($gateway, $frame);
         });
 
         $this->server->on('Close', function (Server $server, int $fd) use ($gateway): void {
-            $this->handleClose($gateway, $server, $fd);
+            $this->handleClose($gateway, $fd);
         });
     }
 
-    protected function handleOpen(
-        Gateway $gateway,
-        Server $server,
-        Request $request,
-    ): void {}
+    protected function handleOpen(Gateway $gateway, Request $request): void
+    {
+        $connection = $this->connections->create(
+            $this->server,
+            $request,
+        );
+    }
 
     protected function handleMessage(
         Gateway $gateway,
-        Server $server,
         Frame $frame,
     ): void {}
 
     protected function handleClose(
         Gateway $gateway,
-        Server $server,
         int $fd,
     ): void {}
 }
