@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Gateway\Protocol\Routing;
+namespace App\Gateway\Routing;
 
 use App\Gateway\Connections\Connection;
 use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;

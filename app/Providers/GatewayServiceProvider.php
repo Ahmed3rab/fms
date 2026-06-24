@@ -3,14 +3,14 @@
 namespace App\Providers;
 
 use App\Gateway\Connections\ClientRepository;
-use App\Gateway\Handlers\PingHandler;
-use App\Gateway\Messages\Incoming\PingMessage;
-use App\Gateway\Handlers\UnsubscribeHandler;
-use App\Gateway\Handlers\SubscribeHandler;
-use App\Gateway\Messages\Incoming\SubscribeMessage;
-use App\Gateway\Handlers\AuthenticateHandler;
-use App\Gateway\Messages\Incoming\UnsubscribeMessage;
-use App\Gateway\Messages\Incoming\AuthenticateMessage;
+use App\Gateway\Protocol\Handlers\AuthenticateHandler;
+use App\Gateway\Protocol\Handlers\PingHandler;
+use App\Gateway\Protocol\Handlers\UnsubscribeHandler;
+use App\Gateway\Protocol\Messages\Incoming\PingMessage;
+use App\Gateway\Protocol\Handlers\SubscribeHandler;
+use App\Gateway\Protocol\Messages\Incoming\UnsubscribeMessage;
+use App\Gateway\Protocol\Messages\Incoming\AuthenticateMessage;
+use App\Gateway\Protocol\Messages\Incoming\SubscribeMessage;
 use App\Gateway\Routing\MessageRouter;
 use App\Gateway\Subscriptions\SubscriptionManager;
 use Illuminate\Support\ServiceProvider;
