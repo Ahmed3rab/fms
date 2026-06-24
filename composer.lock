@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e9b27e94692aed5399483c9b5e8c590d",
+    "content-hash": "461fe9596c64020775d833dcab80d2ea",
     "packages": [
         {
             "name": "arokettu/random-polyfill",
@@ -11701,6 +11701,45 @@
                 }
             ],
             "time": "2026-04-21T14:04:20+00:00"
+        },
+        {
+            "name": "openswoole/ide-helper",
+            "version": "26.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/openswoole/ide-helper.git",
+                "reference": "f5cb2ba6d3108b1e158fbff1e1b44e5782f0f4ff"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/openswoole/ide-helper/zipball/f5cb2ba6d3108b1e158fbff1e1b44e5782f0f4ff",
+                "reference": "f5cb2ba6d3108b1e158fbff1e1b44e5782f0f4ff",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openswoole": ">=26.2.0",
+                "php": ">=8.3"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.6"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "OpenSwoole Group",
+                    "email": "hello@openswoole.com"
+                }
+            ],
+            "description": "IDE helper for OpenSwoole.",
+            "support": {
+                "issues": "https://github.com/openswoole/ide-helper/issues",
+                "source": "https://github.com/openswoole/ide-helper/tree/26.2.0"
+            },
+            "time": "2026-02-28T15:02:47+00:00"
         },
         {
             "name": "pestphp/pest",
