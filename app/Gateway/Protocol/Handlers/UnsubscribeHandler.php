@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Gateway\Handlers;
+namespace App\Gateway\Protocol\Handlers;
 
-use App\Gateway\Messages\Contracts\IncomingMessage;
-use App\Gateway\Connections\ClientConnection;
-use App\Gateway\Subscriptions\SubscriptionManager;
-use App\Gateway\Handlers\Contracts\MessageHandler;
+use App\Gateway\Connections\Connection;
+use App\Gateway\Protocol\Handlers\Contracts\MessageHandler;
+use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
+use App\Gateway\Protocol\Subscriptions\SubscriptionManager;
 
 class UnsubscribeHandler implements MessageHandler
 {
     public function __construct(protected SubscriptionManager $subscriptions) {}
 
-    public function __invoke(ClientConnection $connection, IncomingMessage $message): void
+    public function __invoke(Connection $connection, IncomingMessage $message): void
     {
         /** @var UnsubscribeMessage $message */
         foreach ($message->subscriptions as $subscription) {

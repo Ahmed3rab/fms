@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Gateway\Messages\Incoming;
+namespace App\Gateway\Protocol\Messages\Incoming;
 
 use App\Enums\WebSocketMessageType;
-use App\Gateway\Messages\Contracts\IncomingMessage;
+use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
 
 final readonly class PingMessage extends IncomingMessage
 {

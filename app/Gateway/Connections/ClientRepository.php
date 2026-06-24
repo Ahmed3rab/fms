@@ -5,16 +5,16 @@ namespace App\Gateway\Connections;
 class ClientRepository
 {
     /**
-     * @var array<string, ClientConnection>
+     * @var array<string, Connection>
      */
     protected array $connections = [];
 
-    public function put(string $connectionId, ClientConnection $connection): void
+    public function put(string $connectionId, Connection $connection): void
     {
         $this->connections[$connectionId] = $connection;
     }
 
-    public function get(string $connectionId): ?ClientConnection
+    public function get(string $connectionId): ?Connection
     {
         return $this->connections[$connectionId] ?? null;
     }
@@ -25,8 +25,7 @@ class ClientRepository
     }
 
     /**
-     * @return iterable<Client>
-     */
+     * @return array<string,Connection>*/
     public function all(): iterable
     {
         yield from $this->connections;

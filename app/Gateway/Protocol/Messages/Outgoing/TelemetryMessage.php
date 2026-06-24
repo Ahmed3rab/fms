@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Gateway\Messages\Outgoing;
+namespace App\Gateway\Protocol\Messages\Outgoing;
 
 use App\Data\ResolvedDeviceState;
 use App\Enums\WebSocketMessageType;
-use App\Gateway\Messages\Contracts\OutgoingMessage;
-use App\Gateway\Subscriptions\Subscription;
+use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
+use App\Gateway\Protocol\Subscriptions\Subscription;
 
 final readonly class TelemetryMessage extends OutgoingMessage
 {

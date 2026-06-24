@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Gateway\Messages\Contracts;
+namespace App\Gateway\Protocol\Messages\Contracts;
 
 use App\Enums\WebSocketMessageType;
 use JsonSerializable;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Gateway\Subscriptions;
+namespace App\Gateway\Protocol\Subscriptions;
 
 use App\Enums\WebSocketTopic;
 

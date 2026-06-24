@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Gateway\Messages\Outgoing;
+namespace App\Gateway\Protocol\Messages\Outgoing;
 
 use App\Enums\WebSocketMessageType;
-use App\Gateway\Messages\Contracts\OutgoingMessage;
+use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
 use Carbon\Carbon;
 
 final readonly class PongMessage extends OutgoingMessage

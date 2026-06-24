@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Gateway\Messages\Incoming;
+namespace App\Gateway\Protocol\Messages\Incoming;
 
 use App\Enums\WebSocketMessageType;
-use App\Gateway\Messages\Contracts\IncomingMessage;
+use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
 
 final readonly class AuthenticateMessage extends IncomingMessage
 {
@@ -19,7 +19,7 @@ final readonly class AuthenticateMessage extends IncomingMessage
     public static function fromArray(array $payload): AuthenticateMessage
     {
         return new static(
-            token: $payload['token'],
+            accessToken: $payload['token'],
         );
     }
 

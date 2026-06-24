@@ -2,9 +2,9 @@
 
 namespace App\Gateway\Connections;
 
-use App\Gateway\Messages\Contracts\OutgoingMessage;
+use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
 
-class ClientConnection
+class Connection
 {
     public function __construct(
         public readonly string $id,

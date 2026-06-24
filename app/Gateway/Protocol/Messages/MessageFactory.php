@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Gateway\Messages;
+namespace App\Gateway\Protocol\Messages;
 
 use App\Enums\WebSocketMessageType;
-use App\Gateway\Messages\Contracts\IncomingMessage;
-use App\Gateway\Messages\Incoming\PingMessage;
-use App\Gateway\Messages\Incoming\UnsubscribeMessage;
-use App\Gateway\Messages\Incoming\SubscribeMessage;
-use App\Gateway\Messages\Incoming\AuthenticateMessage;
+use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
+use App\Gateway\Protocol\Messages\Incoming\PingMessage;
+use App\Gateway\Protocol\Messages\Incoming\UnsubscribeMessage;
+use App\Gateway\Protocol\Messages\Incoming\SubscribeMessage;
+use App\Gateway\Protocol\Messages\Incoming\AuthenticateMessage;
 use InvalidArgumentException;
 
 class MessageFactory

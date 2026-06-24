@@ -6,10 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\API\V1\CompanyResource;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CompanyController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * @return AnonymousResourceCollection
+     */
+    public function index(Request $request): AnonymousResourceCollection
     {
         return CompanyResource::collection(
             Company::query()
@@ -18,8 +22,10 @@ class CompanyController extends Controller
                 ->paginate()
         );
     }
-
-    public function show(Request $request, Company $company)
+    /**
+     * @return CompanyResource
+     */
+    public function show(Request $request, Company $company): CompanyResource
     {
         abort_unless(
             Company::query()

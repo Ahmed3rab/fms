@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Gateway\Subscriptions;
+namespace App\Gateway\Protocol\Subscriptions;
 
 use App\Gateway\Connections\Client;
+use App\Gateway\Protocol\Subscriptions\Subscription;
 use Illuminate\Support\Collection;
 
 class SubscriptionManager
