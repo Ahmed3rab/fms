@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\ICruise;
 
+use App\Data\Coordinates;
 use App\Models\Device;
 use App\Models\DeviceState;
 use App\Models\Vehicle;
@@ -57,10 +58,10 @@ class SyncDevices extends Command
 
         $devicesBySystemNo = Device::pluck('id', 'system_no');
         foreach ($positions as $position) {
-            $geoAddress = $geocoder->reverse(
-                $position['Latitude'],
-                $position['Longitude'],
-            );
+            $geoAddress = $geocoder->reverse(Coordinates::fromArray([
+                'latitude' => $position['Latitude'],
+                'longitude' => $position['Longitude'],
+            ]));
             $state = DeviceState::updateOrCreate([
                 'device_id' => $devicesBySystemNo[$position['SystemNo']] ?? null,
             ], [

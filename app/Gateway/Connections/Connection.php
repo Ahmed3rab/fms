@@ -10,7 +10,10 @@ class Connection
     /**
      * @param array<string,mixed> $headers
      */
-    public function __construct(protected int $id, protected string $ip, protected array $headers = [], protected ?User $user = null) {}
+    public function __construct(protected int $id, protected string $ip, protected array $headers = [], protected ?Client $client = null, protected ?User $user = null)
+    {
+        $this->client ??= new Client($this);
+    }
 
     /**
      * @return Connection
@@ -42,11 +45,15 @@ class Connection
         return $this->headers;
     }
 
+    public function client(): Client
+    {
+        return $this->client;
+    }
+
     public function user(): ?User
     {
         return $this->user;
     }
-
     public function authenticate(User $user): void
     {
         $this->user = $user;

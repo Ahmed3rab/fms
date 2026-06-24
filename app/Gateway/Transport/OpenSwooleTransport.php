@@ -85,6 +85,10 @@ class OpenSwooleTransport implements GatewayTransport
         if (! $this->server->isEstablished($connection->id())) {
             return;
         }
+        logger()->info('Sending websocket payload', [
+            'connection' => $connection->id(),
+            'payload' => $payload,
+        ]);
         $this->server->push(
             $connection->id(),
             $payload,

@@ -21,8 +21,8 @@ class RealtimePublisher
         }
 
         $device = Device::query()
-            ->with('vehicle:id,uuid')
             ->whereUuid($state->deviceUuid)
+            ->with('vehicle:id,uuid')
             ->first();
 
         if (! $device?->vehicle) {
@@ -33,11 +33,17 @@ class RealtimePublisher
             WebSocketTopic::Vehicle,
             (string) $device->vehicle->uuid,
         );
-
+        logger()->info('Publisher manager', [
+            'object' => spl_object_id($this->subscriptions),
+        ]);
         foreach ($this->subscriptions->subscribers($subscription) as $client) {
+            logger()->info('Publishing to subscriber', [
+                'connection' => $client->connection()->id(),
+            ]);
+
             $this->gateway->send(
                 $client->connection(),
-                new TelemetryMessage($state),
+                new TelemetryMessage($subscription, $state),
             );
         }
     }

@@ -27,6 +27,7 @@ class TestPublish extends Command
         $vehicle = Vehicle::whereUuid($this->argument('vehicle'))->firstOrFail();
 
         $state = new RealtimeDeviceState(
+            deviceUuid: "019eeeb4-e021-7348-a26b-d899578a2860",
             coordinates: new Coordinates(
                 latitude: 32.8872,
                 longitude: 13.1913,

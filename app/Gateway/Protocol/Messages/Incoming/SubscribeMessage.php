@@ -21,6 +21,7 @@ final readonly class SubscribeMessage extends IncomingMessage
     /**
      * @param array<int,mixed> $payload
      */
+
     public static function fromArray(array $payload): SubscribeMessage
     {
         return new static(
@@ -28,7 +29,8 @@ final readonly class SubscribeMessage extends IncomingMessage
                 ->map(fn(array $item) => new Subscription(
                     topic: WebSocketTopic::from($item['topic']),
                     identifier: $item['identifier'],
-                )),
+                ))
+                ->all(),
         );
     }
 }

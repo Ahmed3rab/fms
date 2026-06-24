@@ -19,6 +19,12 @@ class SubscriptionManager
 
     public function subscribe(Client $client, Subscription $subscription): void
     {
+        logger()->info('SubscriptionManager', [
+            'object' => spl_object_id($this),
+        ]);
+        logger()->info('Registering subscription', [
+            'key' => $subscription->key(),
+        ]);
         if ($client->subscriptions->contains(fn(Subscription $item) => $item->equals($subscription))) {
             return;
         }
