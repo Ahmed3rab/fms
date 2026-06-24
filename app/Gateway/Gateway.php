@@ -57,5 +57,14 @@ class Gateway
         return $this->connections->get($id);
     }
 
-    public function send(Connection $connection, OutgoingMessage $message): void {}
+    public function send(Connection $connection, OutgoingMessage $message): void
+    {
+        $this->transport->send(
+            $connection,
+            json_encode(
+                $message->toArray(),
+                JSON_THROW_ON_ERROR,
+            ),
+        );
+    }
 }
