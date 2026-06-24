@@ -10,6 +10,8 @@ use App\Data\TrackingTimestamps;
 
 interface TracksVehicleState
 {
+    public function deviceUuid(): ?string;
+
     public function coordinates(): ?Coordinates;
 
     public function geoAddress(): ?GeoLocationAddress;

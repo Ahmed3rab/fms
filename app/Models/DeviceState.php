@@ -54,6 +54,11 @@ class DeviceState extends Model implements TracksVehicleState
         return $this->belongsTo(Device::class);
     }
 
+    public function deviceUuid(): ?string
+    {
+        return $this->device->uuid;
+    }
+
     public function coordinates(): ?Coordinates
     {
         if ($this->latitude === null || $this->longitude === null) {
@@ -121,4 +126,5 @@ class DeviceState extends Model implements TracksVehicleState
             lastSynced: $this->last_synced_at,
         );
     }
+
 }

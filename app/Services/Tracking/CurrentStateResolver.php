@@ -19,7 +19,7 @@ class CurrentStateResolver
     {
         $device->loadMissing('state');
 
-        $realtimeState = $this->store->get($device->system_no);
+        $realtimeState = $this->store->get($device->uuid);
 
         $this->apply($device, $realtimeState);
     }
@@ -30,13 +30,13 @@ class CurrentStateResolver
     public function resolveMany(Collection $devices): void
     {
         $states = $this->store->many(
-            $devices->pluck('system_no')->all()
+            $devices->pluck('uuid')->all()
         );
 
         $devices->each(function (Device $device) use ($states) {
             $this->apply(
                 $device,
-                $states[$device->system_no] ?? null,
+                $states[$device->uuid] ?? null,
             );
         });
     }

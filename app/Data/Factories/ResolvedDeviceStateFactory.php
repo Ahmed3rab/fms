@@ -16,6 +16,7 @@ class ResolvedDeviceStateFactory
     public function make(TracksVehicleState $state, DeviceStateSource $source): ResolvedDeviceState
     {
         return new ResolvedDeviceState(
+            deviceUuid: $state->deviceUuid(),
             source: $source->value,
             status: $this->resolveStatus($state),
             coordinates: $state->coordinates(),

@@ -5,6 +5,7 @@ namespace App\Data;
 final readonly class ResolvedDeviceState
 {
     public function __construct(
+        public ?string $deviceUuid,
         public string $source,
         public VehicleStatus $status,
         public ?Coordinates $coordinates,

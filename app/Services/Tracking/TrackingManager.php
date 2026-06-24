@@ -3,6 +3,8 @@
 namespace App\Services\Tracking;
 
 use App\Data\History;
+use App\Data\RealtimeDeviceState;
+use App\Gateway\Realtime\RealtimePublisher;
 use App\Models\Device;
 use App\Models\Vehicle;
 use App\Services\Tracking\Contracts\TrackingProvider;
@@ -11,7 +13,7 @@ use Illuminate\Support\Collection;
 
 class TrackingManager
 {
-    public function __construct(protected TrackingProvider $provider) {}
+    public function __construct(protected TrackingProvider $provider, protected RealtimePublisher $publisher) {}
 
     public function attachCurrentState(Device $device): Device
     {
@@ -44,5 +46,10 @@ class TrackingManager
     public function history(Vehicle $vehicle, Carbon $from, Carbon $to): History
     {
         return $this->provider->history($vehicle, $from, $to);
+    }
+
+    public function publish(RealtimeDeviceState $state): void
+    {
+        $this->publisher->publish($state);
     }
 }

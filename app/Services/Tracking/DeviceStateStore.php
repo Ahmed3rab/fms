@@ -11,10 +11,10 @@ class DeviceStateStore
     /**
      * @param array<string,mixed> $state
      */
-    public function put(string $systemNo, RealtimeDeviceState $state): void
+    public function put(RealtimeDeviceState $state): void
     {
         Redis::connection('default')->setex(
-            "device-state:{$systemNo}",
+            "device-state:{$state->deviceUuid()}",
             21600, // (6) Hours
             json_encode($state)
         );
@@ -23,10 +23,10 @@ class DeviceStateStore
     /**
      * @return array<string,mixed>|null
      */
-    public function get(string $systemNo): ?RealtimeDeviceState
+    public function get(string $deviceUuid): ?RealtimeDeviceState
     {
         $value = Redis::connection('default')->get(
-            "device-state:{$systemNo}"
+            "device-state:{$deviceUuid}"
         );
         if (! $value) {
             return null;
@@ -38,29 +38,29 @@ class DeviceStateStore
     }
 
     /**
-     * @param array<int,string> $systemNos
+     * @param array<int,string> $deviceUuids
      * @return array<string, RealtimeDeviceState>
      */
-    public function many(array $systemNos): array
+    public function many(array $deviceUuids): array
     {
-        if ($systemNos === []) {
+        if ($deviceUuids === []) {
             return [];
         }
 
         $keys = array_map(
-            fn(string $systemNo) => "device-state:{$systemNo}",
-            $systemNos,
+            fn(string $deviceUuid) => "device-state:{$deviceUuid}",
+            $deviceUuids,
         );
 
         $values = Redis::connection('default')->mget($keys);
 
         $states = [];
 
-        foreach ($systemNos as $index => $systemNo) {
+        foreach ($deviceUuids as $index => $deviceUuid) {
             if (! $values[$index]) {
                 continue;
             }
-            $states[$systemNo] = RealtimeDeviceState::fromArray(
+            $states[$deviceUuid] = RealtimeDeviceState::fromArray(
                 json_decode($values[$index], true)
             );
         }
@@ -68,15 +68,15 @@ class DeviceStateStore
         return $states;
     }
 
-    public function forget(string $systemNo): void
+    public function forget(string $deviceUuid): void
     {
         Redis::connection('default')->del(
-            "device-state:{$systemNo}"
+            "device-state:{$deviceUuid}"
         );
     }
 
     public function getByDevice(Device $device): ?RealtimeDeviceState
     {
-        return $this->get($device->system_no);
+        return $this->get($device->uuid);
     }
 }

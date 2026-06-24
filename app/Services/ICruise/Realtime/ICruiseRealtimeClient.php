@@ -123,7 +123,6 @@ class ICruiseRealtimeClient
         $payload['received_at'] = now();
 
         app(DeviceStateStore::class)->put(
-            $payload['SystemNo'],
             $this->mapper->map($payload),
         );
     }

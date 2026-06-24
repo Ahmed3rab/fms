@@ -4,12 +4,12 @@ namespace App\Data;
 
 use App\Services\Tracking\Contracts\TracksVehicleState;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Carbon;
 use JsonSerializable;
 
 final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable, TracksVehicleState
 {
     public function __construct(
+        public ?string $deviceUuid,
         public ?Coordinates $coordinates,
         public ?GeoLocationAddress $geoAddress,
         public ?Speed $speed,
@@ -36,6 +36,7 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
         }
 
         return new self(
+            deviceUuid: $state['device_uuid'] ?? null,
             coordinates: isset($state['coordinates']) ? Coordinates::fromArray($state['coordinates']) : null,
             geoAddress: $address,
             speed: isset($state['speed']) ? Speed::fromArray($state['speed']) : null,
@@ -55,6 +56,7 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
     public function toArray(): array
     {
         return [
+            'device_uuid' => $this->deviceUuid,
             'coordinates'   => $this->coordinates,
             'geo_address' => $this->geoAddress,
             'speed' => $this->speed,
@@ -74,6 +76,11 @@ final readonly class RealtimeDeviceState implements Arrayable, JsonSerializable,
     public function jsonSerialize(): array
     {
         return $this->toArray();
+    }
+
+    public function deviceUuid(): ?string
+    {
+        return $this->deviceUuid;
     }
 
     public function coordinates(): ?Coordinates

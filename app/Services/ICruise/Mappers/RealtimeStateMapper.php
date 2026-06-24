@@ -7,16 +7,20 @@ use App\Data\Distance;
 use App\Data\RealtimeDeviceState;
 use App\Data\Speed;
 use App\Data\TrackingTimestamps;
+use App\Services\Tracking\DeviceResolver;
 use Illuminate\Support\Carbon;
 
 class RealtimeStateMapper
 {
+    public function __construct(protected DeviceResolver $devices) {}
+
     /**
      * @param array<string,mixed> $payload
      */
     public function map(array $payload): RealtimeDeviceState
     {
         return new RealtimeDeviceState(
+            deviceUuid: $this->devices->uuidFromSystemNo($payload['SystemNo']),
             coordinates: isset($payload['Latitude'], $payload['Longitude'])
                 ? Coordinates::fromProvider(
                     (float) $payload['Latitude'],
