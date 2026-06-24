@@ -4,6 +4,7 @@ namespace App\Services\Tracking;
 
 use App\Data\History;
 use App\Data\RealtimeDeviceState;
+use App\Gateway\PubSub\GatewayPublisher;
 use App\Gateway\Realtime\RealtimePublisher;
 use App\Models\Device;
 use App\Models\Vehicle;
@@ -13,7 +14,7 @@ use Illuminate\Support\Collection;
 
 class TrackingManager
 {
-    public function __construct(protected TrackingProvider $provider, protected RealtimePublisher $publisher) {}
+    public function __construct(protected TrackingProvider $provider, protected GatewayPublisher $publisher) {}
 
     public function attachCurrentState(Device $device): Device
     {
@@ -50,6 +51,12 @@ class TrackingManager
 
     public function publish(RealtimeDeviceState $state): void
     {
-        $this->publisher->publish($state);
+        $this->publisher->publish(
+            'tracking:realtime',
+            [
+                'type' => 'telemetry',
+                'state' => $state,
+            ],
+        );
     }
 }
