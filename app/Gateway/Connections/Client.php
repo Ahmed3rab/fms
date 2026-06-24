@@ -2,33 +2,34 @@
 
 namespace App\Gateway\Connections;
 
-use App\Models\PersonalAccessToken;
 use App\Models\Company;
+use App\Models\PersonalAccessToken;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use App\Gateway\Subscriptions\Subscription;
 
 class Client
 {
     /**
-     * @param Collection<int,string> $subscriptions
-     * @param array<int,mixed> $permissions
+     * @param list<string> $permissions
+     * @param Collection<int, Subscription> $subscriptions
      */
     public function __construct(
+        protected Connection $connection,
         public ?PersonalAccessToken $token = null,
         public ?Company $company = null,
         public ?Carbon $connectedAt = null,
         public ?Carbon $lastHeartbeat = null,
-        /**
-         * @var list<string>
-         */
         public array $permissions = [],
-        /**
-         * @var Collection<int,Subscription>
-         */
         public ?Collection $subscriptions = null,
     ) {
         $this->connectedAt ??= now();
         $this->lastHeartbeat ??= now();
         $this->subscriptions ??= collect();
+    }
+
+    public function connection(): Connection
+    {
+        return $this->connection;
     }
 }

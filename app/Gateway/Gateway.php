@@ -7,6 +7,7 @@ use App\Gateway\Connections\ConnectionRepository;
 use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
 use App\Gateway\Protocol\Messages\MessageFactory;
 use App\Gateway\Routing\MessageRouter;
+use App\Gateway\Subscriptions\SubscriptionManager;
 use App\Gateway\Transport\Contracts\GatewayTransport;
 use OpenSwoole\Http\Request;
 
@@ -15,6 +16,7 @@ class Gateway
     public function __construct(
         protected GatewayTransport $transport,
         protected ConnectionRepository $connections,
+        protected SubscriptionManager $subscriptions,
         protected MessageFactory $messages,
         protected MessageRouter $router,
     ) {}
