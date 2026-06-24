@@ -6,9 +6,9 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
-#[Signature('websocket:start')]
-#[Description('Start the tracking websocket server')]
-class StartTrackingWebSocketServer extends Command
+#[Signature('gateway:start')]
+#[Description('Start the tracking gateway server')]
+class StartGatewayServer extends Command
 {
     public function __construct()
     {
@@ -17,7 +17,7 @@ class StartTrackingWebSocketServer extends Command
 
     public function handle(): int
     {
-        $this->info('Starting Tracking WebSocket Server...');
+        $this->info('Starting Tracking gateway Server...');
 
         $this->server->start();
 

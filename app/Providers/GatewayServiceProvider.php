@@ -2,20 +2,20 @@
 
 namespace App\Providers;
 
-use App\Services\WebSocket\Connections\ClientRepository;
-use App\Services\WebSocket\Handlers\PingHandler;
-use App\Services\WebSocket\Messages\Incoming\PingMessage;
-use App\Services\WebSocket\Handlers\UnsubscribeHandler;
-use App\Services\WebSocket\Handlers\SubscribeHandler;
-use App\Services\WebSocket\Messages\Incoming\SubscribeMessage;
-use App\Services\WebSocket\Handlers\AuthenticateHandler;
-use App\Services\WebSocket\Messages\Incoming\UnsubscribeMessage;
-use App\Services\WebSocket\Messages\Incoming\AuthenticateMessage;
-use App\Services\WebSocket\Routing\MessageRouter;
-use App\Services\WebSocket\Subscriptions\SubscriptionManager;
+use App\Gateway\Connections\ClientRepository;
+use App\Gateway\Handlers\PingHandler;
+use App\Gateway\Messages\Incoming\PingMessage;
+use App\Gateway\Handlers\UnsubscribeHandler;
+use App\Gateway\Handlers\SubscribeHandler;
+use App\Gateway\Messages\Incoming\SubscribeMessage;
+use App\Gateway\Handlers\AuthenticateHandler;
+use App\Gateway\Messages\Incoming\UnsubscribeMessage;
+use App\Gateway\Messages\Incoming\AuthenticateMessage;
+use App\Gateway\Routing\MessageRouter;
+use App\Gateway\Subscriptions\SubscriptionManager;
 use Illuminate\Support\ServiceProvider;
 
-class WebSocketServiceProvider extends ServiceProvider
+class GatewayServiceProvider extends ServiceProvider
 {
     /**
      * Register services.

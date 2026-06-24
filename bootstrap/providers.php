@@ -6,5 +6,5 @@ return [
     App\Providers\Filament\PortalPanelProvider::class,
     App\Providers\GeocodingServiceProvider::class,
     App\Providers\TrackingServiceProvider::class,
-    App\Providers\WebSocketServiceProvider::class,
+    App\Providers\GatewayServiceProvider::class,
 ];
