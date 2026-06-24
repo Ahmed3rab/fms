@@ -39,8 +39,6 @@ class OpenSwooleTransport implements GatewayTransport
 
     public function stop(): void {}
 
-    public function send(Connection $connection, string $payload): void {}
-
     public function disconnect(Connection $connection): void {}
 
     protected function configureServer(): void
@@ -95,5 +93,17 @@ class OpenSwooleTransport implements GatewayTransport
         }
 
         $gateway->disconnect($connection);
+    }
+
+    public function send(Connection $connection, string $payload): void
+    {
+        if (! $this->server->isEstablished($connection->id())) {
+            return;
+        }
+
+        $this->server->push(
+            $connection->id(),
+            $payload,
+        );
     }
 }

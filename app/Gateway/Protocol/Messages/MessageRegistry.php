@@ -15,7 +15,7 @@ class MessageRegistry
     /**
      * @param class-string<IncomingMessage> $message
      */
-    public function register(string $type, string $message): void
+    public function register(string $message): void
     {
         if (! is_subclass_of($message, IncomingMessage::class)) {
             throw new InvalidArgumentException(

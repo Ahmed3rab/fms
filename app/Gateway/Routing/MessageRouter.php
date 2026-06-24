@@ -3,6 +3,7 @@
 namespace App\Gateway\Routing;
 
 use App\Gateway\Connections\Connection;
+use App\Gateway\Gateway;
 use App\Gateway\Protocol\Handlers\Contracts\MessageHandler;
 use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
 use RuntimeException;
@@ -14,7 +15,7 @@ class MessageRouter
      */
     public function __construct(protected array $handlers) {}
 
-    public function dispatch(Connection $connection, IncomingMessage $message): void
+    public function dispatch(Gateway $gateway, Connection $connection, IncomingMessage $message): void
     {
         $handler = $this->handlers[$message::class] ?? null;
         if ($handler === null) {
@@ -25,6 +26,6 @@ class MessageRouter
         if ($handler === null) {
             return;
         }
-        $handler->handle($connection, $message);
+        $handler->handle($gateway, $connection, $message);
     }
 }

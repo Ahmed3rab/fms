@@ -38,6 +38,7 @@ class Gateway
         $message = $this->messages->make($message);
 
         $this->router->dispatch(
+            $this,
             $connection,
             $message,
         );
