@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Gateway\Gateway;
+use App\Gateway\Transport\Contracts\GatewayTransport;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -15,11 +17,12 @@ class StartGatewayServer extends Command
         parent::__construct();
     }
 
-    public function handle(): int
+    /**
+     * @return void
+     */
+    public function handle(GatewayTransport $transport, Gateway $gateway): int
     {
-        $this->info('Starting Tracking gateway Server...');
-
-        $this->server->start();
+        $transport->start($gateway);
 
         return self::SUCCESS;
     }
