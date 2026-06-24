@@ -74,10 +74,17 @@ class OpenSwooleTransport implements GatewayTransport
         $gateway->connect($connection);
     }
 
-    protected function handleMessage(
-        Gateway $gateway,
-        Frame $frame,
-    ): void {}
+    protected function handleMessage(Gateway $gateway, Frame $frame): void
+    {
+        $connection = $gateway->connection($frame->fd);
+        if ($connection === null) {
+            return;
+        }
+        $gateway->receive(
+            $connection,
+            $frame->data,
+        );
+    }
 
     protected function handleClose(Gateway $gateway, int $fd): void
     {

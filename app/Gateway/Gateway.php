@@ -25,7 +25,13 @@ class Gateway
         ]);
     }
 
-    public function receive(Connection $connection, string $message): void {}
+    public function receive(Connection $connection, string $message): void
+    {
+        logger()->info('Gateway received message', [
+            'connection' => $connection->id(),
+            'message' => $message,
+        ]);
+    }
 
     public function disconnect(Connection $connection): void
     {
