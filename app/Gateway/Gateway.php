@@ -86,4 +86,11 @@ class Gateway
             ),
         );
     }
+
+    public function disconnectConnection(Connection $connection): void
+    {
+        $this->transport->disconnect($connection);
+
+        $this->connections->forget($connection->id());
+    }
 }
