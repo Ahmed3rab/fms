@@ -3,9 +3,15 @@
 namespace App\Gateway\Connections;
 
 use OpenSwoole\Http\Request;
-use OpenSwoole\WebSocket\Server;
 
 class ConnectionFactory
 {
-    public function create(Server $server, Request $request): Connection {}
+    public function create(Request $request): Connection
+    {
+        return new Connection(
+            id: $request->fd,
+            ip: $request->server['remote_addr'] ?? 'unknown',
+            headers: $request->header ?? [],
+        );
+    }
 }

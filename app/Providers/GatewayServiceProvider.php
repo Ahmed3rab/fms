@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Gateway\Connections\ClientRepository;
+use App\Gateway\Connections\ConnectionRepository;
 use App\Gateway\Protocol\Handlers\AuthenticateHandler;
 use App\Gateway\Protocol\Handlers\PingHandler;
 use App\Gateway\Protocol\Handlers\UnsubscribeHandler;
@@ -13,6 +13,8 @@ use App\Gateway\Protocol\Messages\Incoming\AuthenticateMessage;
 use App\Gateway\Protocol\Messages\Incoming\SubscribeMessage;
 use App\Gateway\Routing\MessageRouter;
 use App\Gateway\Subscriptions\SubscriptionManager;
+use App\Gateway\Transport\Contracts\GatewayTransport;
+use App\Gateway\Transport\OpenSwooleTransport;
 use Illuminate\Support\ServiceProvider;
 
 class GatewayServiceProvider extends ServiceProvider
@@ -22,7 +24,11 @@ class GatewayServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(ClientRepository::class);
+        $this->app->singleton(
+            GatewayTransport::class,
+            OpenSwooleTransport::class,
+        );
+        $this->app->singleton(ConnectionRepository::class);
 
         $this->app->singleton(SubscriptionManager::class);
 

@@ -70,10 +70,8 @@ class OpenSwooleTransport implements GatewayTransport
 
     protected function handleOpen(Gateway $gateway, Request $request): void
     {
-        $connection = $this->connections->create(
-            $this->server,
-            $request,
-        );
+        $connection = $this->connections->create($request);
+        $gateway->connect($connection);
     }
 
     protected function handleMessage(
@@ -81,8 +79,14 @@ class OpenSwooleTransport implements GatewayTransport
         Frame $frame,
     ): void {}
 
-    protected function handleClose(
-        Gateway $gateway,
-        int $fd,
-    ): void {}
+    protected function handleClose(Gateway $gateway, int $fd): void
+    {
+        $connection = $gateway->connection($fd);
+
+        if ($connection === null) {
+            return;
+        }
+
+        $gateway->disconnect($connection);
+    }
 }

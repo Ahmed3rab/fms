@@ -2,36 +2,37 @@
 
 namespace App\Gateway\Connections;
 
-class ClientRepository
+class ConnectionRepository
 {
     /**
-     * @var array<string, Connection>
+     * @var array<int, Connection>
      */
     protected array $connections = [];
 
-    public function put(string $connectionId, Connection $connection): void
+    public function put(Connection $connection): void
     {
-        $this->connections[$connectionId] = $connection;
+        $this->connections[$connection->id()] = $connection;
     }
 
-    public function get(string $connectionId): ?Connection
+    public function get(int $connectionId): ?Connection
     {
         return $this->connections[$connectionId] ?? null;
     }
 
-    public function forget(string $connectionId): void
+    public function forget(int $connectionId): void
     {
         unset($this->connections[$connectionId]);
     }
 
     /**
-     * @return array<string,Connection>*/
+     * @return \Traversable<int, Connection>
+     */
     public function all(): iterable
     {
         yield from $this->connections;
     }
 
-    public function has(string $connectionId): bool
+    public function has(int $connectionId): bool
     {
         return isset($this->connections[$connectionId]);
     }
