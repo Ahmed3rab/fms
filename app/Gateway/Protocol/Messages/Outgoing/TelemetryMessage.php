@@ -5,7 +5,7 @@ namespace App\Gateway\Protocol\Messages\Outgoing;
 use App\Data\ResolvedDeviceState;
 use App\Enums\WebSocketMessageType;
 use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
-use App\Gateway\Protocol\Subscriptions\Subscription;
+use App\Gateway\Subscriptions\Subscription;
 
 final readonly class TelemetryMessage extends OutgoingMessage
 {

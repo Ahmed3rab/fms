@@ -5,7 +5,7 @@ namespace App\Gateway\Protocol\Messages\Incoming;
 use App\Enums\WebSocketMessageType;
 use App\Enums\WebSocketTopic;
 use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
-use App\Gateway\Protocol\Subscriptions\Subscription;
+use App\Gateway\Subscriptions\Subscription;
 
 final readonly class SubscribeMessage extends IncomingMessage
 {

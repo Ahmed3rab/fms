@@ -5,7 +5,7 @@ namespace App\Gateway\Protocol\Handlers;
 use App\Gateway\Connections\Connection;
 use App\Gateway\Protocol\Handlers\Contracts\MessageHandler;
 use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
-use App\Gateway\Protocol\Subscriptions\SubscriptionManager;
+use App\Gateway\Subscriptions\SubscriptionManager;
 
 class SubscribeHandler implements MessageHandler
 {
