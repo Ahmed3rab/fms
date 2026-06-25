@@ -8,6 +8,7 @@ use App\Models\DeviceState;
 use App\Models\Vehicle;
 use App\Services\Geocoding\Contracts\Geocoder;
 use App\Services\ICruise\ICruiseClient;
+use App\Services\Tracking\Identifiers\Contract\TrackingDeviceRegistry;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -20,7 +21,7 @@ class SyncDevices extends Command
     /**
      * Execute the console command.
      */
-    public function handle(ICruiseClient $client, Geocoder $geocoder): int
+    public function handle(ICruiseClient $client, Geocoder $geocoder, TrackingDeviceRegistry $trackingDeviceRegistry): int
     {
         $data = $client->trackers();
         $devices = $data['Tracker'];
@@ -55,6 +56,10 @@ class SyncDevices extends Command
                 ]
             );
         }
+
+        $trackingDeviceRegistry->synchronize(
+            Device::query()->select('uuid', 'system_no')->get(),
+        );
 
         $devicesBySystemNo = Device::pluck('id', 'system_no');
         foreach ($positions as $position) {

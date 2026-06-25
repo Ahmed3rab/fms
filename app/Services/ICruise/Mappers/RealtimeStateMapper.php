@@ -8,12 +8,12 @@ use App\Data\RealtimeDeviceState;
 use App\Data\Speed;
 use App\Data\TrackingTimestamps;
 use App\Services\Geocoding\Contracts\Geocoder;
-use App\Services\Tracking\Identifiers\Contract\TrackingDeviceResolver;
+use App\Services\Tracking\Identifiers\Contract\TrackingDeviceRegistry;
 use Illuminate\Support\Carbon;
 
 class RealtimeStateMapper
 {
-    public function __construct(protected TrackingDeviceResolver $trackingDeviceResolver, protected Geocoder $geoCoder) {}
+    public function __construct(protected TrackingDeviceRegistry $trackingDeviceRegistry, protected Geocoder $geoCoder) {}
 
     /**
      * @param array<string,mixed> $payload
@@ -28,7 +28,7 @@ class RealtimeStateMapper
 
         $geoAddress = $this->geoCoder->reverse($coordinates);
         return new RealtimeDeviceState(
-            deviceUuid: $this->trackingDeviceResolver->uuidFromIdentifier($payload['SystemNo']),
+            deviceUuid: $this->trackingDeviceRegistry->uuidFromIdentifier($payload['SystemNo']),
             coordinates: $coordinates,
             geoAddress: $geoAddress ?? null,
             speed: isset($payload['Velocity']) ? Speed::fromProvider((float) $payload['Velocity']) : null,
