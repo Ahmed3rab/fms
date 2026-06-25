@@ -13,7 +13,7 @@ use Illuminate\Support\Carbon;
 
 class RealtimeStateMapper
 {
-    public function __construct(protected TrackingDeviceResolver $TrackingDeviceResolver, protected Geocoder $geoCoder) {}
+    public function __construct(protected TrackingDeviceResolver $trackingDeviceResolver, protected Geocoder $geoCoder) {}
 
     /**
      * @param array<string,mixed> $payload
@@ -28,7 +28,7 @@ class RealtimeStateMapper
 
         $geoAddress = $this->geoCoder->reverse($coordinates);
         return new RealtimeDeviceState(
-            deviceUuid: $this->TrackingDeviceResolver->resolve($payload['SystemNo'])->uuid,
+            deviceUuid: $this->trackingDeviceResolver->uuidFromProvider($payload['SystemNo']),
             coordinates: $coordinates,
             geoAddress: $geoAddress ?? null,
             speed: isset($payload['Velocity']) ? Speed::fromProvider((float) $payload['Velocity']) : null,

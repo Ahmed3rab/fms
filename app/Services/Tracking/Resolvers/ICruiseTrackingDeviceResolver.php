@@ -7,11 +7,11 @@ use App\Services\Tracking\Resolvers\Contract\TrackingDeviceResolver;
 
 class ICruiseTrackingDeviceResolver implements TrackingDeviceResolver
 {
-    public function resolve(?string $identifier): ?Device
+    public function uuidFromProvider(?string $identifier): string
     {
         return Device::query()->where(
             'system_no',
             $identifier,
-        )->firstOrFail();
+        )->valueOrFail('uuid');
     }
 }
