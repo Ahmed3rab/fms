@@ -28,7 +28,7 @@ class RealtimeStateMapper
 
         $geoAddress = $this->geoCoder->reverse($coordinates);
         return new RealtimeDeviceState(
-            deviceUuid: $this->trackingDeviceResolver->uuidFromProvider($payload['SystemNo']),
+            deviceUuid: $this->trackingDeviceResolver->uuidFromIdentifier($payload['SystemNo']),
             coordinates: $coordinates,
             geoAddress: $geoAddress ?? null,
             speed: isset($payload['Velocity']) ? Speed::fromProvider((float) $payload['Velocity']) : null,

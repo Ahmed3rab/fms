@@ -7,7 +7,7 @@ use App\Services\Tracking\Resolvers\Contract\TrackingDeviceResolver;
 
 class ICruiseTrackingDeviceResolver implements TrackingDeviceResolver
 {
-    public function uuidFromProvider(?string $identifier): string
+    public function uuidFromIdentifier(?string $identifier): string
     {
         return Device::query()->where(
             'system_no',
