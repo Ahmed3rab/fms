@@ -4,8 +4,8 @@ namespace App\Services\Tracking;
 
 use App\Data\History;
 use App\Data\RealtimeDeviceState;
+use App\Gateway\Events\TelemetryEvent;
 use App\Gateway\PubSub\GatewayPublisher;
-use App\Gateway\Realtime\RealtimePublisher;
 use App\Models\Device;
 use App\Models\Vehicle;
 use App\Services\Tracking\Contracts\TrackingProvider;
@@ -52,11 +52,7 @@ class TrackingManager
     public function publish(RealtimeDeviceState $state): void
     {
         $this->publisher->publish(
-            'tracking:realtime',
-            [
-                'type' => 'telemetry',
-                'state' => $state,
-            ],
+            new TelemetryEvent($state),
         );
     }
 }

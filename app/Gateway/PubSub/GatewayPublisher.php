@@ -2,18 +2,19 @@
 
 namespace App\Gateway\PubSub;
 
+use App\Gateway\Events\Contracts\GatewayEvent;
 use Illuminate\Support\Facades\Redis;
 
 class GatewayPublisher
 {
-    /**
-     * @param array<int,mixed> $payload
-     */
-    public function publish(string $channel, array $payload): void
+    public function publish(GatewayEvent $event): void
     {
-        Redis::publish(
-            $channel,
-            json_encode($payload, JSON_THROW_ON_ERROR),
+        logger()->info('Publishing GatewayEvent');
+        $count = Redis::publish(
+            'tracking:realtime',
+            $event->toJson(),
         );
+
+        dump($count);
     }
 }
