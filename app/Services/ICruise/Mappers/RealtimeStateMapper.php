@@ -7,27 +7,30 @@ use App\Data\Distance;
 use App\Data\RealtimeDeviceState;
 use App\Data\Speed;
 use App\Data\TrackingTimestamps;
-use App\Services\Tracking\DeviceResolver;
+use App\Services\Geocoding\Contracts\Geocoder;
+use App\Services\Tracking\Resolvers\Contract\TrackingDeviceResolver;
 use Illuminate\Support\Carbon;
 
 class RealtimeStateMapper
 {
-    public function __construct(protected DeviceResolver $devices) {}
+    public function __construct(protected TrackingDeviceResolver $TrackingDeviceResolver, protected Geocoder $geoCoder) {}
 
     /**
      * @param array<string,mixed> $payload
      */
     public function map(array $payload): RealtimeDeviceState
     {
-        return new RealtimeDeviceState(
-            deviceUuid: $this->devices->uuidFromSystemNo($payload['SystemNo']),
-            coordinates: isset($payload['Latitude'], $payload['Longitude'])
+        $coordinates = isset($payload['Latitude'], $payload['Longitude'])
                 ? Coordinates::fromProvider(
                     (float) $payload['Latitude'],
                     (float) $payload['Longitude'],
-                )
-                : null,
-            geoAddress: $payload['geo_address'] ?? null,
+                ) : null;
+
+        $geoAddress = $this->geoCoder->reverse($coordinates);
+        return new RealtimeDeviceState(
+            deviceUuid: $this->TrackingDeviceResolver->resolve($payload['SystemNo'])->uuid,
+            coordinates: $coordinates,
+            geoAddress: $geoAddress ?? null,
             speed: isset($payload['Velocity']) ? Speed::fromProvider((float) $payload['Velocity']) : null,
             gpsStatus: $payload['GpsStatus'] ?? null,
             angle: $payload['Angle'] ?? null,
@@ -39,7 +42,7 @@ class RealtimeStateMapper
             temperature: isset($payload['Temperature']) ? (string) $payload['Temperature'] : null,
             timestamps: new TrackingTimestamps(
                 gps: isset($payload['DateTime']) ? Carbon::parse($payload['DateTime']) : null,
-                received: isset($payload['received_at']) ? Carbon::parse($payload['received_at']) : now(),
+                received: now(),
                 lastSynced: null,
             ),
             payload: $payload,

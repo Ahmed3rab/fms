@@ -2,17 +2,16 @@
 
 namespace App\Services\ICruise\Realtime;
 
-use App\Data\Coordinates;
-use App\Services\Geocoding\Contracts\Geocoder;
+use App\Data\RealtimeDeviceState;
 use App\Services\ICruise\Mappers\RealtimeStateMapper;
-use App\Services\Tracking\DeviceStateStore;
+use App\Services\Tracking\TrackingManager;
 use Illuminate\Support\Facades\Cache;
 use Ratchet\Client\Connector;
 use React\EventLoop\Loop;
 
 class ICruiseRealtimeClient
 {
-    public function __construct(protected RealtimeStateMapper $mapper) {}
+    public function __construct(protected RealtimeStateMapper $mapper, protected TrackingManager $trackingManager) {}
 
     public function connect(): void
     {
@@ -115,15 +114,14 @@ class ICruiseRealtimeClient
      */
     protected function handlePosition(array $payload): void
     {
-        $geoAddress = app(Geocoder::class)->reverse(new Coordinates(
-            $payload['Latitude'],
-            $payload['Longitude'],
-        ));
-        $payload['geo_address'] = $geoAddress;
-        $payload['received_at'] = now();
+        $this->dispatchRealtimeState($this->mapper->map($payload));
+    }
 
-        app(DeviceStateStore::class)->put(
-            $this->mapper->map($payload),
-        );
+    /**
+     * @return void
+     */
+    protected function dispatchRealtimeState(RealtimeDeviceState $state): void
+    {
+        $this->trackingManager->ingestRealTimeState($state);
     }
 }

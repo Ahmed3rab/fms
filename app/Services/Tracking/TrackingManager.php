@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
 
 class TrackingManager
 {
-    public function __construct(protected TrackingProvider $provider, protected GatewayPublisher $publisher) {}
+    public function __construct(protected TrackingProvider $provider, protected GatewayPublisher $publisher, protected DeviceStateStore $store) {}
 
     public function attachCurrentState(Device $device): Device
     {
@@ -49,8 +49,16 @@ class TrackingManager
         return $this->provider->history($vehicle, $from, $to);
     }
 
-    public function publish(RealtimeDeviceState $state): void
+    public function ingestRealTimeState(RealtimeDeviceState $state): void
     {
+        if ($state->deviceUuid === null) {
+            return;
+        }
+
+        $this->store->put(
+            $state,
+        );
+
         $this->publisher->publish(
             new TelemetryEvent($state),
         );

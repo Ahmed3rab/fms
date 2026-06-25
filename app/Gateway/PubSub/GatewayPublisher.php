@@ -10,11 +10,9 @@ class GatewayPublisher
     public function publish(GatewayEvent $event): void
     {
         logger()->info('Publishing GatewayEvent');
-        $count = Redis::publish(
+        Redis::publish(
             'tracking:realtime',
             $event->toJson(),
         );
-
-        dump($count);
     }
 }

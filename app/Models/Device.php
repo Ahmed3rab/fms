@@ -82,4 +82,6 @@ class Device extends Model
             fn(Builder $query) => $query->visibleTo($user)
         );
     }
+
+    public static function where(string $string, $identifier) {}
 }
