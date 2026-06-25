@@ -8,7 +8,7 @@ use App\Data\RealtimeDeviceState;
 use App\Data\Speed;
 use App\Data\TrackingTimestamps;
 use App\Services\Geocoding\Contracts\Geocoder;
-use App\Services\Tracking\Resolvers\Contract\TrackingDeviceResolver;
+use App\Services\Tracking\Identifiers\Contract\TrackingDeviceResolver;
 use Illuminate\Support\Carbon;
 
 class RealtimeStateMapper

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services\Tracking\Resolvers;
+namespace App\Services\Tracking\Identifiers;
 
 use App\Models\Device;
-use App\Services\Tracking\Resolvers\Contract\TrackingDeviceResolver;
+use App\Services\Tracking\Identifiers\Contract\TrackingDeviceResolver;
 
 class ICruiseTrackingDeviceResolver implements TrackingDeviceResolver
 {
@@ -14,4 +14,6 @@ class ICruiseTrackingDeviceResolver implements TrackingDeviceResolver
             $identifier,
         )->valueOrFail('uuid');
     }
+
+    public function synchronize(iterable $devices): void {}
 }

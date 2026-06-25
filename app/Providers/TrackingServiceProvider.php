@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Services\Tracking\Contracts\TrackingProvider;
-use App\Services\Tracking\Resolvers\Contract\TrackingDeviceResolver;
-use App\Services\Tracking\Resolvers\ICruiseTrackingDeviceResolver;
+use App\Services\Tracking\Identifiers\Contract\TrackingDeviceResolver;
+use App\Services\Tracking\Identifiers\ICruiseTrackingDeviceResolver;
 use Illuminate\Support\ServiceProvider;
 
 class TrackingServiceProvider extends ServiceProvider
