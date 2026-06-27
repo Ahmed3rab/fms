@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Tracking\StateResolver;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -35,10 +36,13 @@ class Device extends Model
                 if ($this->resolvedState !== null) {
                     return $this->resolvedState;
                 }
-                if ($this->state) {
-                    $this->state->source = 'database';
+
+                if (! $this->relationLoaded('state') || $this->state === null) {
+                    return null;
                 }
-                return $this->state;
+
+                return app(StateResolver::class)
+                    ->database($this->state);
             }
         );
     }
@@ -82,6 +86,4 @@ class Device extends Model
             fn(Builder $query) => $query->visibleTo($user)
         );
     }
-
-    public static function where(string $string, $identifier) {}
 }

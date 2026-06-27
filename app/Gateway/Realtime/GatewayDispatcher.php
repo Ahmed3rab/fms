@@ -2,7 +2,7 @@
 
 namespace App\Gateway\Realtime;
 
-use App\Data\RealtimeDeviceState;
+use App\Data\ResolvedDeviceState;
 use App\Gateway\Gateway;
 use App\Gateway\Protocol\Messages\Outgoing\TelemetryMessage;
 use App\Gateway\Subscriptions\Subscription;
@@ -20,9 +20,9 @@ class GatewayDispatcher
         protected TrackingVehicleRegistry $trackingVehicleRegistry
     ) {}
 
-    public function dispatch(RealtimeDeviceState $state): void
+    public function dispatch(ResolvedDeviceState $state): void
     {
-        if ($state->deviceUuid === null) {
+        if ($state->deviceUuid() === null) {
             return;
         }
 

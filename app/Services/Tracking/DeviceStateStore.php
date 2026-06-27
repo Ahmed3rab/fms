@@ -2,7 +2,7 @@
 
 namespace App\Services\Tracking;
 
-use App\Data\RealtimeDeviceState;
+use App\Data\ResolvedDeviceState;
 use App\Models\Device;
 use Illuminate\Support\Facades\Redis;
 
@@ -11,7 +11,7 @@ class DeviceStateStore
     /**
      * @param array<string,mixed> $state
      */
-    public function put(RealtimeDeviceState $state): void
+    public function put(ResolvedDeviceState $state): void
     {
         Redis::connection('default')->setex(
             "device-state:{$state->deviceUuid()}",
@@ -23,7 +23,7 @@ class DeviceStateStore
     /**
      * @return array<string,mixed>|null
      */
-    public function get(string $deviceUuid): ?RealtimeDeviceState
+    public function get(string $deviceUuid): ?ResolvedDeviceState
     {
         $value = Redis::connection('default')->get(
             "device-state:{$deviceUuid}"
@@ -32,14 +32,14 @@ class DeviceStateStore
             return null;
         }
 
-        return RealtimeDeviceState::fromArray(
+        return ResolvedDeviceState::fromArray(
             json_decode($value, true)
         );
     }
 
     /**
      * @param array<int,string> $deviceUuids
-     * @return array<string, RealtimeDeviceState>
+     * @return array<string, ResolvedDeviceState>
      */
     public function many(array $deviceUuids): array
     {
@@ -60,7 +60,7 @@ class DeviceStateStore
             if (! $values[$index]) {
                 continue;
             }
-            $states[$deviceUuid] = RealtimeDeviceState::fromArray(
+            $states[$deviceUuid] = ResolvedDeviceState::fromArray(
                 json_decode($values[$index], true)
             );
         }
@@ -75,7 +75,7 @@ class DeviceStateStore
         );
     }
 
-    public function getByDevice(Device $device): ?RealtimeDeviceState
+    public function getByDevice(Device $device): ?ResolvedDeviceState
     {
         return $this->get($device->uuid);
     }

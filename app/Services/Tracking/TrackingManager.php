@@ -13,7 +13,12 @@ use Illuminate\Support\Collection;
 
 class TrackingManager
 {
-    public function __construct(protected TrackingProvider $provider, protected GatewayDispatcher $dispatcher, protected DeviceStateStore $store) {}
+    public function __construct(
+        protected TrackingProvider $provider,
+        protected GatewayDispatcher $dispatcher,
+        protected DeviceStateStore $store,
+        protected StateResolver $resolver
+    ) {}
 
     public function attachCurrentState(Device $device): Device
     {
@@ -53,7 +58,8 @@ class TrackingManager
         if ($state->deviceUuid === null) {
             return;
         }
-        $this->store->put($state);
-        $this->dispatcher->dispatch($state);
+        $resolved = $this->resolver->realtime($state);
+        $this->store->put($resolved);
+        $this->dispatcher->dispatch($resolved);
     }
 }

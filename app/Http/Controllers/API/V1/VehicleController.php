@@ -13,6 +13,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class VehicleController extends Controller
 {
     public function __construct(private TrackingManager $tracking) {}
+
     public function index(Request $request): AnonymousResourceCollection
     {
         $query = (new VehicleFilter(

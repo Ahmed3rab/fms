@@ -2,9 +2,7 @@
 
 namespace App\Services\Tracking;
 
-use App\Data\Factories\ResolvedDeviceStateFactory;
-use App\Data\RealtimeDeviceState;
-use App\Enums\DeviceStateSource;
+use App\Data\ResolvedDeviceState;
 use App\Models\Device;
 use Illuminate\Support\Collection;
 
@@ -41,20 +39,8 @@ class CurrentStateResolver
         });
     }
 
-    private function apply(Device $device, ?RealtimeDeviceState $realtimeState): void
+    private function apply(Device $device, ?ResolvedDeviceState $resolvedDeviceState): void
     {
-        if ($realtimeState) {
-            $device->setResolvedState(
-                $this->resolver->realtime($realtimeState)
-            );
-
-            return;
-        }
-
-        if ($device->state) {
-            $device->setResolvedState(
-                $this->resolver->database($device->state)
-            );
-        }
+        $device->setResolvedState($resolvedDeviceState);
     }
 }
