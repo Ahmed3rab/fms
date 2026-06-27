@@ -2,23 +2,16 @@
 
 namespace App\Services\Tracking;
 
-use App\Data\History;
-use App\Data\RealtimeDeviceState;
 use App\Data\ResolvedDeviceState;
-use App\Gateway\Realtime\GatewayDispatcher;
 use App\Models\Device;
 use App\Models\Vehicle;
 use App\Services\Tracking\Contracts\TrackingProvider;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
-class TrackingManager
+class CurrentStateService
 {
     public function __construct(
         protected TrackingProvider $provider,
-        protected GatewayDispatcher $dispatcher,
-        protected DeviceStateStore $store,
-        protected StateResolver $resolver
     ) {}
 
     public function attachCurrentState(Device $device): Device
@@ -35,6 +28,7 @@ class TrackingManager
         return $this->provider->attachCurrentStateForMany($devices);
     }
 
+
     public function hydrateVehicle(Vehicle $vehicle): Vehicle
     {
         return $this->provider->hydrateVehicle($vehicle);
@@ -49,23 +43,10 @@ class TrackingManager
         return $this->provider->hydrateVehicles($vehicles);
     }
 
-    public function history(Vehicle $vehicle, Carbon $from, Carbon $to): History
-    {
-        return $this->provider->history($vehicle, $from, $to);
-    }
-
     public function currentState(string $vehicleUuid): ?ResolvedDeviceState
     {
         return $this->provider->currentState($vehicleUuid);
     }
 
-    public function ingestRealTimeState(RealtimeDeviceState $state): void
-    {
-        if ($state->deviceUuid === null) {
-            return;
-        }
-        $resolved = $this->resolver->realtime($state);
-        $this->store->put($resolved);
-        $this->dispatcher->dispatch($resolved);
-    }
+
 }

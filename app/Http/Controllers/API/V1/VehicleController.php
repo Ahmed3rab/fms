@@ -6,13 +6,13 @@ use App\Filters\VehicleFilter;
 use App\Http\Resources\API\V1\VehicleResource;
 use App\Models\Vehicle;
 use App\Http\Controllers\Controller;
-use App\Services\Tracking\TrackingManager;
+use App\Services\Tracking\CurrentStateService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class VehicleController extends Controller
 {
-    public function __construct(private TrackingManager $tracking) {}
+    public function __construct(private CurrentStateService $currentStateService) {}
 
     public function index(Request $request): AnonymousResourceCollection
     {
@@ -28,7 +28,7 @@ class VehicleController extends Controller
 
         $vehicles = $query->paginate();
 
-        $this->tracking->hydrateVehicles(
+        $this->currentStateService->hydrateVehicles(
             $vehicles->getCollection()
         );
 
@@ -43,7 +43,7 @@ class VehicleController extends Controller
         ]);
 
         return VehicleResource::make(
-            $this->tracking->hydrateVehicle($vehicle)
+            $this->currentStateService->hydrateVehicle($vehicle)
         );
     }
 }

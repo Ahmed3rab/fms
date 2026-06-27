@@ -2,9 +2,8 @@
 
 namespace App\Services\ICruise\Realtime;
 
-use App\Data\RealtimeDeviceState;
 use App\Services\ICruise\Mappers\RealtimeStateMapper;
-use App\Services\Tracking\TrackingManager;
+use App\Services\Tracking\RealtimeIngestionService;
 use Illuminate\Support\Facades\Cache;
 use OpenSwoole\Coroutine\Http\Client;
 use OpenSwoole\Coroutine;
@@ -13,7 +12,7 @@ class ICruiseRealtimeClient
 {
     public function __construct(
         protected RealtimeStateMapper $mapper,
-        protected TrackingManager $trackingManager
+        protected RealtimeIngestionService $ingestionService
     ) {}
 
     public function connect(): void
@@ -101,11 +100,7 @@ class ICruiseRealtimeClient
      */
     protected function handlePosition(array $payload): void
     {
-        $this->ingestRealTimeState($this->mapper->map($payload));
+        $this->ingestionService->ingestRealTimeState($this->mapper->map($payload));
     }
 
-    protected function ingestRealTimeState(RealtimeDeviceState $state): void
-    {
-        $this->trackingManager->ingestRealTimeState($state);
-    }
 }

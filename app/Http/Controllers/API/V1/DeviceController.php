@@ -6,13 +6,13 @@ use App\Filters\DeviceFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\API\V1\DeviceResource;
 use App\Models\Device;
-use App\Services\Tracking\TrackingManager;
+use App\Services\Tracking\CurrentStateService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class DeviceController extends Controller
 {
-    public function __construct(private TrackingManager $tracking) {}
+    public function __construct(private CurrentStateService $currentStateService) {}
 
     public function index(Request $request): AnonymousResourceCollection
     {
@@ -23,7 +23,7 @@ class DeviceController extends Controller
 
         $devices = $query->paginate();
 
-        $this->tracking->attachCurrentStateForMany($devices->getCollection());
+        $this->currentStateService->attachCurrentStateForMany($devices->getCollection());
 
         return DeviceResource::collection($devices);
     }
@@ -36,7 +36,7 @@ class DeviceController extends Controller
         $device->load(['vehicle.company', 'state']);
 
         return DeviceResource::make(
-            $this->tracking->attachCurrentState($device)
+            $this->currentStateService->attachCurrentState($device)
         );
     }
 }
