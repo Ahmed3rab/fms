@@ -5,13 +5,13 @@ namespace App\Services\Tracking;
 use App\Data\ResolvedDeviceState;
 use App\Models\Device;
 use App\Models\Vehicle;
-use App\Services\Tracking\Contracts\TrackingProvider;
+use App\Services\Tracking\Contracts\CurrentStateProvider;
 use Illuminate\Support\Collection;
 
 class CurrentStateService
 {
     public function __construct(
-        protected TrackingProvider $provider,
+        protected CurrentStateProvider $provider,
     ) {}
 
     public function attachCurrentState(Device $device): Device
@@ -47,6 +47,4 @@ class CurrentStateService
     {
         return $this->provider->currentState($vehicleUuid);
     }
-
-
 }

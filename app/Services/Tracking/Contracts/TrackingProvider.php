@@ -2,4 +2,4 @@
 
 namespace App\Services\Tracking\Contracts;
 
-interface TrackingProvider extends RealtimeProvider, HistoryProvider, VehicleHydrator, CurrentStateProvider {}
+interface TrackingProvider extends CurrentStateProvider, HistoryProvider {}

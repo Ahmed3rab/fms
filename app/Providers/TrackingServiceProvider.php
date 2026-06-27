@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Tracking\Contracts\CurrentStateProvider;
+use App\Services\Tracking\Contracts\HistoryProvider;
 use App\Services\Tracking\Contracts\TrackingProvider;
 use App\Services\Tracking\Identifiers\Contract\TrackingDeviceRegistry;
 use App\Services\Tracking\Identifiers\Contract\TrackingVehicleRegistry;
@@ -15,6 +17,15 @@ class TrackingServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             TrackingProvider::class,
+            config('tracking.provider'),
+        );
+        $this->app->bind(
+            CurrentStateProvider::class,
+            config('tracking.provider'),
+        );
+
+        $this->app->bind(
+            HistoryProvider::class,
             config('tracking.provider'),
         );
         $this->app->bind(
