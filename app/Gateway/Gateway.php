@@ -6,7 +6,6 @@ use App\Gateway\Connections\Connection;
 use App\Gateway\Connections\ConnectionRepository;
 use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
 use App\Gateway\Protocol\Messages\MessageFactory;
-use App\Gateway\Protocol\Messages\Outgoing\PongMessage;
 use App\Gateway\Routing\MessageRouter;
 use App\Gateway\Subscriptions\SubscriptionManager;
 use App\Gateway\Transport\Contracts\GatewayTransport;

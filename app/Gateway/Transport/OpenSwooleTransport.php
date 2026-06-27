@@ -2,8 +2,8 @@
 
 namespace App\Gateway\Transport;
 
-use App\Gateway\Connections\Connection;
 use App\Gateway\Gateway;
+use App\Gateway\Connections\Connection;
 use App\Gateway\Transport\Contracts\GatewayTransport;
 use OpenSwoole\Http\Request;
 use OpenSwoole\WebSocket\Frame;

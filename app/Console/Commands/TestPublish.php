@@ -21,10 +21,19 @@ class TestPublish extends Command
      */
     public function handle(TrackingManager $tracking): int
     {
-        $vehicle = Vehicle::whereUuid($this->argument('vehicle'))->firstOrFail();
+        $vehicle = Vehicle::query()
+            ->with('device')
+            ->whereUuid($this->argument('vehicle'))
+            ->firstOrFail();
+
+        if (! $vehicle->device) {
+            $this->error('Vehicle has no device attached.');
+
+            return self::FAILURE;
+        }
 
         $state = new RealtimeDeviceState(
-            deviceUuid: "019eeeb4-e021-7348-a26b-d899578a2860",
+            deviceUuid: $vehicle->device->uuid,
             coordinates: new Coordinates(
                 latitude: 32.8872,
                 longitude: 13.1913,
@@ -43,9 +52,9 @@ class TestPublish extends Command
             payload: []
         );
 
-        $tracking->publish($state);
+        $tracking->ingestRealTimeState($state);
 
-        $this->info('Published.');
+        $this->info('Realtime state dispatched.');
 
         return self::SUCCESS;
     }

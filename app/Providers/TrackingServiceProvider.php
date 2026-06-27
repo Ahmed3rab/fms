@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use App\Services\Tracking\Contracts\TrackingProvider;
 use App\Services\Tracking\Identifiers\Contract\TrackingDeviceRegistry;
+use App\Services\Tracking\Identifiers\Contract\TrackingVehicleRegistry;
 use App\Services\Tracking\Identifiers\ICruiseTrackingDeviceRegistry;
+use App\Services\Tracking\Identifiers\ICruiseTrackingVehicleRegistry;
 use Illuminate\Support\ServiceProvider;
 
 class TrackingServiceProvider extends ServiceProvider
@@ -18,6 +20,10 @@ class TrackingServiceProvider extends ServiceProvider
         $this->app->bind(
             TrackingDeviceRegistry::class,
             ICruiseTrackingDeviceRegistry::class,
+        );
+        $this->app->bind(
+            TrackingVehicleRegistry::class,
+            ICruiseTrackingVehicleRegistry::class,
         );
     }
 

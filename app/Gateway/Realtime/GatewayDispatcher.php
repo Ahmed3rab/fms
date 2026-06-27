@@ -3,36 +3,38 @@
 namespace App\Gateway\Realtime;
 
 use App\Data\RealtimeDeviceState;
-use App\Gateway\Gateway;
 use App\Gateway\Protocol\Messages\Outgoing\TelemetryMessage;
 use App\Gateway\Subscriptions\Subscription;
 use App\Gateway\Subscriptions\SubscriptionManager;
 use App\Enums\WebSocketTopic;
-use App\Models\Device;
+use App\Gateway\Transport\Contracts\GatewayTransport;
+use App\Services\Tracking\Identifiers\Contract\TrackingVehicleRegistry;
 
-class RealtimePublisher
+class GatewayDispatcher
 {
-    public function __construct(protected Gateway $gateway, protected SubscriptionManager $subscriptions) {}
+    public function __construct(
+        protected GatewayTransport $transport,
+        protected SubscriptionManager $subscriptions,
+        protected TrackingVehicleRegistry $trackingVehicleRegistry
+    ) {}
 
-    public function publish(RealtimeDeviceState $state): void
+    public function dispatch(RealtimeDeviceState $state): void
     {
         if ($state->deviceUuid === null) {
             return;
         }
 
-        $device = Device::query()
-            ->whereUuid($state->deviceUuid)
-            ->with('vehicle:id,uuid')
-            ->first();
+        $vehicleUuid = $this->trackingVehicleRegistry->uuidFromDevice($state->deviceUuid());
 
-        if (! $device?->vehicle) {
+        if ($vehicleUuid === null) {
             return;
         }
 
         $subscription = new Subscription(
             WebSocketTopic::Vehicle,
-            (string) $device->vehicle->uuid,
+            (string) $vehicleUuid,
         );
+
         logger()->info('Publisher manager', [
             'object' => spl_object_id($this->subscriptions),
         ]);
@@ -41,7 +43,7 @@ class RealtimePublisher
                 'connection' => $client->connection()->id(),
             ]);
 
-            $this->gateway->send(
+            $this->transport->send(
                 $client->connection(),
                 new TelemetryMessage($subscription, $state),
             );
