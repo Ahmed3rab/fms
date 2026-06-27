@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Gateway;
 
 use App\Gateway\Gateway;
 use Illuminate\Console\Attributes\Description;
