@@ -27,7 +27,6 @@ class GatewayDispatcher
         }
 
         $vehicleUuid = $this->trackingVehicleRegistry->uuidFromDevice($state->deviceUuid());
-
         if ($vehicleUuid === null) {
             return;
         }
@@ -36,11 +35,12 @@ class GatewayDispatcher
             WebSocketTopic::Vehicle,
             (string) $vehicleUuid,
         );
+        $subscribers = iterator_to_array(
+            $this->subscriptions->subscribers($subscription)
+        );
+
         foreach ($this->subscriptions->subscribers($subscription) as $client) {
-            logger()->info('PUBLISH', [
-                'subscription' => $subscription->key(),
-            ]);
-            $this->transport->send(
+            $this->gateway->send(
                 $client->connection(),
                 new TelemetryMessage($subscription, $state),
             );

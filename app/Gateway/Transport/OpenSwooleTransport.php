@@ -97,17 +97,16 @@ class OpenSwooleTransport implements GatewayTransport
     public function send(Connection $connection, string $payload): void
     {
         if (! $this->server->isEstablished($connection->id())) {
+            logger()->warning('FD NOT ESTABLISHED', [
+                'fd' => $connection->id(),
+            ]);
             return;
         }
 
-        $this->server->push(
+        $result = $this->server->push(
             $connection->id(),
             $payload,
         );
-
-        logger()->info('Transport OpenSwoole', [
-            'payload' => $payload,
-        ]);
     }
 
     public function disconnect(Connection $connection): void

@@ -31,9 +31,6 @@ class Gateway
 
     public function connect(Request $request): void
     {
-        logger()->info('WS CONNECT', [
-            'connection' => $connection->id(),
-        ]);
         $connection = Connection::fromRequest($request);
         $this->connections->put($connection);
     }
@@ -73,11 +70,19 @@ class Gateway
 
     public function send(Connection $connection, OutgoingMessage $message): void
     {
-        $this->transport->send(
-            $connection,
-            $message->toJson(),
-        );
+        try {
+            $payload = $message->toJson();
+        } catch (\Throwable $e) {
+            logger()->error('TOJSON FAILED', [
+                'class' => get_class($e),
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
 
+            throw $e;
+        }
+
+        $this->transport->send($connection, $payload);
     }
 
     public function disconnectConnection(Connection $connection): void

@@ -55,9 +55,5 @@ class TrackingManager
         }
         $this->store->put($state);
         $this->dispatcher->dispatch($state);
-
-        logger()->info('tracking manager', [
-            'device' => $state->deviceUuid(),
-        ]);
     }
 }
