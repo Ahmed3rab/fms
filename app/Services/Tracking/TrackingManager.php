@@ -4,6 +4,7 @@ namespace App\Services\Tracking;
 
 use App\Data\History;
 use App\Data\RealtimeDeviceState;
+use App\Data\ResolvedDeviceState;
 use App\Gateway\Realtime\GatewayDispatcher;
 use App\Models\Device;
 use App\Models\Vehicle;
@@ -51,6 +52,11 @@ class TrackingManager
     public function history(Vehicle $vehicle, Carbon $from, Carbon $to): History
     {
         return $this->provider->history($vehicle, $from, $to);
+    }
+
+    public function currentState(string $vehicleUuid): ?ResolvedDeviceState
+    {
+        return $this->provider->currentState($vehicleUuid);
     }
 
     public function ingestRealTimeState(RealtimeDeviceState $state): void

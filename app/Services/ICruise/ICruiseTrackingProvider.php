@@ -3,6 +3,7 @@
 namespace App\Services\ICruise;
 
 use App\Data\History;
+use App\Data\ResolvedDeviceState;
 use App\Models\Device;
 use App\Models\Vehicle;
 use App\Services\ICruise\Mappers\HistoryMapper;
@@ -14,7 +15,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class ICruiseTrackingProvider implements TrackingProvider
 {
-    public function __construct(protected CurrentStateResolver $resolver, protected ICruiseClient $client, protected HistoryMapper $historyMapper) {}
+    public function __construct(
+        protected CurrentStateResolver $resolver,
+        protected ICruiseClient $client,
+        protected HistoryMapper $historyMapper,
+    ) {}
 
     public function attachCurrentState(Device $device): Device
     {
@@ -65,5 +70,20 @@ class ICruiseTrackingProvider implements TrackingProvider
             $to,
         );
         return $this->historyMapper->map($history['Data'] ?? []);
+    }
+
+    public function currentState(string $vehicleUuid): ?ResolvedDeviceState
+    {
+        $vehicle = Vehicle::query()
+            ->with('device.state')
+            ->whereUuid($vehicleUuid)
+            ->first();
+        if (! $vehicle?->device) {
+            return null;
+        }
+
+        $this->attachCurrentState($vehicle->device);
+
+        return $vehicle->device->current_state;
     }
 }
