@@ -12,7 +12,7 @@ final readonly class TelemetryMessage extends OutgoingMessage
 
     public static function type(): string
     {
-        return 'error';
+        return 'telemetry';
     }
 
     /**

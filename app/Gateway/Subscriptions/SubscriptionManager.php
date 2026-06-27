@@ -19,12 +19,6 @@ class SubscriptionManager
 
     public function subscribe(Client $client, Subscription $subscription): void
     {
-        logger()->info('SubscriptionManager', [
-            'object' => spl_object_id($this),
-        ]);
-        logger()->info('Registering subscription', [
-            'key' => $subscription->key(),
-        ]);
         if ($client->subscriptions->contains(fn(Subscription $item) => $item->equals($subscription))) {
             return;
         }
@@ -42,6 +36,11 @@ class SubscriptionManager
             $clients,
         );
         $client->subscriptions->push($subscription);
+
+        logger()->info('WS SUBSCRIBE', [
+            'connection' => $client->connection()->id(),
+            'subscription' => $subscription->key(),
+        ]);
     }
 
     public function unsubscribe(Client $client, Subscription $subscription): void
@@ -107,8 +106,14 @@ class SubscriptionManager
      */
     public function subscribers(Subscription $subscription): iterable
     {
-        yield from $this->clientsBySubscription->get($subscription->key(), collect());
+        $clients = $this->clientsBySubscription->get($subscription->key(), collect());
+
+        yield from $clients;
     }
+    // public function subscribers(Subscription $subscription): iterable
+    // {
+    //     yield from $this->clientsBySubscription->get($subscription->key(), collect());
+    // }
 
     public function forget(Client $client): void
     {

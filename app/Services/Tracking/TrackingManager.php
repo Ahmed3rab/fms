@@ -4,8 +4,7 @@ namespace App\Services\Tracking;
 
 use App\Data\History;
 use App\Data\RealtimeDeviceState;
-use App\Gateway\Events\TelemetryEvent;
-use App\Gateway\PubSub\GatewayPublisher;
+use App\Gateway\Realtime\GatewayDispatcher;
 use App\Models\Device;
 use App\Models\Vehicle;
 use App\Services\Tracking\Contracts\TrackingProvider;
@@ -14,7 +13,7 @@ use Illuminate\Support\Collection;
 
 class TrackingManager
 {
-    public function __construct(protected TrackingProvider $provider, protected GatewayPublisher $publisher, protected DeviceStateStore $store) {}
+    public function __construct(protected TrackingProvider $provider, protected GatewayDispatcher $dispatcher, protected DeviceStateStore $store) {}
 
     public function attachCurrentState(Device $device): Device
     {
@@ -54,13 +53,11 @@ class TrackingManager
         if ($state->deviceUuid === null) {
             return;
         }
+        $this->store->put($state);
+        $this->dispatcher->dispatch($state);
 
-        $this->store->put(
-            $state,
-        );
-
-        $this->publisher->publish(
-            new TelemetryEvent($state),
-        );
+        logger()->info('tracking manager', [
+            'device' => $state->deviceUuid(),
+        ]);
     }
 }

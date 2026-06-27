@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Gateway;
 
-use App\Gateway\Gateway;
+use App\Gateway\GatewayRuntime;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -19,10 +19,11 @@ class StartGatewayServer extends Command
     /**
      * @return void
      */
-    public function handle(Gateway $gateway): int
+    public function handle(GatewayRuntime $runtime): int
     {
-        $gateway->start();
+        $runtime->start();
 
         return self::SUCCESS;
     }
+
 }

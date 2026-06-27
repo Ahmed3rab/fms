@@ -7,7 +7,10 @@ use App\Gateway\Gateway;
 
 interface GatewayTransport
 {
-    public function start(Gateway $gateway): void;
+    /**
+     * @param callable(): mixed $boot
+     */
+    public function start(Gateway $gateway, callable $boot): void;
 
     public function stop(): void;
 

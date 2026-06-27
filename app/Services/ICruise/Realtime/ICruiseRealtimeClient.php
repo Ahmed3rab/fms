@@ -6,71 +6,68 @@ use App\Data\RealtimeDeviceState;
 use App\Services\ICruise\Mappers\RealtimeStateMapper;
 use App\Services\Tracking\TrackingManager;
 use Illuminate\Support\Facades\Cache;
-use Ratchet\Client\Connector;
-use React\EventLoop\Loop;
+use OpenSwoole\Coroutine\Http\Client;
+use OpenSwoole\Coroutine;
 
 class ICruiseRealtimeClient
 {
-    public function __construct(protected RealtimeStateMapper $mapper, protected TrackingManager $trackingManager) {}
+    public function __construct(
+        protected RealtimeStateMapper $mapper,
+        protected TrackingManager $trackingManager
+    ) {}
 
     public function connect(): void
     {
-        $server = Cache::get('server-info');
+        // Fire this off in an asynchronous coroutine so it doesn't block the worker boot!
+        Coroutine::create(function () {
+            $server = Cache::get('server-info');
+            $host = $server['websocket']['domain'];
+            $port = (int) $server['websocket']['port'];
 
-        $url = sprintf(
-            'ws://%s:%s',
-            $server['websocket']['domain'],
-            $server['websocket']['port'],
-        );
+            dump("CONNECTING TO ICRUISE ASYNCHRONOUSLY via OpenSwoole Coroutine...");
 
-        $loop = Loop::get();
+            // OpenSwoole's HTTP/WebSocket client
+            $client = new Client($host, $port);
 
-        $connector = new Connector($loop);
+            // Upgrade the connection to a WebSocket
+            $ret = $client->upgrade('/');
 
-        $connector($url)
-            ->then(
-                function ($conn) {
+            if (!$ret) {
+                dump('ICRUISE WEBSOCKET CONNECTION FAILED: ' . $client->errMsg);
+                logger()->error('ICruise websocket connection failed', ['error' => $client->errMsg]);
+                return;
+            }
 
-                    $payload = $this->loginPayload();
+            dump('CONNECTED TO ICRUISE');
 
-                    dump('CONNECTED');
-                    dump($payload);
+            // Send login payload
+            $payload = $this->loginPayload();
+            dump($payload);
+            $client->push($payload);
 
-                    $conn->send($payload);
+            // The non-blocking continuous read loop
+            while (true) {
+                // This yield/suspends execution automatically until a message arrives,
+                // allowing OpenSwoole to handle other connected clients in the meantime!
+                $frame = $client->recv();
 
-                    $conn->on('message', function ($message) {
-
-                        dump('MESSAGE');
-                        dump((string) $message);
-
-                        $this->handleMessage(
-                            (string) $message
-                        );
-                    });
-
-                    $conn->on('close', function ($code = null, $reason = null) {
-
-                        dump('CLOSED');
-                        dump($code);
-                        dump($reason);
-
-                        logger()->warning(
-                            'ICruise websocket disconnected'
-                        );
-                    });
-                },
-                function ($e) {
-
-                    dump('FAILED');
-                    dump($e->getMessage());
+                if ($frame === false) {
+                    dump('ICRUISE CONNECTION CLOSED/ERROR: ' . $client->errMsg);
+                    logger()->warning('ICruise websocket disconnected');
+                    $client->close();
+                    break;
                 }
-            );
 
-        $loop->run();
+                if ($frame && $frame->data) {
+                    dump('MESSAGE RECEIVED');
+                    $this->handleMessage($frame->data);
+                }
+            }
+        });
     }
 
     /**
-     * @return array<string,mixed>
+     * @return string
      */
     protected function loginPayload(): string
     {
@@ -81,23 +78,14 @@ class ICruiseRealtimeClient
             'UserID' => config('icruise.username'),
             'Password' => Cache::get('icruise.ws_password'),
             'ClientType' => '4',
-            'DataTypeReq' => [
-                "80",
-                "82",
-                "85",
-                "8E",
-            ],
+            'DataTypeReq' => ["80", "82", "85", "8E"],
         ]) . "#";
     }
 
     protected function handleMessage(string $message): void
     {
         $message = trim($message, '#');
-
-        $payload = json_decode(
-            $message,
-            true
-        );
+        $payload = json_decode($message, true);
 
         if (! is_array($payload)) {
             return;
@@ -108,19 +96,15 @@ class ICruiseRealtimeClient
             default => null,
         };
     }
-
     /**
      * @param array<int,mixed> $payload
      */
     protected function handlePosition(array $payload): void
     {
-        $this->dispatchRealtimeState($this->mapper->map($payload));
+        $this->ingestRealTimeState($this->mapper->map($payload));
     }
 
-    /**
-     * @return void
-     */
-    protected function dispatchRealtimeState(RealtimeDeviceState $state): void
+    protected function ingestRealTimeState(RealtimeDeviceState $state): void
     {
         $this->trackingManager->ingestRealTimeState($state);
     }

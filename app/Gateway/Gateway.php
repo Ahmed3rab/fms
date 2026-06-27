@@ -21,20 +21,21 @@ class Gateway
         protected MessageRouter $router,
     ) {}
 
-    public function start(): void
+    /**
+     * @param callable(): mixed $boot
+     */
+    public function start(callable $boot): void
     {
-        $this->transport->start($this);
+        $this->transport->start($this, $boot);
     }
 
     public function connect(Request $request): void
     {
+        logger()->info('WS CONNECT', [
+            'connection' => $connection->id(),
+        ]);
         $connection = Connection::fromRequest($request);
         $this->connections->put($connection);
-
-        logger()->info('Gateway connected', [
-            'connection' => $connection->id(),
-            'ip' => $connection->ip(),
-        ]);
     }
 
     public function receive(int $connectionId, string $payload): void
@@ -42,10 +43,6 @@ class Gateway
         $connection = $this->connections->get($connectionId);
 
         if ($connection === null) {
-            logger()->warning('Message received for unknown connection.', [
-                'connection' => $connectionId,
-            ]);
-
             return;
         }
 
@@ -67,10 +64,6 @@ class Gateway
         }
 
         $this->connections->forget($connectionId);
-
-        logger()->info('Gateway disconnected', [
-            'connection' => $connectionId,
-        ]);
     }
 
     public function connection(int $id): ?Connection
@@ -82,11 +75,9 @@ class Gateway
     {
         $this->transport->send(
             $connection,
-            json_encode(
-                $message->toJson(),
-                JSON_THROW_ON_ERROR,
-            ),
+            $message->toJson(),
         );
+
     }
 
     public function disconnectConnection(Connection $connection): void

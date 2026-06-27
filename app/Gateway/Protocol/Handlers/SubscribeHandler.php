@@ -16,12 +16,6 @@ class SubscribeHandler implements MessageHandler
     {
         /** @var SubscribeMessage $message */
         foreach ($message->subscriptions as $subscription) {
-            logger()->info('Subscribed', [
-                'connection' => $connection->id(),
-                'topic' => $subscription->topic->value,
-                'identifier' => $subscription->identifier,
-            ]);
-
             $this->subscriptions->subscribe(
                 $connection->client(),
                 $subscription,

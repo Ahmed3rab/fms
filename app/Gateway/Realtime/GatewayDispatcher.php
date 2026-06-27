@@ -3,6 +3,7 @@
 namespace App\Gateway\Realtime;
 
 use App\Data\RealtimeDeviceState;
+use App\Gateway\Gateway;
 use App\Gateway\Protocol\Messages\Outgoing\TelemetryMessage;
 use App\Gateway\Subscriptions\Subscription;
 use App\Gateway\Subscriptions\SubscriptionManager;
@@ -13,8 +14,9 @@ use App\Services\Tracking\Identifiers\Contract\TrackingVehicleRegistry;
 class GatewayDispatcher
 {
     public function __construct(
-        protected GatewayTransport $transport,
+        protected Gateway $gateway,
         protected SubscriptionManager $subscriptions,
+        protected GatewayTransport $transport,
         protected TrackingVehicleRegistry $trackingVehicleRegistry
     ) {}
 
@@ -34,15 +36,10 @@ class GatewayDispatcher
             WebSocketTopic::Vehicle,
             (string) $vehicleUuid,
         );
-
-        logger()->info('Publisher manager', [
-            'object' => spl_object_id($this->subscriptions),
-        ]);
         foreach ($this->subscriptions->subscribers($subscription) as $client) {
-            logger()->info('Publishing to subscriber', [
-                'connection' => $client->connection()->id(),
+            logger()->info('PUBLISH', [
+                'subscription' => $subscription->key(),
             ]);
-
             $this->transport->send(
                 $client->connection(),
                 new TelemetryMessage($subscription, $state),

@@ -19,17 +19,16 @@ class OpenSwooleTransport implements GatewayTransport
             config('tracking.gateway.host'),
             config('tracking.gateway.port'),
             SWOOLE_PROCESS,
-            SWOOLE_SOCK_TCP,
         );
     }
 
-    public function start(Gateway $gateway): void
+    public function start(Gateway $gateway, callable $boot): void
     {
         $this->createServer();
 
         $this->configureServer();
 
-        $this->registerEventHandlers($gateway);
+        $this->registerEventHandlers($gateway, $boot);
 
         $this->server->start();
     }
@@ -47,8 +46,23 @@ class OpenSwooleTransport implements GatewayTransport
         ]);
     }
 
-    protected function registerEventHandlers(Gateway $gateway): void
+    /**
+     * @param callable(): mixed $boot
+     */
+    protected function registerEventHandlers(Gateway $gateway, callable $boot): void
     {
+        $this->server->on(
+            'WorkerStart',
+            function (Server $server, int $workerId) use ($boot): void {
+
+
+                if ($workerId !== 0) {
+                    return;
+                }
+
+                $boot();
+            },
+        );
         $this->server->on('Open', function (Server $server, Request $request) use ($gateway): void {
             $this->handleOpen($gateway, $request);
         });
@@ -85,14 +99,15 @@ class OpenSwooleTransport implements GatewayTransport
         if (! $this->server->isEstablished($connection->id())) {
             return;
         }
-        logger()->info('Sending websocket payload', [
-            'connection' => $connection->id(),
-            'payload' => $payload,
-        ]);
+
         $this->server->push(
             $connection->id(),
             $payload,
         );
+
+        logger()->info('Transport OpenSwoole', [
+            'payload' => $payload,
+        ]);
     }
 
     public function disconnect(Connection $connection): void

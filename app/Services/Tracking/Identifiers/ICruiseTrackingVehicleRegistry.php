@@ -14,7 +14,6 @@ class ICruiseTrackingVehicleRegistry implements TrackingVehicleRegistry
     public function uuidFromDevice(string $deviceUuid): string
     {
         $uuid = $this->index->uuidFromDeviceIdentifier($deviceUuid);
-
         if ($uuid === null) {
             throw new RuntimeException(
                 "Unable to resolve vehicle for device [{$deviceUuid}]"
