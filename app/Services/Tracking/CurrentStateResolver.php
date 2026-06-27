@@ -12,7 +12,7 @@ class CurrentStateResolver
 {
     public function __construct(
         protected DeviceStateStore $store,
-        protected ResolvedDeviceStateFactory $factory,
+        protected StateResolver $resolver
     ) {}
 
     public function resolve(Device $device): void
@@ -45,10 +45,7 @@ class CurrentStateResolver
     {
         if ($realtimeState) {
             $device->setResolvedState(
-                $this->factory->make(
-                    $realtimeState,
-                    DeviceStateSource::Realtime,
-                )
+                $this->resolver->realtime($realtimeState)
             );
 
             return;
@@ -56,10 +53,7 @@ class CurrentStateResolver
 
         if ($device->state) {
             $device->setResolvedState(
-                $this->factory->make(
-                    $device->state,
-                    DeviceStateSource::Database,
-                )
+                $this->resolver->database($device->state)
             );
         }
     }
