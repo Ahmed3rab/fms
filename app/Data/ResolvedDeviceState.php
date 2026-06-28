@@ -64,7 +64,6 @@ final readonly class ResolvedDeviceState implements Arrayable, JsonSerializable,
     public function toArray(): array
     {
         return [
-            'device_uuid' => $this->deviceUuid,
             'source' => $this->source,
             'status' => $this->status,
             'coordinates' => $this->coordinates,

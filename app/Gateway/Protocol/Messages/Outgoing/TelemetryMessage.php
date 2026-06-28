@@ -21,7 +21,10 @@ final readonly class TelemetryMessage extends OutgoingMessage
     protected function data(): array
     {
         return [
-            'subscription' => $this->subscription->key(),
+            'subscription' => [
+                'topic' => $this->subscription->topic->value,
+                'identifier' => $this->subscription->identifier,
+            ],
             'state' => $this->state,
         ];
     }
