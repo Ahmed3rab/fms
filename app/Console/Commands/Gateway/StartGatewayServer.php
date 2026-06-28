@@ -7,7 +7,7 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
-#[Signature('gateway:start')]
+#[Signature('gateway:serve')]
 #[Description('Start the tracking gateway server')]
 class StartGatewayServer extends Command
 {

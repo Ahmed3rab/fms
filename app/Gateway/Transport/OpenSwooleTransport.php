@@ -67,10 +67,10 @@ class OpenSwooleTransport implements GatewayTransport
                     return;
                 }
 
-                $boot();
                 logger()->info('Gateway worker started.', [
                     'worker' => $workerId,
                 ]);
+                $boot();
                 Timer::tick(
                     config('tracking.gateway.heartbeat_check_interval'),
                     fn() => $this->heartbeat->sweep($gateway),

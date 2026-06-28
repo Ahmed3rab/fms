@@ -5,69 +5,137 @@ namespace App\Services\ICruise\Realtime;
 use App\Services\ICruise\Mappers\RealtimeStateMapper;
 use App\Services\Tracking\RealtimeIngestionService;
 use Illuminate\Support\Facades\Cache;
-use OpenSwoole\Coroutine\Http\Client;
 use OpenSwoole\Coroutine;
+use OpenSwoole\Coroutine\Http\Client;
 
 class ICruiseRealtimeClient
 {
     public function __construct(
         protected RealtimeStateMapper $mapper,
-        protected RealtimeIngestionService $ingestionService
+        protected RealtimeIngestionService $ingestionService,
     ) {}
 
     public function connect(): void
     {
-        // Fire this off in an asynchronous coroutine so it doesn't block the worker boot!
         Coroutine::create(function () {
-            $server = Cache::get('server-info');
-            $host = $server['websocket']['domain'];
-            $port = (int) $server['websocket']['port'];
 
-            dump("CONNECTING TO ICRUISE ASYNCHRONOUSLY via OpenSwoole Coroutine...");
-
-            // OpenSwoole's HTTP/WebSocket client
-            $client = new Client($host, $port);
-
-            // Upgrade the connection to a WebSocket
-            $ret = $client->upgrade('/');
-
-            if (!$ret) {
-                dump('ICRUISE WEBSOCKET CONNECTION FAILED: ' . $client->errMsg);
-                logger()->error('ICruise websocket connection failed', ['error' => $client->errMsg]);
-                return;
-            }
-
-            dump('CONNECTED TO ICRUISE');
-
-            // Send login payload
-            $payload = $this->loginPayload();
-            dump($payload);
-            $client->push($payload);
-
-            // The non-blocking continuous read loop
             while (true) {
-                // This yield/suspends execution automatically until a message arrives,
-                // allowing OpenSwoole to handle other connected clients in the meantime!
-                $frame = $client->recv();
 
-                if ($frame === false) {
-                    dump('ICRUISE CONNECTION CLOSED/ERROR: ' . $client->errMsg);
-                    logger()->warning('ICruise websocket disconnected');
-                    $client->close();
-                    break;
+                try {
+
+                    $this->runSession();
+
+                } catch (\Throwable $e) {
+
+                    logger()->error(
+                        'ICruise realtime client crashed.',
+                        [
+                            'exception' => $e->getMessage(),
+                        ],
+                    );
                 }
 
-                if ($frame && $frame->data) {
-                    dump('MESSAGE RECEIVED');
-                    $this->handleMessage($frame->data);
-                }
+                logger()->info(
+                    'Retrying ICruise connection in 5 seconds.',
+                );
+
+                Coroutine::sleep(5);
             }
         });
     }
 
-    /**
-     * @return string
-     */
+    protected function runSession(): void
+    {
+        $server = Cache::get('server-info');
+
+        if (! is_array($server)) {
+            logger()->warning(
+                'ICruise server information not found.',
+            );
+
+            return;
+        }
+
+        $host = $server['websocket']['domain'];
+        $port = (int) $server['websocket']['port'];
+
+        logger()->info(
+            'Connecting to ICruise realtime...',
+            [
+                'host' => $host,
+                'port' => $port,
+            ],
+        );
+
+        $client = new Client(
+            $host,
+            $port,
+        );
+
+        try {
+
+            if (! $client->upgrade('/')) {
+
+                logger()->error(
+                    'ICruise websocket upgrade failed.',
+                    [
+                        'error' => $client->errMsg,
+                    ],
+                );
+
+                return;
+            }
+
+            logger()->info(
+                'Connected to ICruise realtime.',
+            );
+
+            if (! $client->push($this->loginPayload())) {
+
+                logger()->error(
+                    'Failed to send ICruise login payload.',
+                );
+
+                return;
+            }
+
+            $this->receiveLoop($client);
+
+        } finally {
+
+            $client->close();
+
+        }
+    }
+
+    protected function receiveLoop(Client $client): void
+    {
+        while (true) {
+
+            $frame = $client->recv();
+
+            if ($frame === false) {
+
+                logger()->warning(
+                    'ICruise websocket disconnected.',
+                    [
+                        'error' => $client->errMsg,
+                    ],
+                );
+
+                return;
+            }
+
+            if (! $frame || ! $frame->data) {
+                continue;
+            }
+
+            $this->handleMessage(
+                $frame->data,
+            );
+        }
+    }
+
     protected function loginPayload(): string
     {
         return json_encode([
@@ -77,14 +145,18 @@ class ICruiseRealtimeClient
             'UserID' => config('icruise.username'),
             'Password' => Cache::get('icruise.ws_password'),
             'ClientType' => '4',
-            'DataTypeReq' => ["80", "82", "85", "8E"],
-        ]) . "#";
+            'DataTypeReq' => ['80', '82', '85', '8E'],
+        ]) . '#';
     }
 
     protected function handleMessage(string $message): void
     {
         $message = trim($message, '#');
-        $payload = json_decode($message, true);
+
+        $payload = json_decode(
+            $message,
+            true,
+        );
 
         if (! is_array($payload)) {
             return;
@@ -95,12 +167,14 @@ class ICruiseRealtimeClient
             default => null,
         };
     }
+
     /**
      * @param array<int,mixed> $payload
      */
     protected function handlePosition(array $payload): void
     {
-        $this->ingestionService->ingestRealTimeState($this->mapper->map($payload));
+        $this->ingestionService->ingestRealTimeState(
+            $this->mapper->map($payload),
+        );
     }
-
 }
