@@ -59,7 +59,6 @@ class OpenSwooleTransport implements GatewayTransport
             'WorkerStart',
             function (Server $server, int $workerId) use ($boot, $gateway): void {
 
-
                 if ($workerId !== 0) {
                     return;
                 }
@@ -67,7 +66,7 @@ class OpenSwooleTransport implements GatewayTransport
                 $boot();
 
                 Timer::tick(
-                    30_000,
+                    5_000,
                     fn() => $this->heartbeat->sweep($gateway),
                 );
             },
