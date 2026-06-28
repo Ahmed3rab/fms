@@ -19,7 +19,7 @@ class SubscriptionManager
 
     public function subscribe(Client $client, Subscription $subscription): void
     {
-        if ($client->subscriptions->contains(fn(Subscription $item) => $item->equals($subscription))) {
+        if ($client->isSubscribed($subscription)) {
             return;
         }
         $key = $subscription->key();
@@ -35,7 +35,8 @@ class SubscriptionManager
             $key,
             $clients,
         );
-        $client->subscriptions->push($subscription);
+
+        $client->subscribe($subscription);
 
         logger()->info('WS SUBSCRIBE', [
             'connection' => $client->connection()->id(),
@@ -45,9 +46,7 @@ class SubscriptionManager
 
     public function unsubscribe(Client $client, Subscription $subscription): void
     {
-        $client->subscriptions = $client->subscriptions
-            ->reject(fn(Subscription $item) => $item->equals($subscription))
-            ->values();
+        $client->unsubscribe($subscription);
 
         $key = $subscription->key();
 
@@ -88,17 +87,9 @@ class SubscriptionManager
         }
     }
 
-    /**
-     * @return Collection<int,Subscription>
-     */
-    public function subscriptions(Client $client): Collection
-    {
-        return $client->subscriptions;
-    }
-
     public function subscribed(Client $client, Subscription $subscription): bool
     {
-        return $client->subscriptions->contains(fn(Subscription $item) => $item->equals($subscription));
+        return $client->isSubscribed($subscription);
     }
 
     /**
@@ -106,18 +97,14 @@ class SubscriptionManager
      */
     public function subscribers(Subscription $subscription): iterable
     {
-        $clients = $this->clientsBySubscription->get($subscription->key(), collect());
-
-        yield from $clients;
+        yield from $this->clientsBySubscription->get($subscription->key(), collect());
     }
-    // public function subscribers(Subscription $subscription): iterable
-    // {
-    //     yield from $this->clientsBySubscription->get($subscription->key(), collect());
-    // }
 
     public function forget(Client $client): void
     {
-        foreach ($client->subscriptions as $subscription) {
+        $subscriptions = iterator_to_array($client->subscriptions());
+
+        foreach ($subscriptions as $subscription) {
             $this->unsubscribe($client, $subscription);
         }
     }
