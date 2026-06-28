@@ -3,12 +3,13 @@
 namespace App\Services\Tracking;
 
 use App\Data\RealtimeDeviceState;
-use App\Gateway\Realtime\GatewayDispatcher;
+use App\Gateway\Events\GatewayEventDispatcher;
+use App\Gateway\Events\TelemetryEvent;
 
 class RealtimeIngestionService
 {
     public function __construct(
-        protected GatewayDispatcher $dispatcher,
+        protected GatewayEventDispatcher $eventDispatcher,
         protected DeviceStateStore $store,
         protected StateResolver $resolver
     ) {}
@@ -20,6 +21,8 @@ class RealtimeIngestionService
         }
         $resolved = $this->resolver->realtime($state);
         $this->store->put($resolved);
-        $this->dispatcher->dispatch($resolved);
+        $this->eventDispatcher->dispatch(
+            new TelemetryEvent($resolved),
+        );
     }
 }

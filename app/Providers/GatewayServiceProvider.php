@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Gateway\Connections\ConnectionRepository;
+use App\Gateway\Events\GatewayEventDispatcher;
 use App\Gateway\Events\GatewayEventRegistry;
+use App\Gateway\Events\Handlers\TelemetryEventHandler;
 use App\Gateway\Events\TelemetryEvent;
 use App\Gateway\Protocol\Handlers\AuthenticateHandler;
 use App\Gateway\Protocol\Handlers\PingHandler;
@@ -41,6 +43,13 @@ class GatewayServiceProvider extends ServiceProvider
                 $registry->register(TelemetryEvent::class);
                 return $registry;
             },
+        );
+
+        $this->app->singleton(
+            GatewayEventDispatcher::class,
+            fn(Application $app) => new GatewayEventDispatcher([
+                TelemetryEvent::class => $app->make(TelemetryEventHandler::class),
+            ]),
         );
     }
 

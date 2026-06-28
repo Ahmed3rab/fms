@@ -56,6 +56,7 @@ class ApiTokens extends Page implements HasTable, HasForms
                     CheckboxList::make('abilities')
                         ->options([
                             '*' => 'Full Access',
+                            'telemetry.subscribe' => 'Telemetry Subscribe',
                         ])
                         ->columns(2)
                         ->default(['*']),

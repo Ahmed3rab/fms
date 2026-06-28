@@ -2,12 +2,12 @@
 
 namespace App\Gateway\Events;
 
-use App\Data\RealtimeDeviceState;
+use App\Data\ResolvedDeviceState;
 use App\Gateway\Events\Contracts\GatewayEvent;
 
 final readonly class TelemetryEvent extends GatewayEvent
 {
-    public function __construct(public RealtimeDeviceState $state) {}
+    public function __construct(public ResolvedDeviceState $state) {}
 
     public static function type(): string
     {
@@ -27,7 +27,7 @@ final readonly class TelemetryEvent extends GatewayEvent
     public static function fromArray(array $payload): self
     {
         return new self(
-            RealtimeDeviceState::fromArray(
+            ResolvedDeviceState::fromArray(
                 $payload['state'],
             ),
         );
