@@ -5,46 +5,29 @@ namespace App\Gateway\Realtime;
 use App\Data\ResolvedDeviceState;
 use App\Gateway\Gateway;
 use App\Gateway\Protocol\Messages\Outgoing\TelemetryMessage;
-use App\Gateway\Subscriptions\Subscription;
+use App\Gateway\Routing\EventSubscriptionLocator;
 use App\Gateway\Subscriptions\SubscriptionManager;
-use App\Enums\WebSocketTopic;
-use App\Gateway\Transport\Contracts\GatewayTransport;
-use App\Services\Tracking\Identifiers\Contract\TrackingVehicleRegistry;
 
 class GatewayDispatcher
 {
     public function __construct(
         protected Gateway $gateway,
         protected SubscriptionManager $subscriptions,
-        protected GatewayTransport $transport,
-        protected TrackingVehicleRegistry $trackingVehicleRegistry
+        protected EventSubscriptionLocator $locator,
     ) {}
 
     public function dispatch(ResolvedDeviceState $state): void
     {
-        if ($state->deviceUuid() === null) {
-            return;
-        }
-
-        $vehicleUuid = $this->trackingVehicleRegistry->uuidFromDevice($state->deviceUuid());
-        if ($vehicleUuid === null) {
-            return;
-        }
-
-        $subscription = new Subscription(
-            WebSocketTopic::Vehicle,
-            (string) $vehicleUuid,
-        );
-        $subscribers = iterator_to_array(
-            $this->subscriptions->subscribers($subscription)
-        );
-
-        foreach ($this->subscriptions->subscribers($subscription) as $client) {
-            $this->gateway->send(
-                $client->connection(),
-                new TelemetryMessage($subscription, $state),
-            );
+        foreach ($this->locator->locate($state) as $subscription) {
+            foreach ($this->subscriptions->subscribers($subscription) as $client) {
+                $this->gateway->send(
+                    $client->connection(),
+                    new TelemetryMessage(
+                        $subscription,
+                        $state,
+                    ),
+                );
+            }
         }
     }
-
 }

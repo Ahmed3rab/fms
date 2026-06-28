@@ -28,7 +28,6 @@ class CurrentStateService
         return $this->provider->attachCurrentStateForMany($devices);
     }
 
-
     public function hydrateVehicle(Vehicle $vehicle): Vehicle
     {
         return $this->provider->hydrateVehicle($vehicle);
