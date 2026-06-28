@@ -51,6 +51,8 @@ class Gateway
             return;
         }
 
+        $connection->client()->heartbeat();
+
         try {
             $payload = $this->messages->decode($payload);
             $class = $this->messages->resolve($payload);

@@ -12,8 +12,6 @@ class PingHandler implements MessageHandler
 {
     public function handle(Gateway $gateway, Connection $connection, IncomingMessage $message): void
     {
-        $connection->client()->heartbeat();
-
         $gateway->send(
             $connection,
             new PongMessage(now())

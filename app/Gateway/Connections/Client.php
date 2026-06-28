@@ -118,4 +118,13 @@ class Client
     {
         return $this->subscriptions->contains(fn(Subscription $item) => $item->equals($subscription));
     }
+
+    public function user(): User
+    {
+        /** @var User $user */
+        $user = $this->token->tokenable;
+
+        return $user;
+    }
+
 }

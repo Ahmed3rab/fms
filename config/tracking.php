@@ -21,7 +21,7 @@ return [
         'worker_num' => env('TRACKING_GATEWAY_WORKERS', 1),
         'max_connections' => env('TRACKING_GATEWAY_MAX_CONNECTIONS', 10000),
         'heartbeat_idle_time' => env('TRACKING_GATEWAY_HEARTBEAT_IDLE_TIME', 120),
-        'heartbeat_check_interval' => env('TRACKING_GATEWAY_HEARTBEAT_CHECK_INTERVAL', 30),
+        'heartbeat_check_interval' => env('TRACKING_GATEWAY_HEARTBEAT_CHECK_INTERVAL', 5_000),
 
     ],
 ];
