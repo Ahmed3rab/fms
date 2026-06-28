@@ -27,8 +27,8 @@ class SubscribeHandler implements MessageHandler
     {
         /** @var SubscribeMessage $message */
         foreach ($message->subscriptions as $subscription) {
-
             $vehicle = Vehicle::query()
+                ->visibleTo($connection->client()->user())
                 ->with('device.state')
                 ->whereUuid($subscription->identifier)
                 ->first();
