@@ -122,7 +122,11 @@ class Client
     public function user(): User
     {
         /** @var User $user */
-        $user = $this->token->tokenable;
+        $user = $this->token?->tokenable;
+
+        if (! $user instanceof User) {
+            throw new LogicException('Client is not authenticated.');
+        }
 
         return $user;
     }

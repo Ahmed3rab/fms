@@ -64,9 +64,7 @@ class Gateway
             $permission = $class::requiredPermission();
 
             if ($permission !== null && ! $connection->client()->can($permission)) {
-                throw new ForbiddenException(
-                    $permission,
-                );
+                throw new ForbiddenException();
             }
 
             $message = $this->messages->hydrate(

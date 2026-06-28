@@ -2,15 +2,15 @@
 
 namespace App\Gateway\Exceptions;
 
-use App\Enums\GatewayPermission;
 use App\Gateway\Protocol\Exceptions\ProtocolException;
 
 class ForbiddenException extends ProtocolException
 {
-    public function __construct(GatewayPermission $permission)
-    {
+    public function __construct(
+        string $message = 'You are not authorized to perform this action.',
+    ) {
         parent::__construct(
-            "Missing permission [{$permission->value}].",
+            $message,
             'forbidden',
         );
     }

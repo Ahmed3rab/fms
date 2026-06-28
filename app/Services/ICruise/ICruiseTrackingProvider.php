@@ -72,13 +72,11 @@ class ICruiseTrackingProvider implements TrackingProvider
         return $this->historyMapper->map($history['Data'] ?? []);
     }
 
-    public function currentState(string $vehicleUuid): ?ResolvedDeviceState
+    public function currentState(Vehicle $vehicle): ?ResolvedDeviceState
     {
-        $vehicle = Vehicle::query()
-            ->with('device.state')
-            ->whereUuid($vehicleUuid)
-            ->first();
-        if (! $vehicle?->device) {
+        $vehicle->loadMissing('device.state');
+
+        if (! $vehicle->device) {
             return null;
         }
 

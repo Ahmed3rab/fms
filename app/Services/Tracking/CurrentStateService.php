@@ -42,8 +42,8 @@ class CurrentStateService
         return $this->provider->hydrateVehicles($vehicles);
     }
 
-    public function currentState(string $vehicleUuid): ?ResolvedDeviceState
+    public function currentState(Vehicle $vehicle): ?ResolvedDeviceState
     {
-        return $this->provider->currentState($vehicleUuid);
+        return $this->provider->currentState($vehicle);
     }
 }
