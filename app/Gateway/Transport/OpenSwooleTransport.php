@@ -33,7 +33,11 @@ class OpenSwooleTransport implements GatewayTransport
         $this->configureServer();
 
         $this->registerEventHandlers($gateway, $boot);
-
+        logger()->info('Starting Gateway...', [
+            'host' => config('tracking.gateway.host'),
+            'port' => config('tracking.gateway.port'),
+            'workers' => config('tracking.gateway.worker_num'),
+        ]);
         $this->server->start();
     }
 
@@ -64,11 +68,29 @@ class OpenSwooleTransport implements GatewayTransport
                 }
 
                 $boot();
-
+                logger()->info('Gateway worker started.', [
+                    'worker' => $workerId,
+                ]);
                 Timer::tick(
                     config('tracking.gateway.heartbeat_check_interval'),
                     fn() => $this->heartbeat->sweep($gateway),
                 );
+            },
+        );
+
+        $this->server->on(
+            'WorkerStop',
+            function (Server $server, int $workerId): void {
+                logger()->info('Gateway worker stopped.', [
+                    'worker' => $workerId,
+                ]);
+            },
+        );
+
+        $this->server->on(
+            'Shutdown',
+            function (): void {
+                logger()->info('Gateway stopped.');
             },
         );
 

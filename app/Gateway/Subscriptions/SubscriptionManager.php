@@ -3,6 +3,7 @@
 namespace App\Gateway\Subscriptions;
 
 use App\Gateway\Connections\Client;
+use App\Gateway\GatewayLogger;
 use Illuminate\Support\Collection;
 
 class SubscriptionManager
@@ -12,7 +13,7 @@ class SubscriptionManager
      */
     protected Collection $clientsBySubscription;
 
-    public function __construct()
+    public function __construct(protected GatewayLogger $logger)
     {
         $this->clientsBySubscription = collect();
     }
@@ -38,10 +39,13 @@ class SubscriptionManager
 
         $client->subscribe($subscription);
 
-        logger()->info('WS SUBSCRIBE', [
-            'connection' => $client->connection()->id(),
-            'subscription' => $subscription->key(),
-        ]);
+        $this->logger->info(
+            'Client subscribed.',
+            $client->connection(),
+            [
+                'subscription' => $subscription->key(),
+            ],
+        );
     }
 
     public function unsubscribe(Client $client, Subscription $subscription): void
@@ -65,6 +69,14 @@ class SubscriptionManager
         }
 
         $this->clientsBySubscription->put($key, $clients);
+
+        $this->logger->info(
+            'Client unsubscribed.',
+            $client->connection(),
+            [
+                'subscription' => $subscription->key(),
+            ],
+        );
     }
 
     /**

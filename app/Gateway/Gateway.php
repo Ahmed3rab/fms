@@ -27,6 +27,7 @@ class Gateway
         protected MessageFactory $messages,
         protected MessageRouter $router,
         protected ProtocolErrorResponder $errors,
+        protected GatewayLogger $logger,
     ) {}
 
     /**
@@ -85,8 +86,15 @@ class Gateway
             );
         } catch (\Throwable $e) {
 
-            logger()->error($e);
-
+            $this->logger->error(
+                message: 'Gateway::recieve failed and didn\'t catch ProtocolException',
+                connection: $connection,
+                context: [
+                    'class' => get_class($e),
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ],
+            );
             $this->errors->respond(
                 $this,
                 $connection,
@@ -116,13 +124,22 @@ class Gateway
         try {
             $payload = $message->toJson();
         } catch (\Throwable $e) {
-            logger()->error('TOJSON FAILED', [
-                'class' => get_class($e),
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
 
-            throw $e;
+            $this->logger->error(
+                message: 'Gateway::send $message->toJson() failed',
+                connection: $connection,
+                context: [
+                    'class' => get_class($e),
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ],
+            );
+
+            $this->errors->respond(
+                $this,
+                $connection,
+                new InternalGatewayException(),
+            );
         }
 
         $this->transport->send($connection, $payload);
@@ -140,10 +157,10 @@ class Gateway
                     ),
                 );
             } catch (\Throwable $e) {
-                logger()->warning(
-                    'Failed to send connection close message.',
-                    [
-                        'connection' => $connection->id(),
+                $this->logger->error(
+                    message: 'Failed to disconnect connection.',
+                    connection: $connection,
+                    context: [
                         'reason' => $reason->value,
                         'exception' => $e->getMessage(),
                     ],
