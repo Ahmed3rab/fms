@@ -4,6 +4,7 @@ namespace App\Gateway\Heartbeat;
 
 use App\Gateway\Connections\ConnectionRepository;
 use App\Gateway\Gateway;
+use App\Gateway\Protocol\Messages\Outgoing\DisconnectMessage;
 
 class HeartbeatMonitor
 {
@@ -21,6 +22,11 @@ class HeartbeatMonitor
             if ($client->lastHeartbeat()->diffInSeconds(now()) < 60) {
                 continue;
             }
+
+            $gateway->send(
+                $connection,
+                new DisconnectMessage(),
+            );
 
             $gateway->disconnectConnection($connection);
         }
