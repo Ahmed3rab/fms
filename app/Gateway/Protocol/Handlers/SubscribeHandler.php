@@ -22,6 +22,9 @@ class SubscribeHandler implements MessageHandler
     {
         /** @var SubscribeMessage $message */
         foreach ($message->subscriptions as $subscription) {
+
+            $snapshot = $this->subscriptionSnapshotResolver->snapshot($subscription);
+
             $this->subscriptions->subscribe(
                 $connection->client(),
                 $subscription,
@@ -32,19 +35,17 @@ class SubscribeHandler implements MessageHandler
                 new SubscribedMessage($subscription),
             );
 
-            $snapshot = $this->subscriptionSnapshotResolver->snapshot($subscription);
 
-            if ($snapshot === null) {
-                continue;
+            if ($snapshot !== null) {
+                $gateway->send(
+                    $connection,
+                    new TelemetryMessage(
+                        $subscription,
+                        $snapshot,
+                    ),
+                );
             }
 
-            $gateway->send(
-                $connection,
-                new TelemetryMessage(
-                    $subscription,
-                    $snapshot,
-                ),
-            );
         }
     }
 }
