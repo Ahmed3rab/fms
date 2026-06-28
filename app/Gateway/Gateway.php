@@ -123,18 +123,29 @@ class Gateway
     public function disconnectConnection(Connection $connection, ?CloseReason $reason = null, ?string $message = null): void
     {
         if ($reason !== null) {
-            $this->send(
-                $connection,
-                new CloseMessage(
-                    $reason,
-                    $message ?? '',
-                ),
-            );
+            try {
+                $this->send(
+                    $connection,
+                    new CloseMessage(
+                        $reason,
+                        $message ?? '',
+                    ),
+                );
+            } catch (\Throwable $e) {
+                logger()->warning(
+                    'Failed to send connection close message.',
+                    [
+                        'connection' => $connection->id(),
+                        'reason' => $reason->value,
+                        'exception' => $e->getMessage(),
+                    ],
+                );
+            }
         }
 
-        $this->transport->disconnect($connection);
-
-        $this->cleanup($connection);
+        if (! $this->transport->disconnect($connection)) {
+            $this->cleanup($connection);
+        }
     }
 
     protected function cleanup(Connection $connection): void

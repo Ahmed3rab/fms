@@ -16,5 +16,5 @@ interface GatewayTransport
 
     public function send(Connection $connection, string $payload): void;
 
-    public function disconnect(Connection $connection): void;
+    public function disconnect(Connection $connection): bool;
 }

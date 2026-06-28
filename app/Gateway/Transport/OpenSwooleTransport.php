@@ -118,12 +118,12 @@ class OpenSwooleTransport implements GatewayTransport
         );
     }
 
-    public function disconnect(Connection $connection): void
+    public function disconnect(Connection $connection): bool
     {
         if (! $this->server->isEstablished($connection->id())) {
-            return;
+            return false;
         }
 
-        $this->server->disconnect($connection->id());
+        return (bool) $this->server->disconnect($connection->id());
     }
 }
