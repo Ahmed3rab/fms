@@ -10,6 +10,8 @@ use App\Gateway\Subscriptions\Subscription;
 
 class Client
 {
+    protected bool $authenticated = false;
+
     /**
      * @param list<string> $permissions
      * @param Collection<int, Subscription> $subscriptions
@@ -31,5 +33,17 @@ class Client
     public function connection(): Connection
     {
         return $this->connection;
+    }
+    public function authenticate(PersonalAccessToken $token): void
+    {
+        $this->authenticated = true;
+        $this->token = $token;
+        $this->company = $token->tokenable->company;
+        $this->permissions = $token->abilities;
+    }
+
+    public function authenticated(): bool
+    {
+        return $this->authenticated;
     }
 }
