@@ -4,8 +4,10 @@ namespace App\Gateway;
 
 use App\Gateway\Connections\Connection;
 use App\Gateway\Connections\ConnectionRepository;
+use App\Gateway\Protocol\Exceptions\ProtocolException;
 use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
 use App\Gateway\Protocol\Messages\MessageFactory;
+use App\Gateway\Protocol\ProtocolErrorResponder;
 use App\Gateway\Routing\MessageRouter;
 use App\Gateway\Subscriptions\SubscriptionManager;
 use App\Gateway\Transport\Contracts\GatewayTransport;
@@ -19,6 +21,7 @@ class Gateway
         protected SubscriptionManager $subscriptions,
         protected MessageFactory $messages,
         protected MessageRouter $router,
+        protected ProtocolErrorResponder $errors,
     ) {}
 
     /**
@@ -43,13 +46,21 @@ class Gateway
             return;
         }
 
-        $message = $this->messages->make($payload);
+        try {
+            $message = $this->messages->make($payload);
 
-        $this->router->dispatch(
-            $this,
-            $connection,
-            $message,
-        );
+            $this->router->dispatch(
+                $this,
+                $connection,
+                $message,
+            );
+        } catch (ProtocolException $e) {
+            $this->errors->respond(
+                $this,
+                $connection,
+                $e,
+            );
+        }
     }
 
     public function disconnect(int $connectionId): void

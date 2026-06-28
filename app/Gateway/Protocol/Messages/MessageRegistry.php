@@ -2,6 +2,7 @@
 
 namespace App\Gateway\Protocol\Messages;
 
+use App\Gateway\Exceptions\UnknownMessageException;
 use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
 use InvalidArgumentException;
 
@@ -31,9 +32,6 @@ class MessageRegistry
      */
     public function resolve(string $type): string
     {
-        return $this->messages[$type]
-            ?? throw new InvalidArgumentException(
-                "Unknown websocket message type [{$type}]."
-            );
+        return $this->messages[$type] ?? throw new UnknownMessageException($type);
     }
 }
