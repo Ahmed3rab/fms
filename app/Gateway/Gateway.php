@@ -2,6 +2,7 @@
 
 namespace App\Gateway;
 
+use App\Enums\CloseReason;
 use App\Gateway\Connections\Connection;
 use App\Gateway\Connections\ConnectionRepository;
 use App\Gateway\Exceptions\InternalGatewayException;
@@ -9,6 +10,7 @@ use App\Gateway\Exceptions\UnauthorizedException;
 use App\Gateway\Protocol\Exceptions\ProtocolException;
 use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
 use App\Gateway\Protocol\Messages\MessageFactory;
+use App\Gateway\Protocol\Messages\Outgoing\CloseMessage;
 use App\Gateway\Protocol\ProtocolErrorResponder;
 use App\Gateway\Routing\MessageRouter;
 use App\Gateway\Subscriptions\SubscriptionManager;
@@ -93,7 +95,7 @@ class Gateway
             return;
         }
 
-        $this->disconnectConnection($connection);
+        $this->cleanup($connection);
     }
 
     public function connection(int $id): ?Connection
@@ -118,13 +120,26 @@ class Gateway
         $this->transport->send($connection, $payload);
     }
 
-    public function disconnectConnection(Connection $connection): void
+    public function disconnectConnection(Connection $connection, ?CloseReason $reason = null, ?string $message = null): void
     {
-        $this->subscriptions->forget(
-            $connection->client(),
-        );
+        if ($reason !== null) {
+            $this->send(
+                $connection,
+                new CloseMessage(
+                    $reason,
+                    $message ?? '',
+                ),
+            );
+        }
 
         $this->transport->disconnect($connection);
+
+        $this->cleanup($connection);
+    }
+
+    protected function cleanup(Connection $connection): void
+    {
+        $this->subscriptions->forget($connection->client());
 
         $this->connections->forget($connection->id());
     }

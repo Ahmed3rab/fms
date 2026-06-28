@@ -5,7 +5,6 @@ namespace App\Gateway\Heartbeat;
 use App\Enums\CloseReason;
 use App\Gateway\Connections\ConnectionRepository;
 use App\Gateway\Gateway;
-use App\Gateway\Protocol\Messages\Outgoing\CloseMessage;
 
 class HeartbeatMonitor
 {
@@ -21,11 +20,11 @@ class HeartbeatMonitor
             }
 
             if ($client->lastHeartbeat()->diffInSeconds(now()) >= 60) {
-                $gateway->send(
+                $gateway->disconnectConnection(
                     $connection,
-                    new CloseMessage(CloseReason::HeartbeatTimeout, "Connection closed due to inactivity."),
+                    CloseReason::HeartbeatTimeout,
+                    "Connection closed due to inactivity.",
                 );
-                $gateway->disconnectConnection($connection);
             }
         }
     }
