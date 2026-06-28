@@ -3,24 +3,30 @@
 namespace App\Gateway\Authentication;
 
 use App\Gateway\Connections\Client;
+use App\Gateway\Exceptions\AuthenticationException;
 use App\Models\PersonalAccessToken;
+use App\Models\User;
 
 class GatewayAuthenticator
 {
-    public function authenticate(Client $client, string $accessToken): bool
+    public function authenticate(Client $client, string $accessToken): AuthenticationResult
     {
         $token = PersonalAccessToken::findToken($accessToken);
 
         if ($token === null) {
-            return false;
+            throw new AuthenticationException(
+                'Invalid access token.'
+            );
         }
 
-        $user = $token->tokenable;
+        if (! $token->tokenable instanceof User) {
+            throw new AuthenticationException(
+                'Invalid token owner.'
+            );
+        }
 
-        $client->token = $token;
-        $client->company = $user->company;
-        $client->permissions = $token->abilities;
+        $client->authenticate($token);
 
-        return true;
+        return new AuthenticationResult($token);
     }
 }

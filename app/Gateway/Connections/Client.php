@@ -4,9 +4,11 @@ namespace App\Gateway\Connections;
 
 use App\Models\Company;
 use App\Models\PersonalAccessToken;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use App\Gateway\Subscriptions\Subscription;
+use LogicException;
 
 class Client
 {
@@ -67,9 +69,15 @@ class Client
 
     public function authenticate(PersonalAccessToken $token): void
     {
+        $user = $token->tokenable;
+
+        if (! $user instanceof User) {
+            throw new LogicException();
+        }
+
         $this->authenticated = true;
         $this->token = $token;
-        $this->company = $token->tokenable->company;
+        $this->company = $user->company;
         $this->permissions = $token->abilities;
     }
 

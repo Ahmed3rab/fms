@@ -6,7 +6,7 @@ use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
 
 final readonly class ErrorMessage extends OutgoingMessage
 {
-    public function __construct(public string $code, public string $message) {}
+    public function __construct(public string $error, public string $message) {}
 
     public static function type(): string
     {
@@ -19,7 +19,7 @@ final readonly class ErrorMessage extends OutgoingMessage
     protected function payload(): array
     {
         return [
-            'code' => $this->code,
+            'error' => $this->error,
             'message' => $this->message,
         ];
     }
