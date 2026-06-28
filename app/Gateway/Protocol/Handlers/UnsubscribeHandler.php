@@ -6,6 +6,7 @@ use App\Gateway\Connections\Connection;
 use App\Gateway\Gateway;
 use App\Gateway\Protocol\Handlers\Contracts\MessageHandler;
 use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
+use App\Gateway\Protocol\Messages\Outgoing\UnsubscribedMessage;
 use App\Gateway\Subscriptions\SubscriptionManager;
 
 class UnsubscribeHandler implements MessageHandler
@@ -17,8 +18,12 @@ class UnsubscribeHandler implements MessageHandler
         /** @var UnsubscribeMessage $message */
         foreach ($message->subscriptions as $subscription) {
             $this->subscriptions->unsubscribe(
-                $connection->client,
+                $connection->client(),
                 $subscription,
+            );
+            $gateway->send(
+                $connection,
+                new UnsubscribedMessage($subscription),
             );
         }
     }

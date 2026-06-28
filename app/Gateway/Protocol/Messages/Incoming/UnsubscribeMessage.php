@@ -30,7 +30,7 @@ final readonly class UnsubscribeMessage extends IncomingMessage
                         topic: WebSocketTopic::from($item['topic']),
                         identifier: $item['identifier'],
                     )
-                ),
+                )->all(),
         );
     }
 }
