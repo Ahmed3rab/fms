@@ -6,6 +6,7 @@ use App\Gateway\Connections\Connection;
 use App\Gateway\Gateway;
 use App\Gateway\Protocol\Handlers\Contracts\MessageHandler;
 use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
+use App\Gateway\Protocol\Messages\Outgoing\SubscribedMessage;
 use App\Gateway\Protocol\Messages\Outgoing\TelemetryMessage;
 use App\Gateway\Routing\SubscriptionSnapshotResolver;
 use App\Gateway\Subscriptions\SubscriptionManager;
@@ -24,6 +25,11 @@ class SubscribeHandler implements MessageHandler
             $this->subscriptions->subscribe(
                 $connection->client(),
                 $subscription,
+            );
+
+            $gateway->send(
+                $connection,
+                new SubscribedMessage($subscription),
             );
 
             $snapshot = $this->subscriptionSnapshotResolver->snapshot($subscription);
