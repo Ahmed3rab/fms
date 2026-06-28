@@ -16,7 +16,7 @@ final readonly class PongMessage extends OutgoingMessage
     /**
      * @return array<string,Carbon>
      */
-    protected function payload(): array
+    protected function data(): array
     {
         return [
             'timestamp' => $this->timestamp,

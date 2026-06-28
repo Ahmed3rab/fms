@@ -14,6 +14,7 @@ use App\Gateway\Protocol\Messages\Incoming\UnsubscribeMessage;
 use App\Gateway\Protocol\Messages\Incoming\AuthenticateMessage;
 use App\Gateway\Protocol\Messages\Incoming\SubscribeMessage;
 use App\Gateway\Protocol\Messages\MessageRegistry;
+use App\Gateway\Protocol\ProtocolErrorResponder;
 use App\Gateway\Routing\MessageRouter;
 use App\Gateway\Subscriptions\SubscriptionManager;
 use App\Gateway\Transport\Contracts\GatewayTransport;
@@ -66,11 +67,14 @@ class GatewayServiceProvider extends ServiceProvider
      */
     private function registerHandlers(Application $app): MessageRouter
     {
-        return new MessageRouter([
-            AuthenticateMessage::class => $app->make(AuthenticateHandler::class),
-            SubscribeMessage::class => $app->make(SubscribeHandler::class),
-            UnsubscribeMessage::class => $app->make(UnsubscribeHandler::class),
-            PingMessage::class => $app->make(PingHandler::class),
-        ]);
+        return new MessageRouter(
+            [
+                AuthenticateMessage::class => $app->make(AuthenticateHandler::class),
+                SubscribeMessage::class => $app->make(SubscribeHandler::class),
+                UnsubscribeMessage::class => $app->make(UnsubscribeHandler::class),
+                PingMessage::class => $app->make(PingHandler::class),
+            ],
+            $app->make(ProtocolErrorResponder::class),
+        );
     }
 }

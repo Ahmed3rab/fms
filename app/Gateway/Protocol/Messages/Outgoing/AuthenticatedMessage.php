@@ -11,7 +11,7 @@ final readonly class AuthenticatedMessage extends OutgoingMessage
         return 'authenticated';
     }
 
-    protected function payload(): array
+    protected function data(): array
     {
         return [];
     }

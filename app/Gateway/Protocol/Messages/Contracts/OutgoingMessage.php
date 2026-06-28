@@ -11,7 +11,7 @@ abstract readonly class OutgoingMessage implements JsonSerializable
     /**
      * @return array<string,mixed>
      */
-    abstract protected function payload(): array;
+    abstract protected function data(): array;
 
     /**
      * @return array<string,mixed>
@@ -20,7 +20,7 @@ abstract readonly class OutgoingMessage implements JsonSerializable
     {
         return [
             'type' => static::type(),
-            ...$this->payload(),
+            'data' => $this->data(),
         ];
     }
 
@@ -33,7 +33,9 @@ abstract readonly class OutgoingMessage implements JsonSerializable
     {
         return json_encode(
             $this,
-            JSON_THROW_ON_ERROR,
+            JSON_THROW_ON_ERROR
+            | JSON_UNESCAPED_SLASHES
+            | JSON_UNESCAPED_UNICODE,
         );
     }
 }

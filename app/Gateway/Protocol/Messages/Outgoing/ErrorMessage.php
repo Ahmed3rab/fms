@@ -16,7 +16,7 @@ final readonly class ErrorMessage extends OutgoingMessage
     /**
      * @return array<string,string>
      */
-    protected function payload(): array
+    protected function data(): array
     {
         return [
             'error' => $this->error,

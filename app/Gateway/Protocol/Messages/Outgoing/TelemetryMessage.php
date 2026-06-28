@@ -18,7 +18,7 @@ final readonly class TelemetryMessage extends OutgoingMessage
     /**
      * @return array<string,mixed>
      */
-    protected function payload(): array
+    protected function data(): array
     {
         return [
             'subscription' => $this->subscription->key(),
