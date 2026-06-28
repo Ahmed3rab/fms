@@ -3,7 +3,6 @@
 namespace App\Gateway\Routing;
 
 use App\Gateway\Connections\Connection;
-use App\Gateway\Exceptions\UnauthorizedException;
 use App\Gateway\Gateway;
 use App\Gateway\Protocol\Exceptions\ProtocolException;
 use App\Gateway\Protocol\Handlers\Contracts\MessageHandler;
@@ -21,13 +20,6 @@ class MessageRouter
     public function dispatch(Gateway $gateway, Connection $connection, IncomingMessage $message): void
     {
         try {
-            if (
-                $message::requiresAuthentication()
-                && ! $connection->client()->authenticated()
-            ) {
-                throw new UnauthorizedException();
-            }
-
             $handler = $this->handlers[$message::class] ?? null;
 
             if ($handler === null) {

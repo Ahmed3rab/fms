@@ -4,6 +4,8 @@ namespace App\Gateway;
 
 use App\Gateway\Connections\Connection;
 use App\Gateway\Connections\ConnectionRepository;
+use App\Gateway\Exceptions\InternalGatewayException;
+use App\Gateway\Exceptions\UnauthorizedException;
 use App\Gateway\Protocol\Exceptions\ProtocolException;
 use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
 use App\Gateway\Protocol\Messages\MessageFactory;
@@ -47,7 +49,18 @@ class Gateway
         }
 
         try {
-            $message = $this->messages->make($payload);
+            $payload = $this->messages->decode($payload);
+
+            $class = $this->messages->resolve($payload);
+
+            if ($class::requiresAuthentication() && ! $connection->client()->authenticated()) {
+                throw new UnauthorizedException();
+            }
+
+            $message = $this->messages->hydrate(
+                $class,
+                $payload,
+            );
 
             $this->router->dispatch(
                 $this,
@@ -59,6 +72,15 @@ class Gateway
                 $this,
                 $connection,
                 $e,
+            );
+        } catch (\Throwable $e) {
+
+            logger()->error($e);
+
+            $this->errors->respond(
+                $this,
+                $connection,
+                new InternalGatewayException(),
             );
         }
     }
