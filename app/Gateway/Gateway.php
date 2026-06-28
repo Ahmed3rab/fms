@@ -93,6 +93,8 @@ class Gateway
             return;
         }
 
+        $this->subscriptions->forget($connection->client());
+
         $this->connections->forget($connectionId);
     }
 
