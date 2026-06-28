@@ -25,7 +25,7 @@ class ConnectionRepository
     }
 
     /**
-     * @return \Traversable<int, Connection>
+     * @return iterable<Connection>
      */
     public function all(): iterable
     {

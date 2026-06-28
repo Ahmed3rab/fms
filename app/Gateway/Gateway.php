@@ -93,9 +93,7 @@ class Gateway
             return;
         }
 
-        $this->subscriptions->forget($connection->client());
-
-        $this->connections->forget($connectionId);
+        $this->disconnectConnection($connection);
     }
 
     public function connection(int $id): ?Connection
@@ -122,6 +120,10 @@ class Gateway
 
     public function disconnectConnection(Connection $connection): void
     {
+        $this->subscriptions->forget(
+            $connection->client(),
+        );
+
         $this->transport->disconnect($connection);
 
         $this->connections->forget($connection->id());

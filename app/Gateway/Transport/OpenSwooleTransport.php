@@ -4,14 +4,18 @@ namespace App\Gateway\Transport;
 
 use App\Gateway\Gateway;
 use App\Gateway\Connections\Connection;
+use App\Gateway\Heartbeat\HeartbeatMonitor;
 use App\Gateway\Transport\Contracts\GatewayTransport;
 use OpenSwoole\Http\Request;
+use OpenSwoole\Timer;
 use OpenSwoole\WebSocket\Frame;
 use OpenSwoole\WebSocket\Server;
 
 class OpenSwooleTransport implements GatewayTransport
 {
     protected Server $server;
+
+    public function __construct(protected HeartbeatMonitor $heartbeat) {}
 
     protected function createServer(): void
     {
@@ -53,7 +57,7 @@ class OpenSwooleTransport implements GatewayTransport
     {
         $this->server->on(
             'WorkerStart',
-            function (Server $server, int $workerId) use ($boot): void {
+            function (Server $server, int $workerId) use ($boot, $gateway): void {
 
 
                 if ($workerId !== 0) {
@@ -61,8 +65,14 @@ class OpenSwooleTransport implements GatewayTransport
                 }
 
                 $boot();
+
+                Timer::tick(
+                    30_000,
+                    fn() => $this->heartbeat->sweep($gateway),
+                );
             },
         );
+
         $this->server->on('Open', function (Server $server, Request $request) use ($gateway): void {
             $this->handleOpen($gateway, $request);
         });
