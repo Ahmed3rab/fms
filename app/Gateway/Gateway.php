@@ -5,6 +5,7 @@ namespace App\Gateway;
 use App\Enums\CloseReason;
 use App\Gateway\Connections\Connection;
 use App\Gateway\Connections\ConnectionRepository;
+use App\Gateway\Exceptions\ForbiddenException;
 use App\Gateway\Exceptions\InternalGatewayException;
 use App\Gateway\Exceptions\UnauthorizedException;
 use App\Gateway\Protocol\Exceptions\ProtocolException;
@@ -52,11 +53,18 @@ class Gateway
 
         try {
             $payload = $this->messages->decode($payload);
-
             $class = $this->messages->resolve($payload);
 
             if ($class::requiresAuthentication() && ! $connection->client()->authenticated()) {
                 throw new UnauthorizedException();
+            }
+
+            $permission = $class::requiredPermission();
+
+            if ($permission !== null && ! $connection->client()->can($permission)) {
+                throw new ForbiddenException(
+                    $permission,
+                );
             }
 
             $message = $this->messages->hydrate(

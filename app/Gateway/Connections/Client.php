@@ -2,6 +2,7 @@
 
 namespace App\Gateway\Connections;
 
+use App\Enums\GatewayPermission;
 use App\Models\Company;
 use App\Models\PersonalAccessToken;
 use App\Models\User;
@@ -86,9 +87,9 @@ class Client
         $this->lastHeartbeat = now();
     }
 
-    public function can(string $permission): bool
+    public function can(GatewayPermission $permission): bool
     {
-        return in_array($permission, $this->permissions, true);
+        return in_array($permission->value, $this->permissions, true);
     }
 
     public function subscribe(Subscription $subscription): void

@@ -2,6 +2,7 @@
 
 namespace App\Gateway\Protocol\Messages\Incoming;
 
+use App\Enums\GatewayPermission;
 use App\Enums\WebSocketTopic;
 use App\Gateway\Exceptions\InvalidPayloadException;
 use App\Gateway\Protocol\Messages\Contracts\IncomingMessage;
@@ -86,5 +87,15 @@ final readonly class SubscribeMessage extends IncomingMessage
         }
 
         return new static($subscriptions);
+    }
+
+    public static function requiresAuthentication(): bool
+    {
+        return true;
+    }
+
+    public static function requiredPermission(): ?GatewayPermission
+    {
+        return GatewayPermission::TelemetrySubscribe;
     }
 }
