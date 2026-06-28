@@ -10,4 +10,9 @@ abstract readonly class IncomingMessage
     * @param array<string,mixed> $payload
     */
     abstract public static function fromArray(array $payload): static;
+
+    public static function requiresAuthentication(): bool
+    {
+        return true;
+    }
 }

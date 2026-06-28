@@ -22,4 +22,9 @@ final readonly class AuthenticateMessage extends IncomingMessage
             accessToken: $payload['token'],
         );
     }
+
+    public static function requiresAuthentication(): bool
+    {
+        return false;
+    }
 }
