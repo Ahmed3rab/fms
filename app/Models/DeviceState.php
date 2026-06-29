@@ -28,7 +28,7 @@ class DeviceState extends Model implements TracksVehicleState
         'geo_address'   => AsGeoLocationAddress::class,
         'mileage' => AsDistance::class,
         'speed' =>  AsSpeed::class,
-        'acc'   => AsIgnition::class,
+        'ignition'   => AsIgnition::class,
     ];
 
     /**
@@ -80,7 +80,7 @@ class DeviceState extends Model implements TracksVehicleState
 
     public function ignition(): ?Ignition
     {
-        return $this->acc;
+        return $this->ignition;
     }
 
     public function oil(): ?float

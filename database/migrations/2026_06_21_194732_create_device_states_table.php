@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->decimal('altitude', 10, 2)->nullable();
             $table->boolean('gps_status')->nullable();
             $table->timestamp('gps_time')->nullable();
-            $table->string('acc')->nullable();
+            $table->string('ignition')->nullable();
             $table->decimal('oil', 10, 2)->nullable();
             $table->decimal('voltage', 10, 2)->nullable();
             $table->decimal('mileage', 12, 2)->nullable();

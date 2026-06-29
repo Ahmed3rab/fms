@@ -88,7 +88,7 @@ class SyncDevices extends Command
                 'gps_status'    => $position['GpsStatus'],
                 'angle' => $position['Angle'],
                 'altitude'  => $position['Altitude'],
-                'acc'   => $position['Acc'],
+                'ignition'   => $position['Acc'],
                 'oil'   => $position['Oil'],
                 'voltage'   => $position['Voltage'],
                 'mileage'   => $position['Mileage'],
