@@ -9,6 +9,7 @@ use JsonSerializable;
 final readonly class HistoryPoint implements TracksVehicleState, Arrayable, JsonSerializable
 {
     public function __construct(
+        public ?string $deviceUuid,
         public ?Coordinates $coordinates,
         public ?GeoLocationAddress $geoAddress,
         public ?Speed $speed,
@@ -104,5 +105,10 @@ final readonly class HistoryPoint implements TracksVehicleState, Arrayable, Json
     public function timestamps(): TrackingTimestamps
     {
         return $this->timestamps;
+    }
+
+    public function deviceUuid(): ?string
+    {
+        return $this->deviceUuid;
     }
 }
