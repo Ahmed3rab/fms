@@ -2,20 +2,34 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Filters\TrackingStateFilterBuilder;
 use App\Filters\VehicleFilter;
 use App\Http\Resources\API\V1\VehicleResource;
 use App\Models\Vehicle;
 use App\Http\Controllers\Controller;
 use App\Services\Tracking\CurrentStateService;
+use App\Services\Tracking\Repositories\TrackingStateRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class VehicleController extends Controller
 {
-    public function __construct(private CurrentStateService $currentStateService) {}
+    public function __construct(
+        private CurrentStateService $currentStateService,
+        private TrackingStateRepository $trackingStates,
+        private TrackingStateFilterBuilder $trackingFilterBuilder,
+    ) {}
 
     public function index(Request $request): AnonymousResourceCollection
     {
+        $trackingFilter = $this->trackingFilterBuilder->build(
+            $request->all(),
+        );
+
+        $vehicleUuids = $this->trackingStates->matchingVehicleUuids(
+            $trackingFilter,
+        );
+
         $query = (new VehicleFilter(
             Vehicle::query()
                 ->visibleTo(auth()->user())
@@ -25,6 +39,13 @@ class VehicleController extends Controller
                 ]),
             $request->all(),
         ))->apply();
+
+        if ($vehicleUuids !== null) {
+            $query->whereIn(
+                'uuid',
+                $vehicleUuids,
+            );
+        }
 
         $vehicles = $query->paginate();
 
