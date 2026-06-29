@@ -24,6 +24,15 @@ class VehicleLookupIndex
 
     public function uuidFromDeviceIdentifier(string $uuid): ?string
     {
-        return Redis::hGet(self::KEY, $uuid) ?: null;
+        $value = Redis::connection()->hGet(
+            self::KEY,
+            $uuid,
+        );
+
+        if ($value === false || $value === null) {
+            return null;
+        }
+
+        return (string) $value;
     }
 }

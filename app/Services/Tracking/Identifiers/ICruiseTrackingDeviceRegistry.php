@@ -13,7 +13,7 @@ class ICruiseTrackingDeviceRegistry implements TrackingDeviceRegistry
 
     public function uuidFromIdentifier(string $identifier): string
     {
-        $uuid = $this->index->uuidFromSystemNo($identifier);
+        $uuid = $this->index->uuidFromDeviceIdentifier($identifier);
 
         if ($uuid === null) {
             throw new RuntimeException(

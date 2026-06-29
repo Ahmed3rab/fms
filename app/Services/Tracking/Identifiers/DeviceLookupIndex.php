@@ -22,8 +22,17 @@ class DeviceLookupIndex
         });
     }
 
-    public function uuidFromSystemNo(string $systemNo): ?string
+    public function uuidFromDeviceIdentifier(string $systemNo): ?string
     {
-        return Redis::hGet(self::KEY, $systemNo) ?: null;
+        $value = Redis::connection()->hGet(
+            self::KEY,
+            $systemNo,
+        );
+
+        if ($value === false || $value === null) {
+            return null;
+        }
+
+        return (string) $value;
     }
 }
