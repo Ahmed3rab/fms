@@ -5,6 +5,7 @@ namespace App\Services\Tracking\Contracts;
 use App\Data\Coordinates;
 use App\Data\Distance;
 use App\Data\GeoLocationAddress;
+use App\Data\Ignition;
 use App\Data\Speed;
 use App\Data\TrackingTimestamps;
 
@@ -24,7 +25,7 @@ interface TracksVehicleState
 
     public function altitude(): ?float;
 
-    public function acc(): ?string;
+    public function ignition(): ?Ignition;
 
     public function oil(): ?float;
 

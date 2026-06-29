@@ -69,7 +69,7 @@ class ICruiseTrackingProvider implements TrackingProvider
             $from,
             $to,
         );
-        return $this->historyMapper->map($history['Data'] ?? []);
+        return $this->historyMapper->map($vehicle->device, $history['Data'] ?? []);
     }
 
     public function currentState(Vehicle $vehicle): ?ResolvedDeviceState

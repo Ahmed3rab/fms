@@ -14,10 +14,12 @@ class VehicleHistoryController extends Controller
     public function __invoke(VehicleHistoryRequest $request, Vehicle $vehicle, HistoryService $historyService): AnonymousResourceCollection
     {
         return VehicleHistoryResource::collection(
-            $historyService->history(
-                $vehicle,
-                $request->from(),
-                $request->to(),
+            $historyService->pagiante(
+                vehicle: $vehicle,
+                from: $request->from(),
+                to: $request->to(),
+                page: $request->page(),
+                perPage: $request->perPage(),
             )
         );
     }

@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Casts\AsDistance;
 use App\Casts\AsGeoLocationAddress;
+use App\Casts\AsIgnition;
 use App\Casts\AsSpeed;
 use App\Data\Coordinates;
 use App\Data\Distance;
 use App\Data\GeoLocationAddress;
+use App\Data\Ignition;
 use App\Data\Speed;
 use App\Data\TrackingTimestamps;
 use App\Services\Tracking\Contracts\TracksVehicleState;
@@ -26,6 +28,7 @@ class DeviceState extends Model implements TracksVehicleState
         'geo_address'   => AsGeoLocationAddress::class,
         'mileage' => AsDistance::class,
         'speed' =>  AsSpeed::class,
+        'acc'   => AsIgnition::class,
     ];
 
     /**
@@ -75,7 +78,7 @@ class DeviceState extends Model implements TracksVehicleState
         return $this->altitude;
     }
 
-    public function acc(): ?string
+    public function ignition(): ?Ignition
     {
         return $this->acc;
     }

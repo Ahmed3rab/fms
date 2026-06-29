@@ -32,7 +32,7 @@ class DeviceStateResource extends JsonResource
             'gps_status' => $this->gpsStatus,
             'angle' => $this->angle,
             'altitude' => $this->altitude,
-            'acc' => $this->acc,
+            'ignition' => $this->ignition(),
             'oil' => $this->oil,
             'voltage' => $this->voltage,
             'mileage' => $this->mileage,

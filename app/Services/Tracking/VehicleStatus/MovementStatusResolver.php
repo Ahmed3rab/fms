@@ -2,18 +2,18 @@
 
 namespace App\Services\Tracking\VehicleStatus;
 
+use App\Enums\IgnitionStatus;
 use App\Enums\MovementStatus;
 use App\Services\Tracking\Contracts\TracksVehicleState;
 
 class MovementStatusResolver
 {
-    private const MOVING_SPEED_THRESHOLD = 2;
-
-    /**
-     * @param mixed[]|object|null $state
-     */
     public function resolve(?TracksVehicleState $state): MovementStatus
     {
+        if ($state === null) {
+            return MovementStatus::NoGps;
+        }
+
         $speed = $state->speed();
 
         if ($speed === null) {
@@ -28,7 +28,7 @@ class MovementStatusResolver
             return MovementStatus::Moving;
         }
 
-        return strtoupper($state->acc() ?? '') === 'ON'
+        return $state->ignition()?->status === IgnitionStatus::On
             ? MovementStatus::Idling
             : MovementStatus::Parked;
     }

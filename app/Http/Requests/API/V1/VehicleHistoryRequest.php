@@ -34,6 +34,18 @@ class VehicleHistoryRequest extends FormRequest
                 'date',
                 'after_or_equal:from',
             ],
+            'page' => [
+                'sometimes',
+                'integer',
+                'min:1',
+            ],
+
+            'per_page' => [
+                'sometimes',
+                'integer',
+                'min:1',
+                'max:100',
+            ],
         ];
     }
 
@@ -48,6 +60,19 @@ class VehicleHistoryRequest extends FormRequest
     {
         return Carbon::parse(
             $this->validated('to')
+        );
+    }
+
+    public function page(): int
+    {
+        return max(1, (int) $this->input('page', 1));
+    }
+
+    public function perPage(): int
+    {
+        return min(
+            100,
+            max(1, (int) $this->input('per_page', 100)),
         );
     }
 }

@@ -16,7 +16,7 @@ final readonly class HistoryPoint implements TracksVehicleState, Arrayable, Json
         public ?bool $gpsStatus,
         public ?int $angle,
         public ?float $altitude,
-        public ?string $acc,
+        public ?Ignition $ignition,
         public ?float $oil,
         public ?float $voltage,
         public ?Distance $mileage,
@@ -33,7 +33,7 @@ final readonly class HistoryPoint implements TracksVehicleState, Arrayable, Json
             'gps_status' => $this->gpsStatus,
             'angle' => $this->angle,
             'altitude' => $this->altitude,
-            'acc' => $this->acc,
+            'ignition' => $this->ignition,
             'oil' => $this->oil,
             'voltage' => $this->voltage,
             'mileage' => $this->mileage,
@@ -77,9 +77,9 @@ final readonly class HistoryPoint implements TracksVehicleState, Arrayable, Json
         return $this->altitude;
     }
 
-    public function acc(): ?string
+    public function ignition(): ?Ignition
     {
-        return $this->acc;
+        return $this->ignition;
     }
 
     public function oil(): ?float

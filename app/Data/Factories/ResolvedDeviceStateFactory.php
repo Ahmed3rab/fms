@@ -25,7 +25,7 @@ class ResolvedDeviceStateFactory
             gpsStatus: $state->gpsStatus(),
             angle: $state->angle(),
             altitude: $state->altitude(),
-            acc: $state->acc(),
+            ignitionState: $state->ignition(),
             oil: $state->oil(),
             voltage: $state->voltage(),
             mileage: $state->mileage(),

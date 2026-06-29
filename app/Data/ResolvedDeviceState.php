@@ -21,7 +21,7 @@ final readonly class ResolvedDeviceState implements Arrayable, JsonSerializable,
         public ?bool $gpsStatus,
         public ?int $angle,
         public ?float $altitude,
-        public ?string $acc,
+        public ?Ignition $ignitionState,
         public ?float $oil,
         public ?float $voltage,
         public ?Distance $mileage,
@@ -51,7 +51,7 @@ final readonly class ResolvedDeviceState implements Arrayable, JsonSerializable,
             gpsStatus: $state['gps_status'] ?? null,
             angle: $state['angle'] ?? null,
             altitude: $state['altitude'] ?? null,
-            acc: $state['acc'] ?? null,
+            ignitionState: isset($state['ignition']) ? Ignition::fromArray($state['ignition']) : null,
             oil: $state['oil'] ?? null,
             voltage: $state['voltage'] ?? null,
             mileage: isset($state['mileage']) ? Distance::fromArray($state['mileage']) : null,
@@ -72,7 +72,7 @@ final readonly class ResolvedDeviceState implements Arrayable, JsonSerializable,
             'gps_status' => $this->gpsStatus,
             'angle' => $this->angle,
             'altitude' => $this->altitude,
-            'acc' => $this->acc,
+            'ignition' => $this->ignition(),
             'oil' => $this->oil,
             'voltage' => $this->voltage,
             'mileage' => $this->mileage,
@@ -121,9 +121,9 @@ final readonly class ResolvedDeviceState implements Arrayable, JsonSerializable,
         return $this->altitude;
     }
 
-    public function acc(): ?string
+    public function ignition(): ?Ignition
     {
-        return $this->acc;
+        return $this->ignitionState;
     }
 
     public function oil(): ?float
