@@ -116,8 +116,7 @@ After expiration:
 
 The WebSocket authentication lifecycle consists of four stages.
 
- `Client`                           `Gateway`
-
+    Client                            Gateway
     │                                   │
     │                                   │
     ├──────────── Connect ─────────────►│
