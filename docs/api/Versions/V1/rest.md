@@ -6,15 +6,12 @@
 
 **Last Updated:** June 2026
 
----
-
 ## Table of Contents
 
 * [Overview](#overview)
 * [Base URL](#base-url)
 * [API Version](#api-version)
     * [Changelog](#changelog)
-* [HTTP Status Codes](#http-status-codes)
 * [API Conventions](#api-conventions)
     * [UUIDs](#uuids)
     * [Datetimes](#datetimes)
@@ -28,6 +25,7 @@
 * [Response Format](#response-format)
 * [Pagination](#pagination)
 * [Error Handling](#error-handling)
+* [HTTP Status Codes](#http-status-codes)
 * [Endpoints](#endpoints)
     * [Companies](#companies)
         * [Company Object](#company-object)
@@ -74,7 +72,7 @@ Current version: V1
 The version is included in the request URL.
 
 ```json
-GET /api/v1/vehicles
+GET /vehicles
 ```
 
 Future versions may introduce new endpoints or capabilities while maintaining backward compatibility whenever possible.
@@ -89,26 +87,6 @@ Future versions may introduce new endpoints or capabilities while maintaining ba
     - Vehicle History
     - Tracking Filters
     - Personal Access Token authentication
-
----
-
-## HTTP Status Codes
-
-
-| Code | Message | Description |
-|-----:|---------|-------------|
-| 200 | OK | The request completed successfully. |
-| 201 | Created | A new resource was created successfully. |
-| 204 | No Content | The request completed successfully and no response body was returned. |
-| 400 | Bad Request | The request is malformed or contains invalid parameters. |
-| 401 | Unauthorized | Authentication is required or the provided access token is invalid. |
-| 403 | Forbidden | The authenticated token does not have permission to perform the requested action. |
-| 404 | Not Found | The requested resource does not exist or is not visible to the authenticated user. |
-| 409 | Conflict | The request conflicts with the current state of the target resource. |
-| 422 | Unprocessable Entity | One or more validation rules failed. |
-| 429 | Too Many Requests | The client has exceeded the allowed request rate. |
-| 500 | Internal Server Error | An unexpected server error occurred while processing the request. |
-
 
 ---
 
@@ -175,7 +153,7 @@ Requests without a valid Personal Access Token receive
 *`Example:`*
 
 ```http
-GET /api/v1/vehicles
+GET /vehicles
 Authorization: Bearer <access-token>
 
 Accept: application/json
@@ -220,7 +198,7 @@ For example
 
 ---
 
-## Available Endpoints 
+## Available Endpoints
 
 
 | Method | Endpoint                    | Description            |
@@ -303,9 +281,29 @@ Validation failures return a structured error response.
 
 ---
 
-## **Endpoints**
+## HTTP Status Codes
 
-### **Companies**
+
+| Code | Message | Description |
+|-----:|---------|-------------|
+| 200 | OK | The request completed successfully. |
+| 201 | Created | A new resource was created successfully. |
+| 204 | No Content | The request completed successfully and no response body was returned. |
+| 400 | Bad Request | The request is malformed or contains invalid parameters. |
+| 401 | Unauthorized | Authentication is required or the provided access token is invalid. |
+| 403 | Forbidden | The authenticated token does not have permission to perform the requested action. |
+| 404 | Not Found | The requested resource does not exist or is not visible to the authenticated user. |
+| 409 | Conflict | The request conflicts with the current state of the target resource. |
+| 422 | Unprocessable Entity | One or more validation rules failed. |
+| 429 | Too Many Requests | The client has exceeded the allowed request rate. |
+| 500 | Internal Server Error | An unexpected server error occurred while processing the request. |
+
+
+---
+
+## Endpoints
+
+### Companies
 
 Companies represent fleet owners or customer organizations within the Fleet Management System.
 The authenticated user only receives companies they are authorized to access.
@@ -334,11 +332,11 @@ The authenticated user only receives companies they are authorized to access.
 
 ---
 
-### List Companies
+#### List Companies
 
 Returns a paginated collection of companies visible to the authenticated user.
 
-#### Endpoint
+##### Endpoint
 
 ```http
 GET /companies
@@ -346,7 +344,7 @@ GET /companies
 
 ---
 
-#### Query Parameters
+##### Query Parameters
 
 This endpoint currently does not support filtering.
 
@@ -355,14 +353,14 @@ This endpoint currently does not support filtering.
 *`Example:`*
 
 ```http
-GET /api/v1/companies
+GET /companies
 Authorization: Bearer <token>
 Accept: application/json
 ```
 
 ---
 
-#### Successful Response
+##### Successful Response
 
 ```json
 {
@@ -379,8 +377,8 @@ Accept: application/json
         }
     ],
     "links": {
-        "first": "...",
-        "last": "...",
+        "first": "https://{base_url}/companies?page=1",
+        "last": "https://{base_url}/companies?page=1",
         "prev": null,
         "next": null
     },
@@ -388,14 +386,12 @@ Accept: application/json
         "current_page": 1,
         "last_page": 1,
         "per_page": 15,
-        "total": 2
+        "total": 1
     }
 }
 ```
 
----
-
-#### Response Fields
+##### Response Fields
 
 
 | Field | Type | Description |
@@ -407,11 +403,11 @@ Accept: application/json
 
 ---
 
-### **Get Company**
+#### Get Company
 
 Returns a single company visible to the authenticated user.
 
-#### Endpoint
+##### Endpoint
 
 ```http
 GET /companies/{company}
@@ -419,7 +415,7 @@ GET /companies/{company}
 
 ---
 
-#### Path Parameters
+##### Path Parameters
 
 
 | Parameter | Type | Description |
@@ -434,14 +430,14 @@ GET /companies/{company}
 *`Example:`*
 
 ```http
-GET /api/v1/companies/019eeeb4-ddc3-7204-a8ce-c0f55c48721c
+GET /companies/019eeeb4-ddc3-7204-a8ce-c0f55c48721c
 Authorization: Bearer <token>
 Accept: application/json
 ```
 
 ---
 
-#### Successful Response
+##### Successful Response
 
 ```json
 {
@@ -455,7 +451,8 @@ Accept: application/json
 
 ---
 
-#### Possible Responses
+##### Possible Responses
+
 
 | Status | Description |
 |----------|-------------|
@@ -472,7 +469,7 @@ Accept: application/json
 - Company UUIDs are immutable.
 - `vehicles_count` reflects the number of vehicles currently associated with the company.
 
-### **Vehicles**
+### Vehicles
 
 Vehicles represent the primary tracked assets within the Fleet Management System.
 
@@ -558,9 +555,11 @@ Only vehicles visible to the authenticated user are returned.
 
 ---
 
-#### **List Vehicles**
+#### List Vehicles
 
 Returns a paginated collection of vehicles visible to the authenticated user.
+
+> Note: If a client explicitly requests a non-visible UUID (e.g., GET /vehicles/{unauthorized_uuid}), the system will return a 404 Not Found rather than a 403 Forbidden to prevent resource-existence probing across tenants.
 
 ##### Endpoint
 
@@ -575,6 +574,101 @@ GET /vehicles
 Vehicles may be filtered using one or more query parameters.
 
 When multiple filters are supplied, they are combined using **logical AND**.
+
+---
+
+*`Example:`*
+
+```http
+GET /companies/019eeeb4-ddc3-7204-a8ce-c0f55c48721c
+Authorization: Bearer <token>
+Accept: application/json
+```
+
+---
+
+##### Successful Response
+
+```json
+{
+    "data": [
+        {
+            "uuid": "019f134c-e3c9-720e-a15e-552166f31401",
+            "plate_number": "2-11153",
+            "brand": "Astra",
+            "model": "M588FS",
+            "company": {
+                "uuid": "019f134c-e35e-7131-9114-b2013d219a45",
+                "name": "Al Berga Company"
+            },
+            "location": {
+                "source": "realtime",
+                "status": {
+                    "connection": "online",
+                    "movement": "moving"
+                },
+                "coordinates": {
+                    "latitude": 32.43567,
+                    "longitude": 13.63410
+                },
+                "geo_address": {
+                    "display_name": "شارع مسجد صلاح الدين، ترهونة، ليبيا",
+                    "city": "ترهونة",
+                    "state": "محافظة المرقب",
+                    "country": "ليبيا",
+                    "country_code": "ly"
+                },
+                "speed": {
+                    "kmh": 62,
+                    "mps": 17.22
+                },
+                "gps_status": true,
+                "angle": 175,
+                "altitude": 12,
+                "ignition": {
+                    "status": "on"
+                },
+                "oil": 81,
+                "voltage": 13.7,
+                "mileage": {
+                    "km": 2485047,
+                    "meters": 2485047000
+                },
+                "temperature": "28",
+                "timestamps": {
+                    "gps": "2026-06-29T23:47:43+02:00",
+                    "received": "2026-06-29T23:47:43+02:00",
+                    "last_synced": null
+                }
+            }
+        }
+    ],
+
+    "links": {
+        "first": "https://{base_url}/vehicles?page=1",
+        "last": "https://{base_url}/vehicles?page=1",
+        "prev": null,
+        "next": null
+    },
+    "meta": {
+        "current_page": 1,
+        "last_page": 1,
+        "per_page": 15,
+        "total": 1
+    }
+}
+```
+
+
+##### Response Fields
+
+
+| Field | Type | Description |
+|---------|------|-------------|
+| data | array | Collection of Vehicle objects |
+| links | object | Pagination links |
+| meta | object | Pagination metadata |
+
 
 ---
 
@@ -761,12 +855,12 @@ Multiple filters may be combined.
 ```http
 GET /vehicles?
 company=<company_uuid>
-&connection=online
-&movement=moving
-&ignition=on
-&gps=true
-&tracked=true
-&sort=plate_number
+\ &connection=online
+\ &movement=moving
+\ &ignition=on
+\ &gps=true
+\ &tracked=true
+\ &sort=plate_number
 ```
 
 > This request returns only vehicles that satisfy **all** supplied filters.
@@ -779,7 +873,7 @@ company=<company_uuid>
 
 
 ```http
-GET /api/v1/vehicles?company=<uuid>&connection=online&movement=moving
+GET /vehicles?company=<uuid>&connection=online&movement=moving
 Authorization: Bearer <token>
 Accept: application/json
 ```
@@ -842,8 +936,19 @@ Accept: application/json
             }
         }
     ],
-    "links": {},
-    "meta": {}
+
+    "links": {
+        "first": "https://{base_url}/vehicles?company=<uuid>&connection=online&movement=moving&page=1",
+        "last": "https://{base_url}/vehicles?company=<uuid>&connection=online&movement=moving&page=1",
+        "prev": null,
+        "next": null
+    },
+    "meta": {
+        "current_page": 1,
+        "last_page": 1,
+        "per_page": 15,
+        "total": 1
+    }
 }
 ```
 
@@ -860,7 +965,7 @@ Accept: application/json
 
 ---
 
-#### **Get Vehicle**
+#### Get Vehicle
 
 Returns a single vehicle.
 
@@ -887,7 +992,7 @@ GET /vehicles/{vehicle}
 *`Example:`*
 
 ```http
-GET /api/v1/vehicles/019f134c-e3c9-720e-a15e-552166f31401
+GET /vehicles/019f134c-e3c9-720e-a15e-552166f31401
 Authorization: Bearer <token>
 Accept: application/json
 ```
@@ -1086,7 +1191,7 @@ The status object summarizes the current operational state of the vehicle.
 
 ---
 
-##### Connection Status 
+##### Connection Status
 
 Represents communication between the tracking device and the platform.
 
@@ -1293,7 +1398,7 @@ Historical telemetry is retrieved from the configured tracking provider and norm
 
 ---
 
-#### **List Vehicle History**
+#### List Vehicle History
 
 ##### Endpoint
 
@@ -1325,17 +1430,19 @@ Returns a paginated collection of historical tracking points.
 | from | datetime | Yes | Beginning of the requested period |
 | to | datetime | Yes | End of the requested period |
 | page | integer | No | Page number (default: 1) |
-| per_page | integer | No | Results per page (default: 100, maximum: 100) |
+| per_page | integer | No | Results per page (default: 100, accepts: 1-100) |
 
 
 > `from` and `to` are interpreted using the Fleet Management server timezone unless an explicit timezone offset is supplied.
+
+> Query parameters accept YYYY-MM-DD HH:MM:SS while all response timestamps are returned as ISO-8601.
 
 ---
 
 *`Example:`*
 
 ```http
-GET /api/v1/vehicles/019eeeb4-de44-701c-9c61-797fd2a0e341/history?from=2026-06-29 10:00:00&to=2026-06-29 12:00:00
+GET /vehicles/019eeeb4-de44-701c-9c61-797fd2a0e341/history?from=2026-06-29T10:00:00&to=2026-06-29T12:00:00
 ```
 
 ---
@@ -1381,17 +1488,18 @@ GET /api/v1/vehicles/019eeeb4-de44-701c-9c61-797fd2a0e341/history?from=2026-06-2
             }
         }
     ],
+
     "links": {
-        "first": "...",
-        "last": "...",
+        "first": "https://{base_url}/vehicles/019eeeb4-de44-701c-9c61-797fd2a0e341/history?from=2026-06-29T10:00:00&to=2026-06-29T12:00:00&page=1",
+        "last": "https://{base_url}/vehicles/019eeeb4-de44-701c-9c61-797fd2a0e341/history?from=2026-06-29T10:00:00&to=2026-06-29T12:00:00&page=1",
         "prev": null,
-        "next": "..."
+        "next": null
     },
     "meta": {
         "current_page": 1,
-        "last_page": 4,
-        "per_page": 100,
-        "total": 384
+        "last_page": 1,
+        "per_page": 15,
+        "total": 1
     }
 }
 ```
@@ -1446,6 +1554,10 @@ For historical records:
 
 
 > Historical records preserve the timestamp supplied by the tracking provider.
+
+> Historical tracking data is pulled directly from cold-storage or external tracking provider logs to optimize pipeline throughput. Because these records circumvent the live processing application state, infrastructure metadata fields like `received` (gateway intake timestamp) and `last_synced` (database synchronization timestamp) are omitted and return as `null`. 
+
+> Integrations relying on chronological tracking sequences must strictly utilize the device-generated `gps` timestamp for sorting or timeline auditing.
 
 ---
 
