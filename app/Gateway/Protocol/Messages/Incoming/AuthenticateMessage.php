@@ -15,31 +15,36 @@ final readonly class AuthenticateMessage extends IncomingMessage
         return 'authenticate';
     }
 
-    /**
-     * @param array<int,mixed> $payload
-     */
     public static function fromArray(array $payload): static
     {
-        if (! array_key_exists('token', $payload)) {
+        if (! isset($payload['data']) || ! is_array($payload['data'])) {
+            throw new InvalidPayloadException(
+                'Missing data object.'
+            );
+        }
+
+        $data = $payload['data'];
+
+        if (! array_key_exists('token', $data)) {
             throw new InvalidPayloadException(
                 'Missing token.'
             );
         }
 
-        if (! is_string($payload['token'])) {
+        if (! is_string($data['token'])) {
             throw new InvalidPayloadException(
                 'Token must be a string.'
             );
         }
 
-        if (trim($payload['token']) === '') {
+        if (trim($data['token']) === '') {
             throw new InvalidPayloadException(
                 'Token cannot be empty.'
             );
         }
 
         return new static(
-            accessToken: $payload['token'],
+            accessToken: $data['token'],
         );
     }
 

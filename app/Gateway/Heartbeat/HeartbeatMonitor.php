@@ -19,7 +19,7 @@ class HeartbeatMonitor
                 continue;
             }
 
-            if ($client->lastHeartbeat()->diffInSeconds(now()) >= config('tracking.gateway.heartbeat_idle_time')) {
+            if ($client->lastHeartbeat()->isBefore(now()->subSeconds(config('tracking.gateway.heartbeat_idle_time')))) {
                 $gateway->disconnectConnection(
                     $connection,
                     CloseReason::HeartbeatTimeout,

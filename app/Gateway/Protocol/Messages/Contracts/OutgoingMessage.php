@@ -20,7 +20,7 @@ abstract readonly class OutgoingMessage implements JsonSerializable
     {
         return [
             'type' => static::type(),
-            'data' => $this->data(),
+            'data'  => $this->data() === [] ? (object) [] : $this->data(),
         ];
     }
 
