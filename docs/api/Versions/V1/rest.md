@@ -1581,6 +1581,3 @@ For historical records:
 - Historical availability depends on the configured tracking provider.
 - Some telemetry fields may be unavailable depending on the installed tracking hardware.
 - Clients should use the returned pagination links when navigating large result sets.
-
----
-
