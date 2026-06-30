@@ -830,7 +830,6 @@ Supported sort fields
 - plate_number
 - brand
 - model
-- created_at
 
 > Descending order is indicated using a leading `-`.
 
@@ -843,7 +842,7 @@ GET /vehicles?sort=plate_number
 ```
 
 ```http
-GET /vehicles?sort=-created_at
+GET /vehicles?sort=-model
 ```
 
 ---

@@ -28,7 +28,6 @@ class VehicleFilter
         'plate_number',
         'brand',
         'model',
-        'created_at',
     ];
 
     /**
