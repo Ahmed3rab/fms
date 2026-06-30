@@ -72,7 +72,7 @@ Current version: V1
 The version is included in the request URL.
 
 ```json
-GET /vehicles
+GET /api/v1/vehicles
 ```
 
 Future versions may introduce new endpoints or capabilities while maintaining backward compatibility whenever possible.
