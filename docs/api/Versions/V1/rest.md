@@ -1392,7 +1392,6 @@ Tracking timestamps represent different stages in the lifecycle of a telemetry r
 ##### Location Notes
 
 - The Vehicle Location object is provider-independent.
-- Additional tracking providers can be integrated without changing the REST API.
 - Real-time data is preferred over synchronized database data whenever available.
 - Not all tracking devices support every telemetry field.
 - Optional fields may be `null` depending on the capabilities of the installed hardware.
