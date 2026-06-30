@@ -71,6 +71,8 @@ Current version: V1
 
 The version is included in the request URL.
 
+*`Example:`*
+
 ```json
 GET /api/v1/vehicles
 ```
