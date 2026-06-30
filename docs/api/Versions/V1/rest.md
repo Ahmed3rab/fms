@@ -888,16 +888,6 @@ accept: application/json
 
 ---
 
-*`Example:`*
-
-```http
-GET /vehicles?company=<uuid>&connection=online&movement=moving
-Authorization: Bearer <token>
-Accept: application/json
-```
-
----
-
 ##### Successful Response
 
 ```json
