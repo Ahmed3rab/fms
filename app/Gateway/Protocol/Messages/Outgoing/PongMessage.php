@@ -18,8 +18,6 @@ final readonly class PongMessage extends OutgoingMessage
      */
     protected function data(): array
     {
-        return [
-            'timestamp' => $this->timestamp,
-        ];
+        return [];
     }
 }
