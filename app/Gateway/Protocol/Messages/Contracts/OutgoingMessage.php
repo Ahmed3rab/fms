@@ -20,6 +20,7 @@ abstract readonly class OutgoingMessage implements JsonSerializable
     {
         return [
             'type' => static::type(),
+            'timestamp' => now()->setTimezone(config('app.timezone'))->toIso8601String(),
             'data'  => $this->data() === [] ? (object) [] : $this->data(),
         ];
     }
