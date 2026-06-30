@@ -11,7 +11,7 @@ use App\Gateway\Exceptions\UnauthorizedException;
 use App\Gateway\Protocol\Exceptions\ProtocolException;
 use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
 use App\Gateway\Protocol\Messages\MessageFactory;
-use App\Gateway\Protocol\Messages\Outgoing\CloseMessage;
+use App\Gateway\Protocol\Messages\Outgoing\ClosedMessage;
 use App\Gateway\Protocol\ProtocolErrorResponder;
 use App\Gateway\Routing\MessageRouter;
 use App\Gateway\Subscriptions\SubscriptionManager;
@@ -151,7 +151,7 @@ class Gateway
             try {
                 $this->send(
                     $connection,
-                    new CloseMessage(
+                    new ClosedMessage(
                         $reason,
                         $message ?? '',
                     ),

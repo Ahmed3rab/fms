@@ -5,7 +5,7 @@ namespace App\Gateway\Protocol\Messages\Outgoing;
 use App\Enums\CloseReason;
 use App\Gateway\Protocol\Messages\Contracts\OutgoingMessage;
 
-final readonly class CloseMessage extends OutgoingMessage
+final readonly class ClosedMessage extends OutgoingMessage
 {
     public function __construct(protected CloseReason $reason, protected string $message) {}
 
