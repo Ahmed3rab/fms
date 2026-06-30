@@ -157,7 +157,6 @@ Requests without a valid Personal Access Token receive
 ```http
 GET /vehicles
 Authorization: Bearer <access-token>
-
 Accept: application/json
 ```
 
@@ -342,6 +341,8 @@ Returns a paginated collection of companies visible to the authenticated user.
 
 ```http
 GET /companies
+Authorization: Bearer <token>
+Accept: application/json
 ```
 
 ---
@@ -413,6 +414,8 @@ Returns a single company visible to the authenticated user.
 
 ```http
 GET /companies/{company}
+authorization: bearer <access-token>
+accept: application/json
 ```
 
 ---
@@ -567,6 +570,8 @@ Returns a paginated collection of vehicles visible to the authenticated user.
 
 ```http
 GET /vehicles
+authorization: bearer <access-token>
+accept: application/json
 ```
 
 ---
@@ -576,16 +581,6 @@ GET /vehicles
 Vehicles may be filtered using one or more query parameters.
 
 When multiple filters are supplied, they are combined using **logical AND**.
-
----
-
-*`Example:`*
-
-```http
-GET /companies/019eeeb4-ddc3-7204-a8ce-c0f55c48721c
-Authorization: Bearer <token>
-Accept: application/json
-```
 
 ---
 
@@ -661,7 +656,6 @@ Accept: application/json
 }
 ```
 
-
 ##### Response Fields
 
 
@@ -687,6 +681,8 @@ Accept: application/json
 
 ```http
 GET /vehicles?plate_number=2-11153
+Authorization: Bearer <access-token>
+Accept: application/json
 ```
 
 ---
@@ -704,6 +700,8 @@ GET /vehicles?plate_number=2-11153
 
 ```http
 GET /vehicles?company=<company_uuid>
+Authorization: Bearer <access-token>
+Accept: application/json
 ```
 
 ---
@@ -722,10 +720,14 @@ GET /vehicles?company=<company_uuid>
 
 ```http
 GET /vehicles?tracked=true
+authorization: bearer <access-token>
+accept: application/json
 ```
 
 ```http
 GET /vehicles?brand=Astra
+authorization: bearer <access-token>
+accept: application/json
 ```
 
 ---
@@ -746,6 +748,8 @@ Tracking filters operate on the latest resolved vehicle state, not historical re
 
 ```http
 GET /vehicles?connection=online
+authorization: bearer <access-token>
+accept: application/json
 ```
 
 ---
@@ -764,6 +768,8 @@ GET /vehicles?connection=online
 
 ```http
 GET /vehicles?movement=moving
+authorization: bearer <access-token>
+accept: application/json
 ```
 
 ---
@@ -781,6 +787,8 @@ GET /vehicles?movement=moving
 
 ```http
 GET /vehicles?ignition=on
+authorization: bearer <access-token>
+accept: application/json
 ```
 
 ---
@@ -798,6 +806,8 @@ GET /vehicles?ignition=on
 
 ```http
 GET /vehicles?gps=false
+authorization: bearer <access-token>
+accept: application/json
 ```
 
 ---
@@ -819,6 +829,8 @@ Supported fields
 
 ```http
 GET /vehicles?search=Mercedes
+authorization: bearer <access-token>
+accept: application/json
 ```
 
 ---
@@ -839,10 +851,14 @@ Supported sort fields
 
 ```http
 GET /vehicles?sort=plate_number
+authorization: bearer <access-token>
+accept: application/json
 ```
 
 ```http
 GET /vehicles?sort=-model
+authorization: bearer <access-token>
+accept: application/json
 ```
 
 ---
@@ -862,6 +878,8 @@ company=<company_uuid>
 \ &gps=true
 \ &tracked=true
 \ &sort=plate_number
+authorization: bearer <access-token>
+accept: application/json
 ```
 
 > This request returns only vehicles that satisfy **all** supplied filters.
@@ -871,7 +889,6 @@ company=<company_uuid>
 ---
 
 *`Example:`*
-
 
 ```http
 GET /vehicles?company=<uuid>&connection=online&movement=moving
@@ -974,6 +991,8 @@ Returns a single vehicle.
 
 ```http
 GET /vehicles/{vehicle}
+Authorization: Bearer <token>
+Accept: application/json
 ```
 
 ---
@@ -1403,8 +1422,10 @@ Historical telemetry is retrieved from the configured tracking provider and norm
 
 ##### Endpoint
 
-```
+```http
 GET /vehicles/{vehicle}/history
+Authorization: Bearer <token>
+Accept: application/json
 ```
 
 Returns a paginated collection of historical tracking points.
@@ -1444,6 +1465,8 @@ Returns a paginated collection of historical tracking points.
 
 ```http
 GET /vehicles/019eeeb4-de44-701c-9c61-797fd2a0e341/history?from=2026-06-29T10:00:00&to=2026-06-29T12:00:00
+Authorization: Bearer <token>
+Accept: application/json
 ```
 
 ---
