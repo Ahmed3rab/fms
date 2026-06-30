@@ -62,6 +62,7 @@ class SubscribeHandler implements MessageHandler
                     new TelemetryMessage(
                         $subscription,
                         $snapshot,
+                        $subscription->identifier
                     ),
                 );
             }

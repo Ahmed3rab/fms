@@ -8,7 +8,7 @@ use App\Gateway\Subscriptions\Subscription;
 
 final readonly class TelemetryMessage extends OutgoingMessage
 {
-    public function __construct(public Subscription $subscription, public ResolvedDeviceState $state) {}
+    public function __construct(public Subscription $subscription, public ResolvedDeviceState $state, public string $vehicleUuid) {}
 
     public static function type(): string
     {
@@ -25,7 +25,10 @@ final readonly class TelemetryMessage extends OutgoingMessage
                 'topic' => $this->subscription->topic->value,
                 'identifier' => $this->subscription->identifier,
             ],
-            'state' => $this->state,
+            'vehicle' => [
+                'uuid'  => $this->vehicleUuid,
+                'state' => $this->state,
+            ],
         ];
     }
 }

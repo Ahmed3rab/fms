@@ -25,6 +25,7 @@ class GatewayDispatcher
                     new TelemetryMessage(
                         $subscription,
                         $state,
+                        $subscription->identifier
                     ),
                 );
             }
