@@ -10,7 +10,7 @@
 
 * [Overview](#overview)
 * [Gateway URL](#gateway-url)
-* [API Version](#api-version)
+* [Protocol Version](#protocol-version)
 * [Authentication](#authentication)
     * [Obtaining an Access Token](#obtaining-an-access-token)
     * [Token Abilities](#token-abilities)
@@ -98,7 +98,7 @@ All examples throughout this documentation assume the production gateway URL.
 
 ---
 
-## API Version
+## Protocol Version
 
 Current version: V1
 
