@@ -13,6 +13,13 @@ final readonly class AuthenticatedMessage extends OutgoingMessage
 
     protected function data(): array
     {
-        return [];
+        return [
+            "gateway" => [
+                "version" =>  config('tracking.gateway.version'),
+                'heartbeat' => [
+                    'idle_timeout' => (int) config('tracking.gateway.heartbeat_idle_time'),
+                ],
+            ],
+        ];
     }
 }
