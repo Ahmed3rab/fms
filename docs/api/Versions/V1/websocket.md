@@ -11,7 +11,6 @@
 * [Overview](#overview)
 * [Gateway URL](#gateway-url)
 * [API Version](#api-version)
-
 * [Authentication](#authentication)
     * [Obtaining an Access Token](#obtaining-an-access-token)
     * [Token Abilities](#token-abilities)
@@ -22,7 +21,6 @@
     * [Authentication Failure](#authentication-failure)
     * [Connection Closed](#connection-closed)
     * [Authentication Notes](#authentication-notes)
-
 * [Protocol](#protocol)
     * [Message Envelope](#message-envelope)
     * [Client Messages](#client-messages)
@@ -30,10 +28,8 @@
     * [Message Ordering](#message-ordering)
     * [Unknown Messages](#unknown-messages)
     * [Protocol Notes](#protocol-notes)
-
 * [Connection Lifecycle](#connection-lifecycle)
     * [Message Exchange Pattern](#message-exchange-pattern)
-
 * [Heartbeat](#heartbeat)
     * [Heartbeat Interval](#heartbeat-interval)
     * [Ping](#ping)
@@ -41,7 +37,6 @@
     * [Heartbeat Notes](#heartbeat-notes)
     * [Closing Connection](#closing-connection)
         * [Close Reasons](#close-reasons)
-
 * [Subscriptions](#subscriptions)
     * [Subscription Model](#subscription-model)
     * [Subscription Lifecycle](#subscription-lifecycle)
@@ -51,11 +46,9 @@
     * [Removing a Subscription](#removing-a-subscription)
     * [Successful Unsubscription](#successful-unsubscription)
     * [Subscription Notes](#subscription-notes)
-
 * [Available Topics](#available-topics)
     * [Currently Supported Topics](#currently-supported-topics)
     * [Future Topics](#future-topics)
-
 * [Vehicle Topic](#vehicle-topic)
     * [Required Permission](#required-permission)
     * [Subscription](#subscription)
@@ -65,14 +58,11 @@
     * [Unsubscribe Request](#unsubscribe-request)
     * [Unsubscription Acknowledgement](#unsubscription-acknowledgement)
     * [Vehicle Topic Notes](#vehicle-topic-notes)
-
 * [Timestamps](#timestamps)
-
 * [Error Messages](#error-messages)
     * [Error Message](#error-message)
     * [Error Fields](#error-fields)
     * [Error Codes](#error-codes)
-
 * [Appendix A — Message Reference](#appendix-a--message-reference)
 * [Appendix B — Topic Reference](#appendix-b--topic-reference)
 * [Appendix C — Compatibility](#appendix-c---compatibility)
