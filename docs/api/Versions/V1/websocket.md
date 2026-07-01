@@ -1,6 +1,6 @@
-# Fleet Management WebSocket API
+# Fleet Management Gateway API
 
-**Version:** **V1**
+**Protocol Version:** **V1**
 
 **Status:** Stable
 
@@ -11,6 +11,7 @@
 * [Overview](#overview)
 * [Gateway URL](#gateway-url)
 * [API Version](#api-version)
+
 * [Authentication](#authentication)
     * [Obtaining an Access Token](#obtaining-an-access-token)
     * [Token Abilities](#token-abilities)
@@ -20,31 +21,75 @@
     * [Successful Authentication](#successful-authentication)
     * [Authentication Failure](#authentication-failure)
     * [Connection Closed](#connection-closed)
+    * [Authentication Notes](#authentication-notes)
+
 * [Protocol](#protocol)
     * [Message Envelope](#message-envelope)
     * [Client Messages](#client-messages)
     * [Server Messages](#server-messages)
     * [Message Ordering](#message-ordering)
     * [Unknown Messages](#unknown-messages)
+    * [Protocol Notes](#protocol-notes)
+
 * [Connection Lifecycle](#connection-lifecycle)
+    * [Message Exchange Pattern](#message-exchange-pattern)
+
 * [Heartbeat](#heartbeat)
+    * [Heartbeat Interval](#heartbeat-interval)
     * [Ping](#ping)
     * [Pong](#pong)
+    * [Heartbeat Notes](#heartbeat-notes)
+    * [Closing Connection](#closing-connection)
+        * [Close Reasons](#close-reasons)
+
 * [Subscriptions](#subscriptions)
+    * [Subscription Model](#subscription-model)
+    * [Subscription Lifecycle](#subscription-lifecycle)
+    * [Subscription Message](#subscription-message)
+    * [Subscription Fields](#subscription-fields)
+    * [Successful Subscription](#successful-subscription)
+    * [Removing a Subscription](#removing-a-subscription)
+    * [Successful Unsubscription](#successful-unsubscription)
+    * [Subscription Notes](#subscription-notes)
+
+* [Available Topics](#available-topics)
+    * [Currently Supported Topics](#currently-supported-topics)
+    * [Future Topics](#future-topics)
+
+* [Vehicle Topic](#vehicle-topic)
+    * [Required Permission](#required-permission)
+    * [Subscription](#subscription)
+        * [Events](#events)
+    * [Subscription Acknowledgement](#subscription-acknowledgement)
+    * [Telemetry Event](#telemetry-event)
+    * [Unsubscribe Request](#unsubscribe-request)
+    * [Unsubscription Acknowledgement](#unsubscription-acknowledgement)
+    * [Vehicle Topic Notes](#vehicle-topic-notes)
+
+* [Timestamps](#timestamps)
+
+* [Error Messages](#error-messages)
+    * [Error Message](#error-message)
+    * [Error Fields](#error-fields)
+    * [Error Codes](#error-codes)
+
+* [Appendix A — Message Reference](#appendix-a--message-reference)
+* [Appendix B — Topic Reference](#appendix-b--topic-reference)
+* [Appendix C — Compatibility](#appendix-c---compatibility)
 
 ---
 
 ## Overview
 
-The Fleet Management WebSocket API provides secure, low-latency access to Real-time fleet telemetry.
+The Fleet Management Gateway API provides secure, low-latency access to Real-time fleet telemetry.
 
-Unlike the REST API, which is request-response based, the WebSocket API establishes a persistent bidirectional connection between the client and the Fleet Management Gateway. Once connected and authenticated, clients receive Real-time telemetry events as they occur without repeatedly polling the server.
+Unlike the REST API, which is request-response based, the Gateway API establishes a persistent bidirectional connection between the client and the Fleet Management Gateway. Once connected and authenticated, clients receive Real-time telemetry events as they occur without repeatedly polling the server.
 
-The WebSocket API is intended for applications that require live fleet monitoring, dashboards, dispatch systems, mobile applications, command centers, and other Real-time integrations.
+The Gateway API is intended for applications that require live fleet monitoring, dashboards, dispatch systems, mobile applications, command centers, and other Real-time integrations.
 
-Like the REST API, the WebSocket API provides a provider-independent abstraction over supported GPS tracking platforms. Regardless of the underlying tracking provider, all Real-time events are normalized into a consistent event model.
+Like the REST API, the Gateway API provides a provider-independent abstraction over supported GPS tracking platforms. Regardless of the underlying tracking provider, all Real-time events are normalized into a consistent event model.
 
-The WebSocket API is intentionally lightweight. The gateway is responsible for authentication, authorization, subscription management, and Real-time event delivery. Clients are responsible for maintaining the connection and managing subscriptions.
+The Gateway API is intentionally lightweight. The gateway is responsible for authentication, authorization, subscription management, and Real-time event delivery. Clients are responsible for maintaining the connection and managing subscriptions.
 
 ---
 
@@ -59,7 +104,7 @@ wss://your-domain.com/ws/v1
 
 All examples throughout this documentation assume the production gateway URL.
 
-**`The WebSocket API requires a secure (wss://) connection.`**
+**`The Gateway API requires a secure (wss://) connection.`**
 
 ---
 
@@ -79,15 +124,15 @@ Future protocol versions may introduce additional event types or capabilities wh
 
 ## Authentication
 
-All WebSocket connections require authentication using a Personal Access Token.
+All Gateway connections require authentication using a Personal Access Token.
 
-Authentication occurs after the WebSocket connection has been established.
+Authentication occurs after the Gateway connection has been established.
 
-Unlike the REST API, where the token is transmitted in the HTTP Authorization header with every request, the WebSocket API authenticates the connection once. After successful authentication, the authenticated session remains valid until the connection is closed, the token expires, or the server terminates the session.
+Unlike the REST API, where the token is transmitted in the HTTP Authorization header with every request, the Gateway API authenticates the connection once. After successful authentication, the authenticated session remains valid until the connection is closed, the token expires, or the server terminates the session.
 
 ### Obtaining an Access Token
 
-Before connecting to the WebSocket Gateway, an access token must be created through the Fleet Management Platform.
+Before connecting to the Gateway, an access token must be created through the Fleet Management Platform.
 
 A user signs in to the platform and issues a Personal Access Token from the API Tokens page.
 
@@ -96,7 +141,7 @@ Each Personal Access Token contains:
 
 | Property        | Description                                                              |
 | --------------- | ------------------------------------------------------------------------ |
-| Token           | Secret token used to authenticate API requests and WebSocket connections |
+| Token           | Secret token used to authenticate API requests and Gateway connections |
 | Name            | Human-readable name used to identify the token                           |
 | Abilities       | Permissions granted to the token                                         |
 | Expiration Date | Date and time after which the token becomes invalid                      |
@@ -115,7 +160,7 @@ Examples include:
 - telemetry.subscribe
 - companies.read
 
-The WebSocket Gateway verifies that the authenticated token includes the required ability before allowing subscriptions.
+The Gateway Gateway verifies that the authenticated token includes the required ability before allowing subscriptions.
 
 For example, subscribing to Real-time telemetry requires the telemetry.subscribe ability.
 
@@ -127,13 +172,13 @@ Personal Access Tokens may have an expiration date configured when they are crea
 
 After expiration:
 
-- New WebSocket authentication attempts will fail.
+- New Gateway authentication attempts will fail.
 - Existing authenticated connections may be terminated by the gateway.
 - Clients should obtain a new Personal Access Token before reconnecting.
 
 ### Authentication Flow
 
-The WebSocket authentication lifecycle consists of four stages.
+The Gateway authentication lifecycle consists of four stages.
 
     Client                            Gateway
     │                                   │
@@ -166,10 +211,19 @@ If authentication succeeds, the gateway responds with:
 ```json
 {
     "type": "authenticated",
-    "timestamp": "2026-06-30T19:38:34+02:00",
-    "data": {}
+    "timestamp": "2026-07-01T10:19:12+02:00",
+    "data": {
+        "gateway": {
+            "version": "v1",
+            "heartbeat": {
+                "idle_timeout": 120,
+            }
+        }
+    }
 }
 ```
+
+> gateway.heartbeat values are in seconds.
 
 ### Authentication Failure
 
@@ -205,24 +259,25 @@ When the gateway closes the connection, it sends a final message describing the 
 
 Clients should treat this message as the final event before the socket is closed.
 
-After a disconnection, subscriptions are not restored automatically. Clients must establish a new WebSocket connection, authenticate again, and recreate any required subscriptions.
+After a disconnection, subscriptions are not restored automatically. Clients must establish a new Gateway connection, authenticate again, and recreate any required subscriptions.
 
 ---
 
 ### Authentication Notes
 
-- Authentication is performed once per WebSocket connection.
+- Authentication is performed once per Gateway connection.
 - Every connection must authenticate independently.
 - Tokens inherit the permissions of the user who created them.
 - Tokens may expire or be revoked at any time.
 - Applications should reconnect using a newly issued token when authentication fails due to expiration.
 - The gateway does not accept unauthenticated subscription requests.
+- The authenticated confirmation event contains the global session configuration payload (gateway). Integration clients should capture this metadata upon handshake to dynamically configure background heartbeat intervals and track API contract versioning.
 
 ---
 
 ## Protocol
 
-The Fleet Management WebSocket API uses a message-based protocol built on top of a persistent WebSocket connection.
+The Fleet Management Gateway API uses a message-based protocol built on top of a persistent Gateway connection.
 
 Every message exchanged between the client and the gateway is encoded as a JSON object.
 
@@ -239,6 +294,7 @@ All messages exchanged between the client and the gateway follow the same envelo
 ```json
 {
     "type": "<message-type>",
+    "timestamp": "",
     "data": { }
 }
 ```
@@ -247,6 +303,7 @@ All messages exchanged between the client and the gateway follow the same envelo
 | Field | Type | Description |
 |--------|------|-------------|
 | `type` | string | Identifies the message type. |
+| `timestamp` | datetime | Message timestamp in ISO-8601 format |
 | `data` | object | Message payload. The structure depends on the message type. |
 
 
@@ -263,7 +320,7 @@ The current protocol supports the following message types.
 
 | Type | Description |
 |------|-------------|
-| `authenticate` | Authenticates the WebSocket connection. |
+| `authenticate` | Authenticates the Gateway connection. |
 | `subscribe` | Creates a Real-time subscription. |
 | `unsubscribe` | Removes an existing subscription. |
 | `ping` | Verifies connection health. |
@@ -281,8 +338,8 @@ Server messages are sent by the Fleet Management Gateway to connected clients.
 | Type | Description |
 |------|-------------|
 | `authenticated` | Authentication completed successfully. |
-| `subscribed` | Subscription created successfully. |
-| `unsubscribed` | Subscription removed successfully. |
+| `subscribed` | Subscription acknowledged. |
+| `unsubscribed` | Subscription removed. |
 | `telemetry` | Real-time vehicle telemetry event. |
 | `pong` | Response to a client heartbeat. |
 | `error` | Protocol or validation error. |
@@ -293,9 +350,7 @@ Server messages are sent by the Fleet Management Gateway to connected clients.
 
 ### Message Ordering
 
-Messages generated by a single connection are delivered in the order in which they are produced by the gateway.
-
-Messages are delivered in the order they are generated per WebSocket connection. Applications should not assume ordering across multiple gateway instances or reconnects.
+Messages generated for a single Gateway connection are delivered in the order they are produced by the gateway. Clients should not assume ordering across multiple gateway instances, separate connections, or reconnections.
 
 Applications should always process each received event independently.
 
@@ -322,7 +377,7 @@ This allows applications to remain compatible with future protocol versions that
 
 ## Connection Lifecycle
 
-Every WebSocket client should implement the following lifecycle.
+Every Gateway client should implement the following lifecycle.
 
 
     Client                            Gateway
@@ -349,7 +404,7 @@ Every WebSocket client should implement the following lifecycle.
 
 Every client-initiated operation has a corresponding server acknowledgement.
 
-### Request / Response Pattern
+### Message Exchange Pattern
 
 
 | Client         | Server          |
@@ -359,7 +414,8 @@ Every client-initiated operation has a corresponding server acknowledgement.
 | `unsubscribe`  | `unsubscribed`  |
 | `ping`         | `pong`          |
 
-A successful WebSocket client should always perform the following steps in order:
+
+A successful Gateway client should always perform the following steps in order:
 
 1. **Connect** to the Fleet Management Gateway.
 2. **Authenticate** using a valid Personal Access Token.
@@ -377,7 +433,7 @@ Likewise, clients that fail to maintain an active connection may be disconnected
 
 ## Heartbeat
 
-WebSocket connections are long-lived and may remain open for extended periods of time.
+Gateway connections are long-lived and may remain open for extended periods of time.
 
 To verify that both the client and the gateway remain reachable, the Fleet Management Gateway implements a heartbeat mechanism.
 
@@ -396,6 +452,7 @@ Clients should periodically send `ping` messages throughout the lifetime of the 
 If no heartbeat is received within the configured idle timeout, the gateway closes the connection.
 
 The default configuration is:
+
 
 | Setting                   |       Default |
 | ------------------------- | ------------: |
@@ -451,12 +508,14 @@ The returned timestamp represents the Fleet Management server time.
 
 #### Close Reasons
 
+
 | Reason | Description |
 |---------|-------------|
 | authentication_failed | Authentication failed |
 | heartbeat_timeout | Client stopped sending heartbeats |
 | protocol_error | Invalid protocol message |
 | server_shutdown | Gateway shutting down |
+
 
 ---
 
@@ -466,12 +525,12 @@ Subscriptions determine which Real-time events are delivered to a connected clie
 
 After successful authentication, clients may subscribe to one or more topics. Each subscription instructs the Fleet Management Gateway to deliver events matching the specified resource.
 
-A single WebSocket connection may maintain multiple active subscriptions simultaneously.
+A single Gateway connection may maintain multiple active subscriptions simultaneously.
 
 Subscriptions remain active until one of the following occurs:
 
 - The client explicitly unsubscribes.
-- The WebSocket connection is closed.
+- The Gateway connection is closed.
 - The gateway disconnects the client.
 
 ---
@@ -603,7 +662,7 @@ Clients may stop receiving events by sending an `unsubscribe` message.
 - A client may maintain multiple active subscriptions simultaneously.
 - Duplicate subscriptions are ignored.
 - Unsubscribing from a resource that is not currently subscribed has no effect.
-- Subscriptions are scoped to the current WebSocket connection.
+- Subscriptions are scoped to the current Gateway connection.
 - Closing the connection automatically removes all active subscriptions.
 
 ---
@@ -618,11 +677,9 @@ The protocol is designed to support multiple topic types. Additional topics may 
 
 Clients should ignore unknown message types to remain compatible with future protocol versions.
 
----
-
 ### Currently Supported Topics
 
-The current version of the WebSocket API supports the following topic.
+The current version of the Gateway API supports the following topic.
 
 | Topic | Identifier | Description |
 |--------|------------|-------------|
@@ -647,7 +704,9 @@ Future versions may introduce topics such as:
 | `broadcast` | System-wide gateway announcements. |
 
 
-> The topics listed above are planned capabilities and are **not available in the current version** of the WebSocket API.
+> The topics listed above are planned capabilities and are **not available in the current version** of the Gateway API.
+
+> Future topics will follow the same subscription model and message envelope described in this specification.
 
 ---
 
@@ -660,6 +719,8 @@ Clients subscribe using the vehicle UUID.
 The vehicle UUID is identical to the UUID exposed by the REST API.
 
 Only telemetry matching the subscribed resource is delivered to the client.
+
+The Vehicle topic is currently the only supported subscription topic. Additional topics may be introduced in future protocol versions while preserving the existing message format.
 
 ---
 
@@ -702,7 +763,7 @@ If the subscription is accepted, the gateway responds with a `subscribed` messag
 }
 ```
 
-Receiving this message confirms that the subscription has been successfully registered and that Real-time events for the specified vehicle will begin streaming over the current WebSocket connection.
+Receiving this message confirms that the subscription has been successfully registered and that Real-time events for the specified vehicle will begin streaming over the current Gateway connection.
 
 ---
 
@@ -770,9 +831,9 @@ Whenever new telemetry becomes available for the subscribed vehicle, the gateway
 
 ```
 
-The `vehicle` object is identical to the **Vehicle Location** object returned by the REST API.
+The `vehicle.state` object is identical to the Vehicle Location object returned by the REST API.
 
-Using the same normalized data model across both REST and WebSocket APIs allows applications to consume Real-time and on-demand vehicle data without maintaining separate object models.
+Using the same normalized data model across both REST and Gateway APIs allows applications to consume Real-time and on-demand vehicle data without maintaining separate object models.
 
 ---
 
@@ -828,14 +889,115 @@ A successful subscription receives `telemetry` messages whenever new telemetry b
 
 The gateway delivers only telemetry belonging to the requested vehicle.
 
-Multiple vehicle subscriptions may exist simultaneously on the same WebSocket connection.
+Multiple vehicle subscriptions may exist simultaneously on the same Gateway connection.
 
-### Timestamps
+## Timestamps
 
 
 | Timestamp                    | Meaning                                                   |
 | ---------------------------- | --------------------------------------------------------- |
-| message.timestamp            | Time the gateway sent the WebSocket message               |
+| message.timestamp            | Time the gateway sent the Gateway message               |
 | vehicle.state.timestamps.gps         | Time reported by the GPS device                           |
 | vehicle.state.timestamps.received    | Time the gateway received the telemetry                   |
 | vehicle.state.timestamps.last_synced | Time the telemetry was synchronized into Fleet Management |
+
+
+> The message.timestamp property is generated by the Gateway and is present in every server message.
+
+---
+
+## Error Messages
+
+When a request cannot be processed, the gateway responds with an `error` message.
+
+An error message does not necessarily terminate the Gateway connection. Depending on the error, the client may correct the request and continue using the existing connection.
+
+### Error Message
+
+```json
+{
+    "type": "error",
+    "timestamp": "2026-06-30T14:52:31+02:00",
+    "data": {
+        "error": "invalid_payload",
+        "message": "Missing token."
+    }
+}
+```
+
+### Error Fields
+
+
+| Field | Type | Description |
+|------|------|-------------|
+| error | string | Machine-readable error code |
+| timestamp | Datetime | Error message timestamp in ISO-8601 format. |
+| message | string | Human-readable error description |
+
+
+### Error Codes
+
+
+| Error Code            | Description                                                                    |
+| --------------------- | ------------------------------------------------------------------------------ |
+| authentication_failed | Authentication failed because the supplied access token is invalid or expired. |
+| already_authenticated | Client attempted to authenticate more than once.                               |
+| unauthorized          | The client must authenticate before sending this message.                      |
+| forbidden             | The authenticated client lacks the required permission.                        |
+| invalid_json          | The received message is not valid JSON.                                        |
+| invalid_payload       | The message payload is malformed or missing required fields.                   |
+| unknown_message       | The specified message type is not supported.                                   |
+| invalid_subscription  | The requested subscription is invalid or the resource identifier is not valid. |
+| internal_error        | An unexpected gateway error occurred.                                          |
+
+
+> Additional error codes may be introduced in future protocol versions. Clients should treat unknown error codes as generic failures.
+
+> Unless otherwise specified, an `error` message does not close the Gateway connection. Clients may correct the request and continue using the existing connection.
+
+## Appendix A — Message Reference
+
+
+| Direction | Message           | Description                        |
+| --------- | ----------------- | ---------------------------------- |
+| →         | authenticate      | Authenticate the connection.       |
+| ←         | authenticated     | Connection authenticated.          |
+| →         | ping              | Keep the connection alive.         |
+| ←         | pong              | Heartbeat response.                |
+| →         | subscribe         | Subscribe to a topic.              |
+| ←         | subscribed        | Subscription acknowledged. |
+| →         | unsubscribe       | Remove an active subscription.     |
+| ←         | unsubscribed      | Subscription removed. |
+| ←         | telemetry         | Real-time telemetry event.          |
+| ←         | error             | Request could not be processed.    |
+| ←         | connection_closed | Gateway is closing the connection. |
+
+
+---
+
+## Appendix B — Topic Reference
+
+
+| Topic     | Identifier   | Permission          | Status      |
+| --------- | ------------ | ------------------- | ----------- |
+| vehicle   | Vehicle UUID | telemetry.subscribe | ✅ Supported |
+| company   | Company UUID | —                   | Planned     |
+| fleet     | Fleet UUID   | —                   | Planned     |
+| device    | Device UUID  | —                   | Planned     |
+| trip      | Trip UUID    | —                   | Planned     |
+| alert     | Alert UUID   | —                   | Planned     |
+| broadcast | —            | —                   | Planned     |
+
+
+## Appendix C — Compatibility
+
+Clients should:
+
+- Ignore unknown message types.
+- Ignore unknown fields.
+- Tolerate additional object properties.
+- Treat unknown error codes as generic failures.
+- Not rely on the order of object properties within JSON messages.
+- Ignore additional message types introduced by newer protocol versions.
+
+> These guidelines allow clients to remain compatible with future protocol versions without requiring immediate updates.
