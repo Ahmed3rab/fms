@@ -15,7 +15,7 @@ return [
         ICruiseTrackingProvider::class,
     ),
     'gateway' => [
-
+        'version'   => env('TRACKING_GATEWAY_CURRENT_VERSION', 'v1'),
         'host' => env('TRACKING_GATEWAY_HOST', '0.0.0.0'),
         'port' => env('TRACKING_GATEWAY_PORT', 9502),
         'worker_num' => env('TRACKING_GATEWAY_WORKERS', 1),
